@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Module 01 Study Guide — Motion, Measurement &amp; Graphing</title>
+</head>
+<body>
+
+<!--
+  ============================================================================
+  HOW TO EMBED THIS IN CANVAS
+  ----------------------------------------------------------------------------
+  1. Open your Canvas page and click Edit.
+  2. Click the "</>" (HTML Editor) toggle in the lower-right of the editor.
+  3. Copy EVERYTHING between the two <div id="physics-study-guide"> ... </div>
+     markers below (or the whole <body> contents) and paste it in.
+  4. Save. All styling is inline and all graphics are inline SVG that I drew,
+     so nothing depends on external image links that could break later.
+  If your Canvas strips the drop-down "Show answers" boxes, tell me and I'll
+  move the answer key into a separate collapsible page or a plain list.
+  ============================================================================
+-->
+
+<div id="physics-study-guide" style="max-width:900px;margin:0 auto;padding:8px 4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1f2933;line-height:1.65;font-size:16px;">
+
+  <h1 style="font-size:1.9em;color:#0b5394;margin-bottom:4px;">Module 01 Study Guide</h1>
+  <p style="font-size:1.1em;color:#52606d;margin-top:0;">Scientific Questions &bull; Measurement &bull; Graphing &bull; Speed, Velocity &amp; Motion Graphs</p>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:18px 0;border-radius:4px;">
+    <strong>How to use this guide.</strong> Each section has three parts: <em>Key Ideas</em> (what you must know),
+    a <em>Real-World Connection</em> (where you have already seen this), and <em>Check Your Understanding</em>
+    (practice questions with a hidden answer key). Work the practice questions before opening the answers.
+  </div>
+
+  <!-- ============ FORMULA QUICK REFERENCE ============ -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:36px;">Quick Reference</h2>
+
+  <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:0.98em;">
+    <thead>
+      <tr style="background:#0b5394;color:#fff;text-align:left;">
+        <th style="padding:8px 10px;border:1px solid #0b5394;">Idea</th>
+        <th style="padding:8px 10px;border:1px solid #0b5394;">Relationship</th>
+        <th style="padding:8px 10px;border:1px solid #0b5394;">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">Speed</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;font-family:ui-monospace,Menlo,Consolas,monospace;">speed = distance &divide; time</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">Scalar. Units m/s, mph, km/h.</td>
+      </tr>
+      <tr style="background:#f7fafc;">
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">Average speed</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;font-family:ui-monospace,Menlo,Consolas,monospace;">total distance &divide; total time</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">Includes stops. On a position&ndash;time graph, use the position value at that time.</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">Average velocity</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;font-family:ui-monospace,Menlo,Consolas,monospace;">displacement &divide; time</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">Vector. Displacement is the straight-line change in position <em>with direction</em>.</td>
+      </tr>
+      <tr style="background:#f7fafc;">
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">Slope of position&ndash;time graph</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;font-family:ui-monospace,Menlo,Consolas,monospace;">rise &divide; run = &Delta;position &divide; &Delta;time</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">The slope <em>is</em> the velocity. Flat = at rest.</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">Measurement (vector)</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;font-family:ui-monospace,Menlo,Consolas,monospace;">quantity = magnitude + direction</td>
+        <td style="padding:8px 10px;border:1px solid #cbd5e0;">e.g. velocity = <strong>25 m/s</strong> <strong>west</strong>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- ==================================================================== -->
+  <!-- SECTION 1 : SCIENTIFIC / TESTABLE QUESTIONS (01.01)                  -->
+  <!-- ==================================================================== -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">1. Testable Questions in Science <span style="font-size:0.7em;color:#9aa5b1;">(01.01)</span></h2>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Key Ideas</strong>
+    <ul style="margin:8px 0 0 0;padding-left:22px;">
+      <li>A question is <strong>testable</strong> when you can investigate it with <strong>observations and measurements of the natural world</strong> &mdash; not with opinions, values, or beliefs.</li>
+      <li>Science can offer an explanation only when that explanation is based on <strong>empirical evidence</strong> (data you can observe and measure).</li>
+      <li>A good testable question produces data that are <strong>measurable, objective, and repeatable</strong> &mdash; another person running the same test should get similar results.</li>
+      <li>Testable questions explore <strong>how the natural world behaves</strong>: cause and effect, patterns, and measurable relationships between variables.</li>
+      <li><strong>Not</strong> testable by science: questions of ethics ("<em>should</em> we&hellip;"), aesthetics ("which is prettiest"), or personal preference ("what is the best&hellip;").</li>
+    </ul>
+  </div>
+
+  <div style="background:#fff8e6;border-left:5px solid #e69138;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>&#127793; Real-World Connection</strong><br>
+    "Does adding salt to water make it boil faster?" is testable &mdash; you can measure boiling times.
+    "Is salted pasta water tastier?" is not a science question &mdash; taste is a preference, and different people will answer differently no matter how carefully you measure.
+    Consumer-product labs, medical trials, and sports-science studies all live or die by whether their question can be turned into repeatable measurements.
+  </div>
+
+  <div style="background:#f3f0ff;border-left:5px solid #674ea7;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Check Your Understanding</strong>
+    <ol style="margin:10px 0 0 0;padding-left:22px;">
+      <li>Which of the following is a <strong>testable</strong> scientific question?
+        <ul style="list-style:lower-alpha;padding-left:22px;">
+          <li>Is it fair to keep large animals in zoos?</li>
+          <li>Does the color of light change how fast radish seeds sprout?</li>
+          <li>Which painting in the museum is the most beautiful?</li>
+          <li>Should the school day start one hour later?</li>
+        </ul>
+      </li>
+      <li>The results of a well-designed scientific investigation should be:
+        <ul style="list-style:lower-alpha;padding-left:22px;">
+          <li>based mostly on the researcher's personal opinion</li>
+          <li>impossible for anyone else to repeat</li>
+          <li>measurable and repeatable</li>
+          <li>different every time, with no pattern</li>
+        </ul>
+      </li>
+      <li>Science can provide an explanation for a question when the explanation is built on:
+        <ul style="list-style:lower-alpha;padding-left:22px;">
+          <li>tradition and popular belief</li>
+          <li>observations and evidence from the natural world</li>
+          <li>how strongly people feel about the answer</li>
+          <li>a vote among the scientists in the room</li>
+        </ul>
+      </li>
+    </ol>
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-weight:bold;color:#674ea7;">Show answers</summary>
+      <div style="padding:8px 0;">
+        <strong>1.</strong> (b) &mdash; light color and sprouting time can both be measured, and the test can be repeated.<br>
+        <strong>2.</strong> (c) &mdash; measurable and repeatable data are what let other scientists check the results.<br>
+        <strong>3.</strong> (b) &mdash; explanations in science must rest on evidence from the natural world.
+      </div>
+    </details>
+  </div>
+
+
+  <!-- ==================================================================== -->
+  <!-- SECTION 2 : PHYSICAL QUANTITY / MAGNITUDE / DIRECTION (01.04)        -->
+  <!-- ==================================================================== -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">2. Reading a Measurement: Quantity, Magnitude &amp; Direction <span style="font-size:0.7em;color:#9aa5b1;">(01.04)</span></h2>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Key Ideas</strong>
+    <p style="margin:8px 0;">Every measurement in physics has parts. Take <span style="font-family:ui-monospace,Menlo,Consolas,monospace;background:#e6efff;padding:2px 6px;border-radius:3px;">velocity = 25 m/s west</span>:</p>
+    <ul style="margin:0;padding-left:22px;">
+      <li><strong>Physical quantity</strong> &mdash; <em>what</em> is being measured. Here: <strong>velocity</strong>. (Other examples: force, acceleration, mass, temperature.)</li>
+      <li><strong>Magnitude</strong> &mdash; the <em>size</em>: the number together with its unit. Here: <strong>25 m/s</strong>.</li>
+      <li><strong>Direction</strong> &mdash; <em>which way</em>. Here: <strong>west</strong>.</li>
+    </ul>
+    <p style="margin:10px 0 4px 0;"><strong>Scalars vs. vectors</strong></p>
+    <ul style="margin:0;padding-left:22px;">
+      <li><strong>Scalar</strong> = magnitude only. Examples: distance, speed, mass, time, temperature.</li>
+      <li><strong>Vector</strong> = magnitude <em>and</em> direction. Examples: displacement, velocity, acceleration, force.</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;margin:18px 0;">
+    <svg viewBox="0 0 460 180" style="width:100%;max-width:480px;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+      <text x="20" y="26" font-size="15" font-weight="bold" fill="#1f2933">velocity = 25 m/s west</text>
+      <text x="20" y="48" font-size="12" fill="#52606d">the physical quantity being measured is "velocity"</text>
+      <line x1="70" y1="110" x2="360" y2="110" stroke="#0b5394" stroke-width="9"/>
+      <polygon points="360,92 360,128 396,110" fill="#0b5394"/>
+      <text x="95" y="96" font-size="12.5" fill="#0b5394" font-weight="bold">magnitude: 25 m/s  (how fast)</text>
+      <text x="120" y="150" font-size="12.5" fill="#e69138" font-weight="bold">direction: west  (the way the arrow points)</text>
+    </svg>
+  </div>
+
+  <div style="background:#fff8e6;border-left:5px solid #e69138;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>&#128663; Real-World Connection</strong><br>
+    Your car's <em>odometer</em> reports a scalar &mdash; "you have driven 300 miles," no direction.
+    Your <em>GPS</em> reports vectors &mdash; "the destination is 12 miles to the northeast," and "head south on Main St."
+    A weather report saying "wind 20 mph from the west" is a vector; saying "it is 72&deg;F" is a scalar.
+  </div>
+
+  <div style="background:#f3f0ff;border-left:5px solid #674ea7;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Check Your Understanding</strong>
+    <p style="margin:8px 0;">Use the measurement <span style="font-family:ui-monospace,Menlo,Consolas,monospace;background:#efeaff;padding:2px 6px;border-radius:3px;">acceleration = 9.8 m/s&sup2; downward</span> for questions 1&ndash;3.</p>
+    <ol style="margin:6px 0 0 0;padding-left:22px;">
+      <li>What is the <strong>physical quantity</strong> in this measurement?</li>
+      <li>What is the <strong>magnitude</strong> in this measurement?</li>
+      <li>What is the <strong>direction</strong> in this measurement?</li>
+      <li>Which of these is a <strong>vector</strong> quantity: mass, temperature, velocity, or distance?</li>
+      <li>Which of these is a <strong>scalar</strong> quantity: displacement, force, speed, or acceleration?</li>
+      <li>Explain why "a runner jogged 5 km" describes a scalar, but "a runner jogged 5 km north" describes a vector.</li>
+    </ol>
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-weight:bold;color:#674ea7;">Show answers</summary>
+      <div style="padding:8px 0;">
+        <strong>1.</strong> acceleration &nbsp;&nbsp; <strong>2.</strong> 9.8 m/s&sup2; &nbsp;&nbsp; <strong>3.</strong> downward<br>
+        <strong>4.</strong> velocity (it names a direction) &nbsp;&nbsp; <strong>5.</strong> speed (magnitude only)<br>
+        <strong>6.</strong> "5 km" gives only a magnitude, so it is distance (a scalar). Adding "north" gives a direction, making it displacement (a vector).
+      </div>
+    </details>
+  </div>
+
+
+  <!-- ==================================================================== -->
+  <!-- SECTION 3 : FRAMES OF REFERENCE / RELATIVE MOTION (01.04)            -->
+  <!-- ==================================================================== -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">3. Frames of Reference &amp; Relative Motion <span style="font-size:0.7em;color:#9aa5b1;">(01.04)</span></h2>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Key Ideas</strong>
+    <ul style="margin:8px 0 0 0;padding-left:22px;">
+      <li>How fast something appears to move depends on your <strong>frame of reference</strong> &mdash; what you are measuring the motion against (the ground, another vehicle, etc.).</li>
+      <li>A speedometer shows speed <strong>relative to the ground</strong>. It says nothing about direction, so it reports a scalar.</li>
+      <li><strong>Same direction:</strong> the relative speed between two objects is the <em>difference</em> of their speeds. The faster object pulls ahead; the slower one appears to drift backward.</li>
+      <li><strong>Opposite directions:</strong> the relative speed is the <em>sum</em> of their speeds (they separate or approach quickly).</li>
+      <li>Two objects moving at the <strong>same velocity</strong> (same speed <em>and</em> direction) appear <strong>motionless relative to each other</strong>.</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;margin:18px 0;">
+    <svg viewBox="0 0 460 190" style="width:100%;max-width:520px;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+      <rect x="0" y="55" width="460" height="95" fill="#eef1f4"/>
+      <line x1="0" y1="102" x2="460" y2="102" stroke="#c3cbd4" stroke-width="4" stroke-dasharray="22 16"/>
+      <rect x="70" y="62" width="78" height="26" rx="6" fill="#0b5394"/>
+      <text x="109" y="79" font-size="11" fill="#fff" text-anchor="middle">CAR 85 mph</text>
+      <rect x="70" y="112" width="104" height="30" rx="6" fill="#e69138"/>
+      <text x="122" y="131" font-size="11" fill="#fff" text-anchor="middle">TRUCK 75 mph</text>
+      <line x1="300" y1="100" x2="410" y2="100" stroke="#1f2933" stroke-width="3"/>
+      <polygon points="410,92 410,108 430,100" fill="#1f2933"/>
+      <text x="300" y="86" font-size="11" fill="#1f2933">both heading east</text>
+      <text x="12" y="176" font-size="11.5" fill="#52606d">Relative to the truck, the car pulls ahead at 85 &minus; 75 = 10 mph. Relative to the car, the truck slides backward at 10 mph.</text>
+    </svg>
+  </div>
+
+  <div style="background:#fff8e6;border-left:5px solid #e69138;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>&#128643; Real-World Connection</strong><br>
+    Sitting in a stopped train, when the train on the next track rolls forward you briefly feel like <em>you</em> are moving backward &mdash; your brain picked the wrong frame of reference.
+    On the highway, passing a car that is only slightly slower than you feels like it is crawling backward past your window, even though it is doing 70 mph relative to the road.
+  </div>
+
+  <div style="background:#f3f0ff;border-left:5px solid #674ea7;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Check Your Understanding</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>A bus reads 50 mph. It passes a car traveling 45 mph in the <strong>same direction</strong>. To a passenger looking out of the bus, the car appears to:
+        <ul style="list-style:lower-alpha;padding-left:22px;">
+          <li>race forward quickly</li>
+          <li>drift slowly backward</li>
+          <li>stay exactly even with the window</li>
+          <li>move backward at 95 mph</li>
+        </ul>
+      </li>
+      <li>A drone flies 30 mph east directly above a runner going 8 mph east. The drone's speed <strong>relative to the runner</strong> is:
+        <ul style="list-style:lower-alpha;padding-left:22px;">
+          <li>38 mph east</li>
+          <li>22 mph east</li>
+          <li>8 mph east</li>
+          <li>0 mph</li>
+        </ul>
+      </li>
+      <li>Two cyclists both ride north at exactly 15 mph, side by side. Their velocity <strong>relative to each other</strong> is:
+        <ul style="list-style:lower-alpha;padding-left:22px;">
+          <li>30 mph north</li>
+          <li>15 mph north</li>
+          <li>0 mph &mdash; they appear motionless to each other</li>
+          <li>impossible to tell</li>
+        </ul>
+      </li>
+    </ol>
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-weight:bold;color:#674ea7;">Show answers</summary>
+      <div style="padding:8px 0;">
+        <strong>1.</strong> (b) &mdash; same direction, so relative speed is 50 &minus; 45 = 5 mph; the slower car slips backward slowly.<br>
+        <strong>2.</strong> (b) &mdash; 30 &minus; 8 = 22 mph east.<br>
+        <strong>3.</strong> (c) &mdash; equal speed and equal direction means zero relative velocity.
+      </div>
+    </details>
+  </div>
+
+
+  <!-- ==================================================================== -->
+  <!-- SECTION 4 : MAKING ACCURATE GRAPHS (01.05)                          -->
+  <!-- ==================================================================== -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">4. Building an Accurate Graph <span style="font-size:0.7em;color:#9aa5b1;">(01.05)</span></h2>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Key Ideas</strong>
+    <ul style="margin:8px 0 0 0;padding-left:22px;">
+      <li><strong>Independent variable</strong> = what the experimenter <em>changes on purpose</em>. It goes on the <strong>x-axis</strong> (horizontal).</li>
+      <li><strong>Dependent variable</strong> = what is <em>measured</em> and <em>responds</em> to the change. It goes on the <strong>y-axis</strong> (vertical).</li>
+      <li><strong>Title format:</strong> "<em>Dependent variable</em> vs. <em>Independent variable</em>" &mdash; e.g. "Volume vs. Mass."</li>
+      <li><strong>Every axis needs</strong> a label <em>and</em> a unit.</li>
+      <li><strong>Scales must be uniform:</strong> equal steps in value must be equal distances on the axis (0, 2, 4, 6, 8&hellip; &mdash; not 0, 2, 4, 5, 7&hellip; drawn evenly spaced).</li>
+    </ul>
+    <p style="margin:10px 0 0 0;"><strong>Common graphing errors:</strong> axes swapped (independent variable placed on the y-axis); inconsistent/uneven interval spacing; missing units; a line drawn beyond the data that was actually collected.</p>
+  </div>
+
+  <div style="text-align:center;margin:18px 0;">
+    <svg viewBox="0 0 460 210" style="width:100%;max-width:520px;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+      <!-- BAD graph -->
+      <text x="15" y="16" font-size="12" font-weight="bold" fill="#c0392b">&#10007; Uneven scale</text>
+      <line x1="30" y1="30" x2="30" y2="170" stroke="#555" stroke-width="2"/>
+      <line x1="30" y1="170" x2="200" y2="170" stroke="#555" stroke-width="2"/>
+      <text x="12" y="170" font-size="10" fill="#555">1</text>
+      <text x="12" y="150" font-size="10" fill="#555">2</text>
+      <text x="12" y="120" font-size="10" fill="#555">4</text>
+      <text x="12" y="95" font-size="10" fill="#555">5</text>
+      <text x="12" y="45" font-size="10" fill="#555">7</text>
+      <line x1="30" y1="170" x2="185" y2="40" stroke="#c0392b" stroke-width="2.5"/>
+      <text x="60" y="195" font-size="10" fill="#c0392b">gaps between numbers are not equal</text>
+      <!-- GOOD graph -->
+      <text x="270" y="16" font-size="12" font-weight="bold" fill="#1e8449">&#10003; Uniform scale</text>
+      <line x1="285" y1="30" x2="285" y2="170" stroke="#555" stroke-width="2"/>
+      <line x1="285" y1="170" x2="450" y2="170" stroke="#555" stroke-width="2"/>
+      <text x="267" y="170" font-size="10" fill="#555">2</text>
+      <text x="267" y="135" font-size="10" fill="#555">4</text>
+      <text x="267" y="100" font-size="10" fill="#555">6</text>
+      <text x="267" y="65" font-size="10" fill="#555">8</text>
+      <line x1="285" y1="170" x2="440" y2="45" stroke="#1e8449" stroke-width="2.5"/>
+      <text x="300" y="195" font-size="10" fill="#1e8449">equal value steps = equal spacing</text>
+    </svg>
+  </div>
+
+  <div style="background:#fff8e6;border-left:5px solid #e69138;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>&#128200; Real-World Connection</strong><br>
+    News graphics get called out constantly for uneven or truncated axes that exaggerate a trend.
+    In a lab, if you grow bean plants and record height every day, "day number" is what you chose (x-axis) and "plant height" is what nature decided (y-axis) &mdash; the title is "Plant Height vs. Day."
+  </div>
+
+  <div style="background:#f3f0ff;border-left:5px solid #674ea7;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Check Your Understanding</strong>
+    <p style="margin:8px 0;">A student changed the <strong>mass</strong> on a scale and measured the <strong>acceleration</strong> of a cart for each mass, then graphed the results.</p>
+    <ol style="margin:6px 0 0 0;padding-left:22px;">
+      <li>What is the <strong>independent variable</strong>?</li>
+      <li>What is the <strong>dependent variable</strong>?</li>
+      <li>What should the <strong>title</strong> of the graph be?</li>
+      <li>The student put mass on the y-axis and acceleration on the x-axis. What is the error?</li>
+      <li>The student labeled the y-axis 0, 10, 20, 25, 40, 60 with the tick marks evenly spaced. What is the error?</li>
+      <li>The student collected data only up to 5 kg but drew the best-fit line out to 12 kg. Why is that a problem?</li>
+    </ol>
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-weight:bold;color:#674ea7;">Show answers</summary>
+      <div style="padding:8px 0;">
+        <strong>1.</strong> mass (the student chose it) &nbsp;&nbsp; <strong>2.</strong> acceleration (it was measured / responded)<br>
+        <strong>3.</strong> "Acceleration vs. Mass"<br>
+        <strong>4.</strong> The axes are swapped &mdash; the independent variable (mass) belongs on the x-axis.<br>
+        <strong>5.</strong> The scale intervals are not consistent; equal spaces on the axis must represent equal changes in value.<br>
+        <strong>6.</strong> The line now shows data that were never collected; you cannot assume the pattern continues past the measured range.
+      </div>
+    </details>
+  </div>
+
+
+  <!-- ==================================================================== -->
+  <!-- SECTION 5 : TYPES OF RELATIONSHIPS (01.06)                          -->
+  <!-- ==================================================================== -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">5. Recognizing Relationships from a Graph <span style="font-size:0.7em;color:#9aa5b1;">(01.06)</span></h2>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Key Ideas</strong>
+    <ul style="margin:8px 0 0 0;padding-left:22px;">
+      <li><strong>Linear / direct:</strong> a straight line, usually through the origin. As x increases, y increases by the same factor. Double x &rarr; double y.</li>
+      <li><strong>Quadratic (nonlinear increasing):</strong> an upward-bending curve that gets steeper. y grows much faster than x (often y &prop; x&sup2;). Double x &rarr; y increases about four times.</li>
+      <li><strong>Inverse:</strong> a curve that falls steeply then levels off, approaching but never touching the axes. As x increases, y decreases. Double x &rarr; y is cut in half (y &prop; 1/x).</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;margin:18px 0;">
+    <svg viewBox="0 0 460 170" style="width:100%;max-width:560px;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+      <!-- linear -->
+      <line x1="25" y1="20" x2="25" y2="130" stroke="#555" stroke-width="1.5"/>
+      <line x1="25" y1="130" x2="140" y2="130" stroke="#555" stroke-width="1.5"/>
+      <line x1="25" y1="130" x2="132" y2="30" stroke="#0b5394" stroke-width="3"/>
+      <text x="20" y="152" font-size="11" fill="#1f2933">Linear / Direct</text>
+      <!-- quadratic -->
+      <line x1="185" y1="20" x2="185" y2="130" stroke="#555" stroke-width="1.5"/>
+      <line x1="185" y1="130" x2="300" y2="130" stroke="#555" stroke-width="1.5"/>
+      <path d="M185,130 Q 255,128 292,28" fill="none" stroke="#e69138" stroke-width="3"/>
+      <text x="205" y="152" font-size="11" fill="#1f2933">Quadratic</text>
+      <!-- inverse -->
+      <line x1="345" y1="20" x2="345" y2="130" stroke="#555" stroke-width="1.5"/>
+      <line x1="345" y1="130" x2="452" y2="130" stroke="#555" stroke-width="1.5"/>
+      <path d="M352,28 C 372,120 392,126 450,128" fill="none" stroke="#674ea7" stroke-width="3"/>
+      <text x="378" y="152" font-size="11" fill="#1f2933">Inverse</text>
+    </svg>
+  </div>
+
+  <div style="background:#fff8e6;border-left:5px solid #e69138;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>&#128736;&#65039; Real-World Connection</strong>
+    <ul style="margin:8px 0 0 0;padding-left:22px;">
+      <li><strong>Linear:</strong> the stretch of a spring vs. the force pulling it (Hooke's law). Twice the force, twice the stretch.</li>
+      <li><strong>Quadratic:</strong> a car's kinetic energy vs. its speed. Going twice as fast means about four times the energy &mdash; and roughly four times the braking distance.</li>
+      <li><strong>Inverse:</strong> for a fixed trip, travel time vs. driving speed. Drive twice as fast, arrive in half the time.</li>
+    </ul>
+  </div>
+
+  <div style="background:#f3f0ff;border-left:5px solid #674ea7;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Check Your Understanding</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>A graph of "distance stretched vs. hanging weight" is a straight line starting at the origin. What kind of relationship is this?</li>
+      <li>A graph of "kinetic energy vs. speed" is a curve that starts shallow and bends sharply upward. What kind of relationship is this?</li>
+      <li>A graph of "electric current vs. resistance" (at constant voltage) is a curve that drops fast and then flattens near both axes. What kind of relationship is this?</li>
+      <li>In a direct/linear relationship, if one variable is tripled, what happens to the other?</li>
+      <li>In an inverse relationship, if one variable is tripled, what happens to the other?</li>
+    </ol>
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-weight:bold;color:#674ea7;">Show answers</summary>
+      <div style="padding:8px 0;">
+        <strong>1.</strong> Linear (direct) &mdash; straight line through the origin.<br>
+        <strong>2.</strong> Quadratic / nonlinear increasing &mdash; y grows much faster than x.<br>
+        <strong>3.</strong> Inverse &mdash; as one goes up the other goes down, curving toward the axes.<br>
+        <strong>4.</strong> It is also tripled.<br>
+        <strong>5.</strong> It becomes one-third as large.
+      </div>
+    </details>
+  </div>
+
+
+  <!-- ==================================================================== -->
+  <!-- SECTION 6 : SPEED & AVERAGE SPEED (01.07)                           -->
+  <!-- ==================================================================== -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">6. Speed &amp; Average Speed <span style="font-size:0.7em;color:#9aa5b1;">(01.07)</span></h2>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Key Ideas</strong>
+    <ul style="margin:8px 0 0 0;padding-left:22px;">
+      <li><span style="font-family:ui-monospace,Menlo,Consolas,monospace;background:#e6efff;padding:2px 6px;border-radius:3px;">speed = distance &divide; time</span>. Keep units consistent (meters and seconds &rarr; m/s).</li>
+      <li><strong>Average speed</strong> = <strong>total distance</strong> &divide; <strong>total time</strong>, even if the object sped up, slowed down, or stopped along the way.</li>
+      <li>On a <strong>position&ndash;time graph</strong>, the average speed from the start to some time <em>t</em> is the position reached at <em>t</em> divided by <em>t</em>.</li>
+      <li>A flat (horizontal) part of a position&ndash;time graph is a period when the object was <strong>not moving</strong> &mdash; but that time still counts in an average-speed calculation.</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;margin:18px 0;">
+    <svg viewBox="0 0 460 300" style="width:100%;max-width:520px;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+      <line x1="60" y1="40" x2="60" y2="260" stroke="#555" stroke-width="2"/>
+      <line x1="60" y1="260" x2="420" y2="260" stroke="#555" stroke-width="2"/>
+      <text x="18" y="150" font-size="12" fill="#555" transform="rotate(-90 22 150)">position (miles)</text>
+      <text x="200" y="290" font-size="12" fill="#555">time (hours)</text>
+      <!-- x ticks 1..5 spacing 60 -->
+      <text x="116" y="278" font-size="10" fill="#555">1</text>
+      <text x="176" y="278" font-size="10" fill="#555">2</text>
+      <text x="236" y="278" font-size="10" fill="#555">3</text>
+      <text x="296" y="278" font-size="10" fill="#555">4</text>
+      <text x="356" y="278" font-size="10" fill="#555">5</text>
+      <!-- y ticks 0,50,90,120 : y = 260 - pos/120*200 -->
+      <text x="35" y="182" font-size="10" fill="#555">50</text>
+      <text x="35" y="115" font-size="10" fill="#555">90</text>
+      <text x="30" y="64" font-size="10" fill="#555">120</text>
+      <!-- polyline (0,0)(1,50)(2,50)(3,90)(4,90)(5,120) -->
+      <polyline points="60,260 120,177 180,177 240,110 300,110 360,60" fill="none" stroke="#0b5394" stroke-width="3"/>
+      <circle cx="60" cy="260" r="4" fill="#0b5394"/>
+      <circle cx="120" cy="177" r="4" fill="#0b5394"/>
+      <circle cx="180" cy="177" r="4" fill="#0b5394"/>
+      <circle cx="240" cy="110" r="4" fill="#0b5394"/>
+      <circle cx="300" cy="110" r="4" fill="#0b5394"/>
+      <circle cx="360" cy="60" r="4" fill="#0b5394"/>
+      <text x="128" y="168" font-size="10" fill="#e69138">stopped (t = 1 to 2)</text>
+      <text x="248" y="102" font-size="10" fill="#e69138">stopped (t = 3 to 4)</text>
+    </svg>
+  </div>
+
+  <div style="background:#fff8e6;border-left:5px solid #e69138;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>&#128666; Real-World Connection</strong><br>
+    A road-trip app that says "270 miles in 6 hours, average 45 mph" is doing exactly this calculation &mdash; the low average reflects the gas stops and traffic, even though you cruised at 70 mph on the open highway.
+  </div>
+
+  <div style="background:#f3f0ff;border-left:5px solid #674ea7;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Check Your Understanding</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>A runner covers 150 m in 25 s. What is the runner's speed?</li>
+      <li>A train travels 2,000 m in 80 s. What is the train's speed?</li>
+      <li>A skater glides 84 m in 12 s. What is the skater's speed?</li>
+      <li>Using the graph above, what is the average speed from the start until <em>t</em> = 1 hour?</li>
+      <li>Using the graph above, what is the average speed from the start until <em>t</em> = 2 hours?</li>
+      <li>Using the graph above, what is the average speed from the start until <em>t</em> = 4 hours?</li>
+    </ol>
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-weight:bold;color:#674ea7;">Show answers</summary>
+      <div style="padding:8px 0;">
+        <strong>1.</strong> 150 &divide; 25 = <strong>6 m/s</strong><br>
+        <strong>2.</strong> 2000 &divide; 80 = <strong>25 m/s</strong><br>
+        <strong>3.</strong> 84 &divide; 12 = <strong>7 m/s</strong><br>
+        <strong>4.</strong> 50 mi &divide; 1 h = <strong>50 mph</strong><br>
+        <strong>5.</strong> 50 mi &divide; 2 h = <strong>25 mph</strong> (the car was parked from t = 1 to 2, but that hour still counts)<br>
+        <strong>6.</strong> 90 mi &divide; 4 h = <strong>22.5 mph</strong>
+      </div>
+    </details>
+  </div>
+
+
+  <!-- ==================================================================== -->
+  <!-- SECTION 7 : SLOPE OF MOTION GRAPHS (01.08)                          -->
+  <!-- ==================================================================== -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">7. Slope of a Position&ndash;Time Graph <span style="font-size:0.7em;color:#9aa5b1;">(01.08)</span></h2>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Key Ideas</strong>
+    <ul style="margin:8px 0 0 0;padding-left:22px;">
+      <li><span style="font-family:ui-monospace,Menlo,Consolas,monospace;background:#e6efff;padding:2px 6px;border-radius:3px;">slope = rise &divide; run = (position&#8322; &minus; position&#8321;) &divide; (time&#8322; &minus; time&#8321;)</span></li>
+      <li>On a position&ndash;time graph, <strong>the slope is the velocity</strong>.</li>
+      <li><strong>Steeper</strong> line &rarr; faster. <strong>Flat</strong> line &rarr; at rest (velocity = 0). <strong>Downward</strong> slope &rarr; moving back toward the start.</li>
+      <li><strong>Constant speed</strong> shows up as a <strong>straight line</strong> (equal distance covered in each equal time interval).</li>
+      <li><strong>Speeding up</strong> &rarr; the curve gets steeper over time. <strong>Slowing down</strong> &rarr; the curve flattens over time.</li>
+      <li>In a <strong>data table</strong>: constant speed means each equal distance step takes the <em>same</em> amount of time. Increasing time per step = slowing down; decreasing time per step = speeding up.</li>
+    </ul>
+  </div>
+
+  <div style="background:#fff8e6;border-left:5px solid #e69138;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>&#128647; Real-World Connection</strong><br>
+    A fitness-tracker "pace" graph is a slope reading: a steep section of the distance&ndash;time line is a sprint, a flat section is a water break.
+    Cars roll faster and speed up more on a smooth road than on gravel &mdash; the surface changes the shape of the motion graph.
+  </div>
+
+  <div style="background:#f3f0ff;border-left:5px solid #674ea7;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Check Your Understanding &mdash; Part A (slope from a curve)</strong>
+    <p style="margin:8px 0;">A position&ndash;time graph passes through these points: (0 s, 0 m), (1 s, 3 m), (2 s, 5 m), (3 s, 6 m), (4 s, 6.5 m).</p>
+    <ol style="margin:6px 0 0 0;padding-left:22px;">
+      <li>Calculate the slope of the segment from <em>t</em> = 1 s to <em>t</em> = 2 s.</li>
+      <li>Calculate the slope of the segment from <em>t</em> = 2 s to <em>t</em> = 3 s.</li>
+      <li>Is this object speeding up or slowing down? How do you know?</li>
+    </ol>
+    <p style="margin:14px 0 6px 0;"><strong>Part B (segmented graph)</strong> &mdash; points: (0 h, 0 mi), (1 h, 20 mi), (3 h, 20 mi), (4 h, 60 mi).</p>
+    <ol start="4" style="margin:0;padding-left:22px;">
+      <li>Calculate the slope from <em>t</em> = 1 h to <em>t</em> = 3 h. What was the object doing?</li>
+      <li>Calculate the slope from <em>t</em> = 3 h to <em>t</em> = 4 h.</li>
+    </ol>
+    <p style="margin:14px 0 6px 0;"><strong>Part C (data table)</strong> &mdash; time for a cart to reach each distance on four surfaces:</p>
+    <table style="width:100%;border-collapse:collapse;font-size:0.92em;margin:6px 0;">
+      <tr style="background:#674ea7;color:#fff;">
+        <th style="padding:6px 8px;border:1px solid #674ea7;">Distance (cm)</th><th style="padding:6px 8px;border:1px solid #674ea7;">0</th><th style="padding:6px 8px;border:1px solid #674ea7;">20</th><th style="padding:6px 8px;border:1px solid #674ea7;">40</th><th style="padding:6px 8px;border:1px solid #674ea7;">60</th><th style="padding:6px 8px;border:1px solid #674ea7;">80</th><th style="padding:6px 8px;border:1px solid #674ea7;">100</th>
+      </tr>
+      <tr><td style="padding:6px 8px;border:1px solid #cbd5e0;">Time A (s)</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">2.0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">4.0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">6.0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">8.0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">10.0</td></tr>
+      <tr style="background:#f7fafc;"><td style="padding:6px 8px;border:1px solid #cbd5e0;">Time B (s)</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">3.0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">5.5</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">7.5</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">9.0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">10.0</td></tr>
+      <tr><td style="padding:6px 8px;border:1px solid #cbd5e0;">Time C (s)</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">1.0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">2.5</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">4.5</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">7.5</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">12.0</td></tr>
+      <tr style="background:#f7fafc;"><td style="padding:6px 8px;border:1px solid #cbd5e0;">Time D (s)</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">0</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">2.1</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">3.9</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">6.2</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">7.8</td><td style="padding:6px 8px;border:1px solid #cbd5e0;">10.1</td></tr>
+    </table>
+    <ol start="6" style="margin:0;padding-left:22px;">
+      <li>Which surface let the cart travel <strong>closest to a constant speed</strong>?</li>
+      <li>Which surface let the cart <strong>speed up the entire distance</strong>?</li>
+      <li>Which surface caused the cart to <strong>slow down the entire distance</strong>?</li>
+    </ol>
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-weight:bold;color:#674ea7;">Show answers</summary>
+      <div style="padding:8px 0;">
+        <strong>1.</strong> (5 &minus; 3) &divide; (2 &minus; 1) = <strong>2 m/s</strong><br>
+        <strong>2.</strong> (6 &minus; 5) &divide; (3 &minus; 2) = <strong>1 m/s</strong><br>
+        <strong>3.</strong> Slowing down &mdash; each later 1-second interval covers less distance, so the slope is decreasing.<br>
+        <strong>4.</strong> (20 &minus; 20) &divide; (3 &minus; 1) = <strong>0 mph</strong> &mdash; the object was stopped (at rest).<br>
+        <strong>5.</strong> (60 &minus; 20) &divide; (4 &minus; 3) = <strong>40 mph</strong><br>
+        <strong>6.</strong> <strong>Surface A</strong> &mdash; every 20 cm takes exactly 2.0 s, so the speed never changes.<br>
+        <strong>7.</strong> <strong>Surface B</strong> &mdash; the time for each 20 cm keeps shrinking (3.0, 2.5, 2.0, 1.5, 1.0 s), so it is always speeding up.<br>
+        <strong>8.</strong> <strong>Surface C</strong> &mdash; the time for each 20 cm keeps growing (1.0, 1.5, 2.0, 3.0, 4.5 s), so it is always slowing down.
+      </div>
+    </details>
+  </div>
+
+
+  <!-- ==================================================================== -->
+  <!-- SECTION 8 : READING MOTION GRAPHS (01.09)                           -->
+  <!-- ==================================================================== -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">8. Reading Motion Graphs: At Rest vs. Moving <span style="font-size:0.7em;color:#9aa5b1;">(01.09)</span></h2>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Key Ideas</strong>
+    <ul style="margin:8px 0 0 0;padding-left:22px;">
+      <li><strong>Position&ndash;time graph:</strong> a sloped line = moving; a <strong>horizontal (flat) line = at rest</strong> (position is not changing).</li>
+      <li><strong>Speed&ndash;time graph:</strong> the object is <strong>at rest when the line sits on the x-axis</strong> (speed = 0); it is moving whenever the line is above the axis.</li>
+      <li><strong>Translating a position&ndash;time graph into a speed&ndash;time graph:</strong>
+        <ul style="padding-left:20px;">
+          <li>Straight sloped line (constant speed) &rarr; speed&ndash;time graph is a <strong>horizontal line above zero</strong>.</li>
+          <li>Horizontal position line (at rest) &rarr; speed&ndash;time graph is a <strong>horizontal line on the x-axis</strong> (zero).</li>
+          <li>A downward-sloping position line still means <em>moving</em>, so its speed&ndash;time graph is a horizontal line <em>above</em> zero (speed is a magnitude &mdash; it has no sign).</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;margin:18px 0;">
+    <svg viewBox="0 0 460 330" style="width:100%;max-width:540px;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+      <!-- Row 1: at rest -->
+      <text x="10" y="20" font-size="11" font-weight="bold" fill="#1f2933">Position&ndash;time</text>
+      <text x="300" y="20" font-size="11" font-weight="bold" fill="#1f2933">matching Speed&ndash;time</text>
+      <line x1="20" y1="35" x2="20" y2="95" stroke="#555" stroke-width="1.5"/>
+      <line x1="20" y1="95" x2="150" y2="95" stroke="#555" stroke-width="1.5"/>
+      <line x1="20" y1="60" x2="150" y2="60" stroke="#0b5394" stroke-width="3"/>
+      <text x="30" y="112" font-size="10" fill="#52606d">flat &rarr; at rest</text>
+      <text x="200" y="70" font-size="20" fill="#555">&rarr;</text>
+      <line x1="290" y1="35" x2="290" y2="95" stroke="#555" stroke-width="1.5"/>
+      <line x1="290" y1="95" x2="430" y2="95" stroke="#555" stroke-width="1.5"/>
+      <line x1="290" y1="95" x2="430" y2="95" stroke="#e69138" stroke-width="3"/>
+      <text x="300" y="112" font-size="10" fill="#52606d">speed = 0 (on the axis)</text>
+      <!-- Row 2: constant speed rising -->
+      <line x1="20" y1="150" x2="20" y2="210" stroke="#555" stroke-width="1.5"/>
+      <line x1="20" y1="210" x2="150" y2="210" stroke="#555" stroke-width="1.5"/>
+      <line x1="20" y1="210" x2="145" y2="150" stroke="#0b5394" stroke-width="3"/>
+      <text x="26" y="227" font-size="10" fill="#52606d">straight rise &rarr; constant speed</text>
+      <text x="200" y="185" font-size="20" fill="#555">&rarr;</text>
+      <line x1="290" y1="150" x2="290" y2="210" stroke="#555" stroke-width="1.5"/>
+      <line x1="290" y1="210" x2="430" y2="210" stroke="#555" stroke-width="1.5"/>
+      <line x1="290" y1="175" x2="430" y2="175" stroke="#e69138" stroke-width="3"/>
+      <text x="300" y="227" font-size="10" fill="#52606d">flat line above zero</text>
+      <!-- Row 3: constant speed falling -->
+      <line x1="20" y1="265" x2="20" y2="325" stroke="#555" stroke-width="1.5"/>
+      <line x1="20" y1="325" x2="150" y2="325" stroke="#555" stroke-width="1.5"/>
+      <line x1="20" y1="270" x2="145" y2="325" stroke="#0b5394" stroke-width="3"/>
+      <text x="26" y="342" font-size="10" fill="#52606d" opacity="0">.</text>
+      <text x="200" y="300" font-size="20" fill="#555">&rarr;</text>
+      <line x1="290" y1="265" x2="290" y2="325" stroke="#555" stroke-width="1.5"/>
+      <line x1="290" y1="325" x2="430" y2="325" stroke="#555" stroke-width="1.5"/>
+      <line x1="290" y1="290" x2="430" y2="290" stroke="#e69138" stroke-width="3"/>
+    </svg>
+    <div style="font-size:0.85em;color:#52606d;">Row 3: the position line goes <em>down</em> (returning toward the start) &mdash; still moving, so the speed&ndash;time graph is a flat line above zero, same as row 2.</div>
+  </div>
+
+  <div style="background:#fff8e6;border-left:5px solid #e69138;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>&#128739;&#65039; Real-World Connection</strong><br>
+    A GPS breadcrumb trail that keeps pinging the same coordinates (flat position graph) means the phone &mdash; and probably its owner &mdash; is sitting still.
+    A cruise-control drive at a steady 65 mph is the straight-sloped position line and the flat speed line at the same time.
+  </div>
+
+  <div style="background:#f3f0ff;border-left:5px solid #674ea7;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Check Your Understanding</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>On a speed&ndash;time graph, the line runs along the x-axis from <em>t</em> = 4 s to <em>t</em> = 8 s. During that interval, is the object at rest or moving?</li>
+      <li>On a position&ndash;time graph, the line is horizontal from <em>t</em> = 0 s to <em>t</em> = 3 s, then slopes upward. During which interval is the object at rest?</li>
+      <li>A position&ndash;time graph is a straight line from (0 s, 0 m) to (5 s, 25 m). Describe the matching speed&ndash;time graph.</li>
+      <li>A position&ndash;time graph is a horizontal line at position 10 m for the whole trip. Describe the matching speed&ndash;time graph.</li>
+      <li>A position&ndash;time graph is a straight line from (0 s, 25 m) down to (5 s, 0 m). Describe the matching speed&ndash;time graph.</li>
+    </ol>
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-weight:bold;color:#674ea7;">Show answers</summary>
+      <div style="padding:8px 0;">
+        <strong>1.</strong> At rest &mdash; speed is zero whenever the line is on the x-axis.<br>
+        <strong>2.</strong> From <em>t</em> = 0 s to <em>t</em> = 3 s (the flat part of the position graph).<br>
+        <strong>3.</strong> A horizontal line at a constant positive speed of 5 m/s (25 m &divide; 5 s).<br>
+        <strong>4.</strong> A horizontal line right on the x-axis &mdash; speed = 0 the whole time.<br>
+        <strong>5.</strong> A horizontal line at a constant positive speed of 5 m/s. The object is moving back toward the origin, but speed has no direction, so the value is still +5.
+      </div>
+    </details>
+  </div>
+
+
+  <!-- ==================================================================== -->
+  <!-- SECTION 9 : VELOCITY & AVERAGE VELOCITY (01.10)                     -->
+  <!-- ==================================================================== -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">9. Velocity &amp; Change in Velocity <span style="font-size:0.7em;color:#9aa5b1;">(01.10)</span></h2>
+
+  <div style="background:#f0f6ff;border-left:5px solid #0b5394;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Key Ideas</strong>
+    <ul style="margin:8px 0 0 0;padding-left:22px;">
+      <li><strong>Velocity</strong> is a vector: speed <em>plus</em> direction.</li>
+      <li>Velocity <strong>changes</strong> if <em>any</em> of these change: the speed, the direction, or both. A car rounding a curve at a steady 30 mph <em>is</em> changing velocity, because its direction is changing.</li>
+      <li><strong>Displacement</strong> = straight-line distance from start to finish, <em>with direction</em>. Going out and coming back can give a large distance but a small (or zero) displacement.</li>
+      <li><span style="font-family:ui-monospace,Menlo,Consolas,monospace;background:#e6efff;padding:2px 6px;border-radius:3px;">average velocity = displacement &divide; total time</span> &mdash; and the answer must include a direction.</li>
+      <li>Pick one direction as positive (e.g. east +, west &minus;). Add the legs, then attach the direction of the result.</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;margin:18px 0;">
+    <svg viewBox="0 0 460 150" style="width:100%;max-width:520px;height:auto;" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+      <line x1="40" y1="95" x2="420" y2="95" stroke="#555" stroke-width="2"/>
+      <text x="34" y="115" font-size="10" fill="#555">start</text>
+      <!-- east leg 100 m : scale 360px = 140 m -> 100m = 257px -> x 40..297 -->
+      <line x1="40" y1="72" x2="297" y2="72" stroke="#0b5394" stroke-width="6"/>
+      <polygon points="297,63 297,81 315,72" fill="#0b5394"/>
+      <text x="110" y="58" font-size="11" fill="#0b5394">walk 100 m east</text>
+      <!-- west leg 40 m : 40m = 103px -> x 297..194 -->
+      <line x1="297" y1="118" x2="194" y2="118" stroke="#e69138" stroke-width="6"/>
+      <polygon points="194,109 194,127 176,118" fill="#e69138"/>
+      <text x="205" y="140" font-size="11" fill="#e69138">walk 40 m west</text>
+      <circle cx="194" cy="95" r="5" fill="#1f2933"/>
+      <text x="150" y="90" font-size="10" fill="#1f2933">end</text>
+      <text x="40" y="24" font-size="11.5" fill="#1f2933">Distance traveled = 140 m &nbsp;&bull;&nbsp; Displacement = 60 m east</text>
+    </svg>
+  </div>
+
+  <div style="background:#fff8e6;border-left:5px solid #e69138;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>&#127939; Real-World Connection</strong><br>
+    Run one full lap of a 400 m track and your distance is 400 m, but your displacement is 0 &mdash; you finished where you started, so your <em>average velocity</em> for the lap is 0 m/s even though your average <em>speed</em> was not.
+    A merry-go-round horse moves at constant speed but its velocity is changing every instant because its direction keeps turning.
+  </div>
+
+  <div style="background:#f3f0ff;border-left:5px solid #674ea7;padding:14px 18px;margin:16px 0;border-radius:4px;">
+    <strong>Check Your Understanding</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>Which of the following shows a <strong>change in velocity</strong>?
+        <ul style="list-style:lower-alpha;padding-left:22px;">
+          <li>a car cruising straight down a flat highway at a steady 55 mph</li>
+          <li>a race car going around a circular track at a steady 120 mph</li>
+          <li>a book resting on a shelf</li>
+          <li>a hockey puck sliding in a straight line at constant speed</li>
+        </ul>
+      </li>
+      <li>Give one more example of your own that shows a change in velocity, and say <em>what</em> is changing (speed, direction, or both).</li>
+      <li>Maria walks 60.0 m north in 120.0 s, then 20.0 m south in 40.0 s. What is her average velocity for the trip?</li>
+      <li>Devon walks 80.0 m east in 100.0 s, then 80.0 m west in 100.0 s. What is his average velocity for the trip?</li>
+      <li>Sam jogs 100.0 m west in 50.0 s, then 40.0 m east in 20.0 s. What is his average velocity for the trip? How does it compare to his average <em>speed</em>?</li>
+    </ol>
+    <details style="margin-top:12px;">
+      <summary style="cursor:pointer;font-weight:bold;color:#674ea7;">Show answers</summary>
+      <div style="padding:8px 0;">
+        <strong>1.</strong> (b) &mdash; the speed is constant but the direction keeps changing, so the velocity changes.<br>
+        <strong>2.</strong> Sample: a ball dropped from your hand speeds up as it falls (speed changing); a car merging onto a curved on-ramp while accelerating (both changing).<br>
+        <strong>3.</strong> Displacement = 60 m north &minus; 20 m south = 40 m north. Total time = 160 s. Average velocity = 40 &divide; 160 = <strong>0.25 m/s north</strong>.<br>
+        <strong>4.</strong> Displacement = 80 &minus; 80 = 0 m. Average velocity = 0 &divide; 200 = <strong>0 m/s</strong> (he ended where he started).<br>
+        <strong>5.</strong> Displacement = 100 W &minus; 40 = 60 m west. Total time = 70 s. Average velocity = 60 &divide; 70 &asymp; <strong>0.86 m/s west</strong>. Average speed = total distance 140 m &divide; 70 s = <strong>2.0 m/s</strong> &mdash; larger, because speed counts every meter walked, not just the net change in position.
+      </div>
+    </details>
+  </div>
+
+
+  <!-- ============ GLOSSARY ============ -->
+  <h2 style="font-size:1.5em;color:#0b5394;border-bottom:3px solid #0b5394;padding-bottom:6px;margin-top:40px;">Key Vocabulary</h2>
+  <dl style="margin:14px 0;">
+    <dt style="font-weight:bold;margin-top:10px;">Testable question</dt>
+    <dd style="margin:0 0 0 0;">A question that can be investigated with measurements and observations of the natural world, giving repeatable data.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Empirical evidence</dt>
+    <dd>Information gained from observation, measurement, or experiment &mdash; the basis of every scientific explanation.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Physical quantity</dt>
+    <dd>The property being measured (velocity, force, acceleration, mass, &hellip;).</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Magnitude</dt>
+    <dd>The size of a measurement: its number together with its unit.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Scalar</dt>
+    <dd>A quantity with magnitude only (distance, speed, mass, time, temperature).</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Vector</dt>
+    <dd>A quantity with magnitude <em>and</em> direction (displacement, velocity, acceleration, force).</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Frame of reference</dt>
+    <dd>The object or background against which motion is measured.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Independent variable</dt>
+    <dd>The variable the experimenter changes on purpose; plotted on the x-axis.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Dependent variable</dt>
+    <dd>The variable that responds and is measured; plotted on the y-axis.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Linear (direct) relationship</dt>
+    <dd>A straight-line graph; the two variables change by the same factor.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Inverse relationship</dt>
+    <dd>As one variable increases, the other decreases; the graph is a curve approaching both axes.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Speed</dt>
+    <dd>Distance divided by time; a scalar.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Velocity</dt>
+    <dd>Speed in a stated direction; a vector.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Displacement</dt>
+    <dd>The change in position measured in a straight line from start to finish, with direction.</dd>
+    <dt style="font-weight:bold;margin-top:10px;">Slope (of a position&ndash;time graph)</dt>
+    <dd>Rise over run; equal to the object's velocity. Zero slope means the object is at rest.</dd>
+  </dl>
+
+  <div style="background:#eef1f4;padding:12px 16px;border-radius:4px;margin:24px 0;font-size:0.9em;color:#52606d;">
+    Study tip: cover the "Show answers" boxes and try to <em>explain each key idea out loud</em> as if you were teaching it. If you can teach it, you know it.
+  </div>
+
+</div><!-- /#physics-study-guide -->
+
+</body>
+</html>
