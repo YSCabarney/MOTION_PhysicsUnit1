@@ -1,0 +1,609 @@
+<title>Acceleration & Equations</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#f6f4ee;
+    --surface:#ffffff;
+    --surface-2:#edeade;
+    --ink:#22262f;
+    --muted:#5b6270;
+    --line:#ddd7c6;
+    --accent:#2f6f8f;
+    --accent-ink:#1c4a5f;
+    --accent-soft:#e3edf1;
+    --accel:#c8592a;
+    --accel-soft:#f5e4d8;
+    --good:#3f7f57;
+    --good-soft:#e3efe6;
+    --shadow: 0 1px 2px rgba(30,26,14,0.05), 0 8px 24px -12px rgba(30,26,14,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14171c;
+      --surface:#1b1f26;
+      --surface-2:#232832;
+      --ink:#e9e6dd;
+      --muted:#9ba2af;
+      --line:#333947;
+      --accent:#7cbcdf;
+      --accent-ink:#bfe0f2;
+      --accent-soft:#1e2e37;
+      --accel:#e79463;
+      --accel-soft:#3a2a20;
+      --good:#7fc79a;
+      --good-soft:#1e3327;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14171c;
+    --surface:#1b1f26;
+    --surface-2:#232832;
+    --ink:#e9e6dd;
+    --muted:#9ba2af;
+    --line:#333947;
+    --accent:#7cbcdf;
+    --accent-ink:#bfe0f2;
+    --accent-soft:#1e2e37;
+    --accel:#e79463;
+    --accel-soft:#3a2a20;
+    --good:#7fc79a;
+    --good-soft:#1e3327;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Source Serif 4', Georgia, 'Times New Roman', serif;
+    font-size:16px;
+    line-height:1.6;
+    padding-inline:20px;
+    padding-block:28px;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+
+  h1,h2,h3,.disp{font-family:'Space Grotesk', 'Segoe UI', sans-serif;}
+  h1,h2,h3{text-wrap:balance; color:var(--ink);}
+  code,.mono,.eq,td.num,.formula{font-family:'IBM Plex Mono', ui-monospace, monospace;}
+  .mono{font-variant-numeric:tabular-nums;}
+
+  a{color:var(--accent-ink);}
+
+  /* ---------- header ---------- */
+  header.masthead{padding-block:6px 22px;border-bottom:2px solid var(--ink);margin-bottom:22px;}
+  .eyebrow{
+    font-family:'Space Grotesk',sans-serif; font-size:12.5px; font-weight:600;
+    letter-spacing:0.09em; text-transform:uppercase; color:var(--accel);
+    display:flex; align-items:center; gap:8px; margin-bottom:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:2px;background:var(--accel);display:inline-block;}
+  h1.title{font-size:clamp(28px,6vw,38px); font-weight:700; line-height:1.08; margin:0 0 10px;}
+  .subtitle{color:var(--muted); font-size:16px; max-width:56ch; margin:0 0 14px;}
+  .meta-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600;
+    padding:4px 10px; border-radius:99px; border:1px solid var(--line);
+    color:var(--muted); background:var(--surface);
+  }
+
+  /* ---------- nav ---------- */
+  nav.toc{
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:5;
+    background:var(--bg); padding-block:8px 14px; margin-bottom:8px;
+    display:flex; gap:6px; overflow-x:auto; scrollbar-width:none;
+    border-bottom:1px solid var(--line);
+  }
+  nav.toc::-webkit-scrollbar{display:none;}
+  nav.toc a{
+    flex:none; font-family:'Space Grotesk',sans-serif; font-size:12.5px; font-weight:600;
+    text-decoration:none; color:var(--muted); background:var(--surface);
+    border:1px solid var(--line); padding:6px 12px; border-radius:8px; white-space:nowrap;
+  }
+  nav.toc a:hover{color:var(--accent-ink); border-color:var(--accent);}
+
+  section{padding-block:30px; border-bottom:1px solid var(--line); scroll-margin-top:52px;}
+  section:last-of-type{border-bottom:none;}
+
+  .sec-label{
+    font-family:'Space Grotesk',sans-serif; font-size:12.5px; font-weight:700;
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--accent-ink);
+    margin:0 0 8px;
+  }
+  h2.sec-title{font-size:24px; font-weight:700; margin:0 0 14px;}
+  h3.sub-title{font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; margin:22px 0 8px;}
+  p{margin:0 0 12px;}
+  ul,ol{margin:0 0 12px; padding-left:22px;}
+  li{margin-bottom:5px;}
+  strong{font-weight:600;}
+  .lede{font-size:17px;}
+
+  /* ---------- cards / boxes ---------- */
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:16px 18px; box-shadow:var(--shadow);
+  }
+  .stack{display:flex; flex-direction:column; gap:14px;}
+
+  .formula-box{
+    background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accel);
+    border-radius:10px; padding:14px 18px; margin:14px 0;
+  }
+  .formula-box .name{font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;}
+  .formula-box .eq{font-size:19px; font-weight:500; color:var(--ink);}
+  .formula-box .key{font-size:13.5px; color:var(--muted); margin-top:8px;}
+  .formula-box .key span{color:var(--ink); font-weight:600;}
+
+  .unit-strip{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-family:'IBM Plex Mono',monospace; font-size:14px;}
+  .unit-pill{background:var(--surface-2); border-radius:8px; padding:5px 10px;}
+  .unit-op{color:var(--muted); font-weight:600;}
+
+  .callout{
+    display:flex; gap:12px; background:var(--accent-soft); border-radius:10px;
+    padding:14px 16px; margin:16px 0; border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  .callout .icon{font-family:'Space Grotesk',sans-serif; font-weight:700; color:var(--accent-ink); flex:none;}
+  .callout p{margin:0; font-size:15px;}
+  .callout.warn{background:var(--accel-soft); border-color:color-mix(in srgb, var(--accel) 35%, transparent);}
+  .callout.warn .icon{color:var(--accel);}
+
+  /* ---------- vocab grid ---------- */
+  .vocab-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:8px;}
+  @media (max-width:520px){.vocab-grid{grid-template-columns:1fr;}}
+  .vocab-item{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px 14px;}
+  .vocab-item .term{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14.5px; margin-bottom:3px;}
+  .vocab-item .term .tag{font-family:'IBM Plex Mono',monospace; font-weight:500; font-size:12px; color:var(--muted); margin-left:6px;}
+  .vocab-item p{font-size:14px; margin:0; color:var(--muted);}
+
+  /* ---------- 3-card grid ---------- */
+  .trio{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:10px;}
+  @media (max-width:600px){.trio{grid-template-columns:1fr;}}
+  .trio .card{padding:14px 16px;}
+  .trio .glyph{font-size:22px; margin-bottom:6px;}
+  .trio h4{font-family:'Space Grotesk',sans-serif; font-size:14.5px; margin:0 0 4px;}
+  .trio p{font-size:13.5px; color:var(--muted); margin:0 0 8px;}
+  .trio .ex{font-size:12.5px; color:var(--accent-ink); font-weight:600;}
+
+  /* ---------- diagram ---------- */
+  .diagram-card{margin:16px 0;}
+  .diagram-label{font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;}
+  svg{max-width:100%; height:auto; display:block;}
+  .svg-caption{font-size:13px; color:var(--muted); margin-top:8px;}
+
+  /* ---------- table ---------- */
+  .table-wrap{overflow-x:auto; margin:14px 0;}
+  table{border-collapse:collapse; width:100%; min-width:460px; font-size:14.5px;}
+  th,td{padding:9px 12px; border-bottom:1px solid var(--line); text-align:left;}
+  th{font-family:'Space Grotesk',sans-serif; font-size:12.5px; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); font-weight:600;}
+  tbody tr:nth-child(even){background:var(--surface-2);}
+  td.num, th.num{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+  td.filled{color:var(--accent-ink); font-weight:600; font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- worked steps ---------- */
+  .steps{list-style:none; margin:12px 0 0; padding:0; counter-reset:step;}
+  .steps li{
+    counter-increment:step; position:relative; padding-left:34px; margin-bottom:12px; font-size:15px;
+  }
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:0; width:24px; height:24px;
+    background:var(--accent); color:var(--surface); border-radius:50%;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:12.5px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .steps .eq-line{display:block; font-family:'IBM Plex Mono',monospace; background:var(--surface-2); border-radius:6px; padding:6px 10px; margin-top:5px; font-size:14px; width:fit-content;}
+
+  /* ---------- practice ---------- */
+  .problem{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:14px; box-shadow:var(--shadow);}
+  .problem-head{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:6px;}
+  .problem-num{font-family:'Space Grotesk',sans-serif; font-weight:700; color:var(--accel); font-size:13px; text-transform:uppercase; letter-spacing:0.05em;}
+  .problem-tag{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); background:var(--surface-2); padding:2px 8px; border-radius:99px;}
+  .problem p.prompt{font-size:15px; margin-bottom:0;}
+
+  details{margin-top:10px;}
+  details summary{
+    cursor:pointer; list-style:none; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px;
+    color:var(--accent-ink); display:inline-flex; align-items:center; gap:6px;
+    padding:6px 12px; border:1px solid var(--accent); border-radius:8px;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary::before{content:"▸"; font-size:11px; transition:transform .15s ease;}
+  details[open] summary::before{transform:rotate(90deg);}
+  details[open] summary{margin-bottom:10px;}
+  .answer{background:var(--good-soft); border:1px solid color-mix(in srgb, var(--good) 40%, transparent); border-radius:10px; padding:12px 14px; font-size:14.5px;}
+  .answer .result{font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--good); font-size:15px;}
+
+  /* ---------- reference card ---------- */
+  .ref-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:10px;}
+  @media (max-width:560px){.ref-grid{grid-template-columns:1fr;}}
+  .ref-card{background:var(--ink); color:var(--bg); border-radius:10px; padding:12px 14px;}
+  .ref-card .rname{font-family:'Space Grotesk',sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:0.06em; opacity:0.65; margin-bottom:4px;}
+  .ref-card .req{font-family:'IBM Plex Mono',monospace; font-size:17px; font-weight:500;}
+  .ref-card .rsolve{font-size:12px; opacity:0.75; margin-top:6px;}
+
+  .checklist{list-style:none; margin:10px 0 0; padding:0; display:flex; flex-direction:column; gap:8px;}
+  .checklist li{display:flex; gap:10px; align-items:flex-start; font-size:15px;}
+  .checklist li::before{content:"☐"; color:var(--accent); font-size:17px; line-height:1.3;}
+
+  footer{padding-top:24px; color:var(--muted); font-size:13px;}
+
+  @media (prefers-reduced-motion: reduce){
+    * {transition:none !important; animation:none !important;}
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Physics · Acceleration &amp; Force</div>
+    <h1 class="title">Acceleration &amp; Manipulating Equations</h1>
+    <p class="subtitle">A study guide for the virtual physics unit connecting how things speed up, slow down, and turn — to the algebra skill you'll use to solve for any variable in any formula.</p>
+    <div class="meta-row">
+      <span class="chip">Builds on: vectors &amp; scalars</span>
+      <span class="chip">Unit: m/s²</span>
+      <span class="chip">~20&nbsp;min read</span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <a href="#refresher">Refresher</a>
+    <a href="#accel">Acceleration</a>
+    <a href="#types">Types</a>
+    <a href="#worked">Worked Data</a>
+    <a href="#manipulate">Manipulating Eq.</a>
+    <a href="#practice-rearrange">Practice: Rearrange</a>
+    <a href="#practice-calc">Practice: Calculate</a>
+    <a href="#together">Put It Together</a>
+    <a href="#reference">Quick Reference</a>
+  </nav>
+
+  <!-- ================= REFRESHER ================= -->
+  <section id="refresher">
+    <p class="sec-label">Before You Start</p>
+    <h2 class="sec-title">Quick Refresher</h2>
+    <p class="lede">You already know the difference between a <strong>scalar</strong> (just a size) and a <strong>vector</strong> (a size <em>and</em> a direction). Keep that distinction close — acceleration is a vector too, and its direction is what makes it trickier than it first sounds.</p>
+    <div class="vocab-grid">
+      <div class="vocab-item">
+        <div class="term">Speed <span class="tag">scalar</span></div>
+        <p>How fast something moves. 25 m/s — no direction attached.</p>
+      </div>
+      <div class="vocab-item">
+        <div class="term">Velocity <span class="tag">vector</span></div>
+        <p>Speed <em>with</em> a direction. 25 m/s east.</p>
+      </div>
+      <div class="vocab-item">
+        <div class="term">Acceleration <span class="tag">vector</span></div>
+        <p>The rate velocity changes — in size, direction, or both.</p>
+      </div>
+      <div class="vocab-item">
+        <div class="term">Time interval <span class="tag">scalar</span></div>
+        <p>How long the change takes, symbol <span class="mono">t</span>, in seconds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHAT IS ACCELERATION ================= -->
+  <section id="accel">
+    <p class="sec-label">Concept One</p>
+    <h2 class="sec-title">What Is Acceleration?</h2>
+    <p class="lede">In everyday speech "acceleration" just means <em>speeding up</em>. In physics it means something more precise: <strong>any change in velocity over time</strong> — speeding up, slowing down, or changing direction all count.</p>
+
+    <div class="formula-box">
+      <div class="name">Acceleration</div>
+      <div class="eq">a&nbsp;=&nbsp;(v<sub>f</sub>&nbsp;−&nbsp;v<sub>o</sub>)&nbsp;/&nbsp;t</div>
+      <div class="key"><span>a</span> = acceleration &nbsp;·&nbsp; <span>v<sub>f</sub></span> = final velocity &nbsp;·&nbsp; <span>v<sub>o</sub></span> = original velocity &nbsp;·&nbsp; <span>t</span> = time interval</div>
+    </div>
+
+    <h3 class="sub-title">Where the unit comes from</h3>
+    <div class="unit-strip">
+      <span class="unit-pill">m/s</span><span class="unit-op">÷</span><span class="unit-pill">s</span><span class="unit-op">=</span><span class="unit-pill">m/s²</span>
+    </div>
+    <p style="margin-top:10px;">A change in velocity (m/s) divided by a time (s) leaves <strong>meters per second, per second</strong> — every second, the velocity itself changes by that many m/s.</p>
+
+    <h3 class="sub-title">Accelerated vs. non-accelerated motion</h3>
+    <p>A ball rolling at a constant velocity covers equal distances in equal times — its positions, sketched once per second, land <strong>evenly spaced</strong>. An accelerating ball's positions spread <strong>farther apart</strong> each second (speeding up) or crowd <strong>closer together</strong> (slowing down).</p>
+
+    <div class="card diagram-card">
+      <div class="diagram-label">Position every 1 second</div>
+      <svg viewBox="0 0 620 150" role="img" aria-label="Diagram comparing evenly spaced dots for constant velocity to increasingly spaced dots for acceleration">
+        <text x="10" y="22" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="600" fill="var(--accent-ink)">NON-ACCELERATED — constant velocity</text>
+        <line x1="10" y1="40" x2="610" y2="40" stroke="var(--line)" stroke-width="2"/>
+        <g fill="var(--accent)">
+          <circle cx="20" cy="40" r="7"/><circle cx="140" cy="40" r="7"/><circle cx="260" cy="40" r="7"/>
+          <circle cx="380" cy="40" r="7"/><circle cx="500" cy="40" r="7"/><circle cx="600" cy="40" r="7"/>
+        </g>
+        <text x="10" y="85" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="600" fill="var(--accel)">ACCELERATED — speeding up</text>
+        <line x1="10" y1="103" x2="610" y2="103" stroke="var(--line)" stroke-width="2"/>
+        <g fill="var(--accel)">
+          <circle cx="20" cy="103" r="7"/><circle cx="55" cy="103" r="7"/><circle cx="120" cy="103" r="7"/>
+          <circle cx="220" cy="103" r="7"/><circle cx="360" cy="103" r="7"/><circle cx="540" cy="103" r="7"/>
+        </g>
+        <text x="10" y="138" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">t = 0s, 1s, 2s, 3s, 4s, 5s — gaps between dots grow as speed increases</text>
+      </svg>
+    </div>
+
+    <details>
+      <summary>Check: the constant-velocity ball</summary>
+      <div class="answer">
+        <p style="margin-bottom:6px;">A ball moving at constant velocity travels 1 meter every second. At the 5‑meter mark:</p>
+        <p class="result">speed = 1 m/s &nbsp;·&nbsp; time = 5 seconds</p>
+        <p style="margin:6px 0 0;">Because velocity never changes, the sketch is <strong>evenly spaced</strong> — this is non-accelerated motion, even though the ball is moving.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ================= TYPES ================= -->
+  <section id="types">
+    <p class="sec-label">Concept One, continued</p>
+    <h2 class="sec-title">Three Ways to Accelerate</h2>
+    <p>Because acceleration is a vector, <strong>any</strong> of these three changes counts — and the sign of <span class="mono">a</span> tells you which one is happening.</p>
+    <div class="trio">
+      <div class="card">
+        <div class="glyph">🚗💨</div>
+        <h4>Speeding Up</h4>
+        <p>Velocity and acceleration point the same direction. <span class="mono">a</span> is positive (in the direction of motion).</p>
+        <div class="ex">Merging onto a highway</div>
+      </div>
+      <div class="card">
+        <div class="glyph">🛑</div>
+        <h4>Slowing Down</h4>
+        <p>Acceleration points opposite to velocity — often called deceleration.</p>
+        <div class="ex">A car braking at a red light</div>
+      </div>
+      <div class="card">
+        <div class="glyph">🎢</div>
+        <h4>Changing Direction</h4>
+        <p>Speed can stay constant while velocity — and therefore acceleration — still changes.</p>
+        <div class="ex">A car rounding a curve at steady speed</div>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="icon">i</span>
+      <p><strong>Real world:</strong> free fall is acceleration too. Any object in free fall near Earth's surface gains about <strong>9.8 m/s of speed every second</strong> — that constant is itself an acceleration, <span class="mono">g = 9.8 m/s²</span>.</p>
+    </div>
+  </section>
+
+  <!-- ================= WORKED DATA ================= -->
+  <section id="worked">
+    <p class="sec-label">Applying the Idea</p>
+    <h2 class="sec-title">Worked Example: Sprinting Speeds</h2>
+    <p>Speed problems are acceleration's simpler cousin — no change in velocity, just <span class="mono">distance ÷ time</span>. The table below has one blank per row; each blank needs a different rearrangement of the same relationship, which is exactly the skill the next section builds.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Animal</th><th class="num">Distance</th><th class="num">Time</th><th class="num">Speed</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cheetah</td><td class="num">75 m</td><td class="num">3.0 s</td><td class="num">25 m/s</td></tr>
+          <tr><td>Greyhound</td><td class="num">160 m</td><td class="num">10. s</td><td class="num filled">16 m/s</td></tr>
+          <tr><td>Gazelle</td><td class="num">1.0 km</td><td class="num filled">36 s</td><td class="num">100. km/h</td></tr>
+          <tr><td>Turtle</td><td class="num filled">0.30 m</td><td class="num">30. s</td><td class="num">1.0 cm/s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <details>
+      <summary>Show how each blank was solved</summary>
+      <div class="answer">
+        <p><strong>Greyhound</strong> — speed is missing, so use speed = distance/time directly: 160 m ÷ 10. s = <span class="result">16 m/s</span>.</p>
+        <p><strong>Gazelle</strong> — time is missing, so the formula had to be <em>rearranged</em>: speed = distance/time → time = distance/speed. 1.0 km ÷ 100. km/h = 0.01 h = <span class="result">36 s</span>.</p>
+        <p style="margin-bottom:0;"><strong>Turtle</strong> — distance is missing, so rearrange again: distance = speed × time. 1.0 cm/s × 30. s = <span class="result">30. cm = 0.30 m</span>.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ================= MANIPULATING EQUATIONS ================= -->
+  <section id="manipulate">
+    <p class="sec-label">Concept Two</p>
+    <h2 class="sec-title">Manipulating Equations</h2>
+    <p class="lede">Every formula in this course can be solved for <em>any</em> of its variables — not just the one it's written for. <strong>Manipulating an equation</strong> means rearranging it algebraically until the variable you need is alone on one side.</p>
+
+    <div class="callout">
+      <span class="icon">✓</span>
+      <p><strong>The 5-step method:</strong> (1) eliminate any fractions, (2) isolate the variable you want, (3) use simple algebra — the same operation on both sides, (4) show every step, (5) check your work and make sure no fraction is left in the denominator.</p>
+    </div>
+
+    <h3 class="sub-title">Worked example — solve p = mv for v</h3>
+    <ol class="steps">
+      <li>Start with the original equation.<span class="eq-line">p = mv</span></li>
+      <li>"v" is multiplied by "m." Multiplication is undone by division — divide both sides by m.<span class="eq-line">p/m = mv/m</span></li>
+      <li>The "m" on the right cancels, leaving v alone.<span class="eq-line">v = p/m</span></li>
+    </ol>
+
+    <h3 class="sub-title">Worked example — solve a = (v<sub>f</sub> − v<sub>o</sub>)/t for t</h3>
+    <p>This one has a fraction, so step 1 is to clear it first.</p>
+    <ol class="steps">
+      <li>Multiply both sides by t to clear the fraction.<span class="eq-line">a·t = v<sub>f</sub> − v<sub>o</sub></span></li>
+      <li>Now t is multiplied by a — divide both sides by a to isolate t.<span class="eq-line">(a·t)/a = (v<sub>f</sub> − v<sub>o</sub>)/a</span></li>
+      <li>The "a" on the left cancels, leaving t alone.<span class="eq-line">t = (v<sub>f</sub> − v<sub>o</sub>)/a</span></li>
+    </ol>
+
+    <div class="callout warn">
+      <span class="icon">⚠</span>
+      <p><strong>Common slip:</strong> after clearing a fraction, students often forget to divide <em>every</em> term on the other side. Whatever you do to one side of the equation, do to the <em>entire</em> other side — not just one term of it.</p>
+    </div>
+  </section>
+
+  <!-- ================= PRACTICE: REARRANGE ================= -->
+  <section id="practice-rearrange">
+    <p class="sec-label">Practice Set 1</p>
+    <h2 class="sec-title">Rearrange It</h2>
+    <p>Solve each equation for the requested variable. Show every step before you check your answer.</p>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 1</span><span class="problem-tag">force &amp; mass</span></div>
+      <p class="prompt">Newton's second law is <span class="mono">F = ma</span>. Solve for <span class="mono">m</span>.</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>Divide both sides by a: F/a = ma/a → the a's cancel on the right.</p>
+          <p class="result">m = F/a</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 2</span><span class="problem-tag">distance &amp; time</span></div>
+      <p class="prompt">The constant-velocity equation is <span class="mono">d = vt</span>. Solve for <span class="mono">t</span>.</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>Divide both sides by v: d/v = vt/v → the v's cancel on the right.</p>
+          <p class="result">t = d/v</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 3</span><span class="problem-tag">acceleration</span></div>
+      <p class="prompt">Starting from <span class="mono">a = (v<sub>f</sub> − v<sub>o</sub>)/t</span>, solve for <span class="mono">v<sub>f</sub></span>.</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>Clear the fraction: at = v<sub>f</sub> − v<sub>o</sub>. Then isolate v<sub>f</sub> by adding v<sub>o</sub> to both sides.</p>
+          <p class="result">v<sub>f</sub> = at + v<sub>o</sub></p>
+        </div>
+      </details>
+    </div>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 4</span><span class="problem-tag">acceleration</span></div>
+      <p class="prompt">From the same equation, solve for <span class="mono">v<sub>o</sub></span> instead.</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>Clear the fraction: at = v<sub>f</sub> − v<sub>o</sub>. This time isolate v<sub>o</sub> by adding it to both sides, then subtracting at from both sides.</p>
+          <p class="result">v<sub>o</sub> = v<sub>f</sub> − at</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 5</span><span class="problem-tag">density</span></div>
+      <p class="prompt">Density is <span class="mono">D = m/V</span>. Solve for <span class="mono">V</span> — remember, don't leave a fraction in the denominator.</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>Multiply both sides by V to clear the fraction: DV = m. Then divide both sides by D.</p>
+          <p class="result">V = m/D</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= PRACTICE: CALCULATE ================= -->
+  <section id="practice-calc">
+    <p class="sec-label">Practice Set 2</p>
+    <h2 class="sec-title">Calculate It</h2>
+    <p>Use <span class="mono">a = (v<sub>f</sub> − v<sub>o</sub>)/t</span> for each real-world scenario. Watch your sign — a negative answer means the object is slowing down.</p>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 1</span><span class="problem-tag">track &amp; field</span></div>
+      <p class="prompt">A sprinter starts from rest and reaches 10.0 m/s in 2.5 s. What is her acceleration?</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>a = (v<sub>f</sub> − v<sub>o</sub>)/t = (10.0 − 0)/2.5</p>
+          <p class="result">a = 4.0 m/s²</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 2</span><span class="problem-tag">driving</span></div>
+      <p class="prompt">A car cruising at 28 m/s brakes to a complete stop in 7.0 s. Find its acceleration.</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>a = (v<sub>f</sub> − v<sub>o</sub>)/t = (0 − 28)/7.0</p>
+          <p class="result">a = −4.0 m/s² (negative: the car is decelerating)</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 3</span><span class="problem-tag">elevators</span></div>
+      <p class="prompt">An elevator starts at rest and reaches 3.0 m/s upward in 1.5 s. Find its acceleration.</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>a = (v<sub>f</sub> − v<sub>o</sub>)/t = (3.0 − 0)/1.5</p>
+          <p class="result">a = 2.0 m/s²</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 4</span><span class="problem-tag">amusement parks</span></div>
+      <p class="prompt">A roller coaster car crests a hill at 5.0 m/s, then speeds down the drop, reaching 25 m/s after 4.0 s. Find its acceleration.</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>a = (v<sub>f</sub> − v<sub>o</sub>)/t = (25 − 5.0)/4.0</p>
+          <p class="result">a = 5.0 m/s²</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Problem 5</span><span class="problem-tag">conceptual</span></div>
+      <p class="prompt">Skater A speeds up from 0 to 5.0 m/s in 2.0 s. Skater B slows from 5.0 m/s to 0 in 5.0 s. Which skater has the greater magnitude of acceleration?</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>Skater A: a = 5.0/2.0 = 2.5 m/s². Skater B: a = −5.0/5.0 = −1.0 m/s², magnitude 1.0 m/s².</p>
+          <p class="result">Skater A accelerates more — the same speed change happened in less time.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= PUT IT TOGETHER ================= -->
+  <section id="together">
+    <p class="sec-label">Putting It Together</p>
+    <h2 class="sec-title">One Problem, Both Skills</h2>
+    <div class="problem">
+      <div class="problem-head"><span class="problem-num">Application</span><span class="problem-tag">highway merge</span></div>
+      <p class="prompt">A car merges onto the highway at 8.0 m/s and accelerates at a steady 3.0 m/s². Using the manipulated form of the acceleration equation from Problem 3 above, what is the car's velocity after 4.0 s?</p>
+      <details><summary>Check your answer</summary>
+        <div class="answer">
+          <p>Rearranged form: v<sub>f</sub> = at + v<sub>o</sub></p>
+          <p>v<sub>f</sub> = (3.0)(4.0) + 8.0 = 12 + 8.0</p>
+          <p class="result">v<sub>f</sub> = 20 m/s</p>
+          <p style="margin-top:6px;">Notice the two skills chained together: rearranging the equation first made the calculation a single plug-and-chug step.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= REFERENCE ================= -->
+  <section id="reference">
+    <p class="sec-label">Keep This Handy</p>
+    <h2 class="sec-title">Quick Reference Card</h2>
+    <div class="ref-grid">
+      <div class="ref-card">
+        <div class="rname">Acceleration</div>
+        <div class="req">a = (v<sub>f</sub> − v<sub>o</sub>) / t</div>
+        <div class="rsolve">units: m/s²</div>
+      </div>
+      <div class="ref-card">
+        <div class="rname">Newton's 2nd Law</div>
+        <div class="req">F = ma</div>
+        <div class="rsolve">units: N (kg·m/s²)</div>
+      </div>
+      <div class="ref-card">
+        <div class="rname">Constant Velocity</div>
+        <div class="req">d = vt</div>
+        <div class="rsolve">units: m</div>
+      </div>
+      <div class="ref-card">
+        <div class="rname">Momentum</div>
+        <div class="req">p = mv</div>
+        <div class="rsolve">units: kg·m/s</div>
+      </div>
+    </div>
+
+    <h3 class="sub-title">Mastery checklist</h3>
+    <ul class="checklist">
+      <li>I can explain why constant velocity is <em>not</em> acceleration.</li>
+      <li>I can identify speeding up, slowing down, and turning as all being acceleration.</li>
+      <li>I can calculate acceleration given v<sub>f</sub>, v<sub>o</sub>, and t.</li>
+      <li>I can rearrange a=(v<sub>f</sub>−v<sub>o</sub>)/t to solve for any one variable.</li>
+      <li>I always clear fractions first and check for a fraction left in the denominator.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Study guide adapted from the class handouts <em>Acceleration</em> and <em>Manipulating Equations</em>. Bring any step you get stuck on to class or office hours.
+  </footer>
+
+</div>
