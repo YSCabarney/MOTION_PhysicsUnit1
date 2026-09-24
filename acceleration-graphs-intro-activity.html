@@ -1,0 +1,436 @@
+<title>Graphing Acceleration</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#f6f4ee; --surface:#ffffff; --surface-2:#edeade; --ink:#22262f; --muted:#5b6270; --line:#ddd7c6;
+    --accent:#2f6f8f; --accent-ink:#1c4a5f; --accent-soft:#e3edf1;
+    --accel:#c8592a; --accel-soft:#f5e4d8;
+    --vel:#3f7f57; --grass:#dfe9d6;
+    --good:#3f7f57; --good-soft:#e3efe6;
+    --shadow: 0 1px 2px rgba(30,26,14,0.05), 0 8px 24px -12px rgba(30,26,14,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14171c; --surface:#1b1f26; --surface-2:#232832; --ink:#e9e6dd; --muted:#9ba2af; --line:#333947;
+      --accent:#7cbcdf; --accent-ink:#bfe0f2; --accent-soft:#1e2e37;
+      --accel:#e79463; --accel-soft:#3a2a20; --vel:#7fc79a; --grass:#1f2b22;
+      --good:#7fc79a; --good-soft:#1e3327;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14171c; --surface:#1b1f26; --surface-2:#232832; --ink:#e9e6dd; --muted:#9ba2af; --line:#333947;
+    --accent:#7cbcdf; --accent-ink:#bfe0f2; --accent-soft:#1e2e37;
+    --accel:#e79463; --accel-soft:#3a2a20; --vel:#7fc79a; --grass:#1f2b22;
+    --good:#7fc79a; --good-soft:#1e3327;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg); color:var(--ink); font-family:'Source Serif 4',Georgia,serif; font-size:16px; line-height:1.6; padding-inline:20px; padding-block:24px;}
+  .wrap{max-width:780px; margin:0 auto;}
+  h1,h2,h3{font-family:'Space Grotesk','Segoe UI',sans-serif; text-wrap:balance;}
+  .mono{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+  strong{font-weight:600;} p{margin:0 0 12px;} svg{max-width:100%; height:auto; display:block;}
+
+  .hero{border-radius:16px; padding:24px; background:linear-gradient(135deg,#1c4a5f 0%,#2f6f8f 100%); color:#f3f7f8; margin-bottom:18px; box-shadow:var(--shadow);}
+  .hero .eyebrow{font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#f0b48f; margin-bottom:8px;}
+  .hero h1{font-size:clamp(26px,6vw,34px); margin:0 0 8px; color:#fff;}
+  .hero p{margin:0; color:#dce8ee; font-size:15.5px; max-width:52ch;}
+
+  .progress{display:flex; gap:6px; overflow-x:auto; padding-block:4px 14px; scrollbar-width:none;}
+  .progress::-webkit-scrollbar{display:none;}
+  .pstep{flex:none; font-family:'Space Grotesk',sans-serif; font-size:11.5px; font-weight:600; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:5px 10px; border-radius:99px; white-space:nowrap;}
+
+  .step{padding-block:24px; border-bottom:1px solid var(--line); scroll-margin-top:16px;}
+  .step:last-of-type{border-bottom:none;}
+  .step-head{display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;}
+  .step-num{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; color:#fff; background:var(--accent); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none;}
+  .step-title{font-size:21px; margin:0;}
+  .step-time{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); background:var(--surface-2); padding:3px 9px; border-radius:99px;}
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow);}
+  .callout{display:flex; gap:12px; background:var(--accent-soft); border-radius:10px; padding:12px 16px; margin:14px 0; border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);}
+  .callout .icon{font-weight:700; color:var(--accent-ink); flex:none;}
+  .callout p{margin:0; font-size:15px;}
+
+  /* explorer */
+  .controls{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:12px;}
+  @media (max-width:560px){.controls{grid-template-columns:1fr;}}
+  .ctl label{display:flex; justify-content:space-between; font-family:'Space Grotesk',sans-serif; font-size:12.5px; font-weight:600; color:var(--muted); margin-bottom:4px;}
+  .ctl output{font-family:'IBM Plex Mono',monospace; color:var(--ink);}
+  input[type=range]{width:100%; accent-color:var(--accent);}
+  .presets{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;}
+  .btn{font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; padding:6px 12px; border-radius:99px; border:1px solid var(--line); background:var(--surface); color:var(--ink); cursor:pointer;}
+  .btn:hover{border-color:var(--accent);} .btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .btn.primary{background:var(--accent); color:#fff; border-color:var(--accent);}
+
+  .stage{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 10px 8px; margin-bottom:12px; box-shadow:var(--shadow);}
+  .stage-top{display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;}
+  .stage-title{font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted);}
+  .readout{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .scene{font-size:14.5px; margin:6px 2px 2px;}
+  .scene b{color:var(--accel);}
+  .grass{fill:var(--grass);} .yard{stroke:var(--line); stroke-width:1;}
+  .ghost{fill:var(--muted); opacity:0.5;}
+  .ball-fill{fill:#fff; stroke:#22262f; stroke-width:1.6;} .ball-patch{fill:#22262f;}
+  .v-arrow{stroke:var(--vel); fill:var(--vel);} .a-arrow{stroke:var(--accel); fill:var(--accel);}
+  .arrow-line{stroke-width:3.5; stroke-linecap:round;}
+  .lbl{font-family:'Space Grotesk',sans-serif; font-size:10.5px; font-weight:700;}
+  .lbl-v{fill:var(--vel);} .lbl-a{fill:var(--accel);}
+
+  .charts{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+  @media (max-width:640px){.charts{grid-template-columns:1fr;}}
+  .chart{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:8px;}
+  .chart-title{font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; margin:0 0 2px 4px;}
+  .chart-shape{font-size:12.5px; color:var(--muted); margin:2px 4px 2px; min-height:38px;}
+  .ax{stroke:var(--line); stroke-width:1; fill:none;} .axmain{stroke:var(--muted); stroke-width:1.2; fill:none;}
+  .tick{font-family:'IBM Plex Mono',monospace; font-size:9px; fill:var(--muted);}
+  .tri{fill:none; stroke:var(--muted); stroke-width:1.4; stroke-dasharray:4 3;}
+  .tri-lbl{font-family:'IBM Plex Mono',monospace; font-size:9.5px; fill:var(--ink); font-weight:600;}
+  .curve{fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round;}
+  .c-x{stroke:var(--accent);} .c-v{stroke:var(--vel);} .c-a{stroke:var(--accel);}
+  .mk{fill:var(--ink); stroke:var(--surface); stroke-width:2;}
+  .pt{stroke:var(--surface); stroke-width:1.5;}
+
+  /* questions */
+  .q{margin:0 0 18px;} .q p.qt{font-weight:600; margin-bottom:8px; font-size:15.5px;}
+  .opts{display:flex; flex-wrap:wrap; gap:8px;}
+  .opt{font-family:'Space Grotesk',sans-serif; font-size:13.5px; font-weight:600; padding:7px 13px; border-radius:99px; border:1px solid var(--line); background:var(--surface); color:var(--ink); cursor:pointer;}
+  .opt:hover{border-color:var(--accent);}
+  .opt.correct{background:var(--good-soft); border-color:var(--good); color:var(--good);}
+  .opt.wrong{background:var(--accel-soft); border-color:var(--accel); color:var(--accel);}
+  .why{margin-top:10px;}
+  .why-verdict{font-size:14.5px; margin-bottom:8px; padding:8px 12px; border-radius:8px;}
+  .why-verdict.ok{background:var(--good-soft); border:1px solid var(--good);}
+  .why-verdict.no{background:var(--accel-soft); border:1px solid var(--accel);}
+  .why-verdict b{font-family:'Space Grotesk',sans-serif;}
+  .work{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 12px;}
+  .work-title{font-family:'Space Grotesk',sans-serif; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:6px;}
+  .work-grid{display:grid; grid-template-columns:1.15fr 1fr; gap:12px; align-items:center;}
+  @media (max-width:560px){.work-grid{grid-template-columns:1fr;}}
+  .wl{font-family:'IBM Plex Mono',monospace; font-size:12.5px; background:var(--surface-2); border-radius:6px; padding:5px 9px; margin:0 0 5px; width:fit-content; max-width:100%; font-variant-numeric:tabular-nums;}
+  .wl.res{background:var(--good-soft); color:var(--good); font-weight:600;}
+  .wnote{font-size:13px; color:var(--muted); margin:6px 0 0;}
+  .pair{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+  .pair .cap{font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700; color:var(--muted); margin:0 0 2px 4px;}
+
+  .calc{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+  .fb{font-size:13.5px; margin-top:6px; min-height:20px;}
+  input[type=number]{font-family:'IBM Plex Mono',monospace; font-size:15px; width:110px; padding:7px 10px; border-radius:8px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink);}
+  input[type=number]:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .formula{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accel); border-radius:10px; padding:12px 18px; margin:10px 0;}
+  .formula .eq{font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:500;}
+  .formula .key{font-size:13.5px; color:var(--muted); margin-top:6px;}
+  textarea.jot{width:100%; min-height:64px; resize:vertical; font-family:'Source Serif 4',Georgia,serif; font-size:15px; color:var(--ink); background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px;}
+  textarea.jot:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  footer{padding-top:18px; color:var(--muted); font-size:13px;}
+  @media (prefers-reduced-motion: reduce){*{transition:none !important; animation:none !important;}}
+</style>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Physics · Intro Activity · Student Version</div>
+    <h1>Graphing Acceleration</h1>
+    <p>A sprinter bursts off the line. A pass rolls to a stop. Same physics, three different graphs. In 10 minutes you'll learn to read all three.</p>
+  </div>
+
+  <div class="progress">
+    <span class="pstep">① Explore — 3 min</span>
+    <span class="pstep">② The Formula — 2 min</span>
+    <span class="pstep">③ Read the Graphs — 4 min</span>
+    <span class="pstep">④ Soccer Wrap — 1 min</span>
+  </div>
+
+  <!-- STEP 1 -->
+  <section class="step" id="s1">
+    <div class="step-head"><span class="step-num">1</span><h2 class="step-title">Explore the Graphs</h2><span class="step-time">⏱ 3 min</span></div>
+    <p><strong>Acceleration</strong> is how fast velocity changes. Play with the sliders like you will in the Moving Man lab. Watch the ball move, then watch what each setting does to the three graphs. Click each preset.</p>
+
+    <div class="controls">
+      <div class="ctl"><label for="x0">Initial position <output id="x0o">0 m</output></label><input type="range" id="x0" min="-5" max="5" step="1" value="0"></div>
+      <div class="ctl"><label for="v0">Initial velocity <output id="v0o">0 m/s</output></label><input type="range" id="v0" min="-5" max="5" step="1" value="0"></div>
+      <div class="ctl"><label for="a0">Acceleration <output id="a0o">2 m/s²</output></label><input type="range" id="a0" min="-4" max="4" step="0.5" value="2"></div>
+    </div>
+    <div class="presets">
+      <button class="btn" data-p="0,0,0">Zero acceleration</button>
+      <button class="btn" data-p="0,0,1">Small positive</button>
+      <button class="btn" data-p="0,0,3.5">Large positive</button>
+      <button class="btn" data-p="0,5,-2">Negative (slowing)</button>
+      <button class="btn primary" id="replay">▶ Replay</button>
+    </div>
+
+    <div class="stage">
+      <div class="stage-top"><span class="stage-title">What it looks like on the field</span><span class="readout" id="readout"></span></div>
+      <svg id="stage" viewBox="0 0 700 140" role="img" aria-label="A soccer ball moving along a field with velocity and acceleration arrows"></svg>
+      <p class="scene" id="scene"></p>
+    </div>
+
+    <div class="charts">
+      <div class="chart"><p class="chart-title">Position vs. time</p><svg id="cx" viewBox="0 0 220 160" role="img" aria-label="Position-time graph"></svg><p class="chart-shape" id="sx"></p></div>
+      <div class="chart"><p class="chart-title">Velocity vs. time</p><svg id="cv" viewBox="0 0 220 160" role="img" aria-label="Velocity-time graph"></svg><p class="chart-shape" id="sv"></p></div>
+      <div class="chart"><p class="chart-title">Acceleration vs. time</p><svg id="ca" viewBox="0 0 220 160" role="img" aria-label="Acceleration-time graph"></svg><p class="chart-shape" id="sa"></p></div>
+    </div>
+    <div class="callout"><span class="icon">Try it</span><p>Set acceleration to <strong>0</strong> and initial velocity to <strong>3</strong>. The ball is moving, so why is the acceleration graph flat at zero? Look at the green arrow and the orange arrow.</p></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="step" id="s2">
+    <div class="step-head"><span class="step-num">2</span><h2 class="step-title">The Formula</h2><span class="step-time">⏱ 2 min</span></div>
+    <div class="formula"><div class="eq">a = (v<sub>f</sub> − v<sub>o</sub>) / t</div><div class="key">a = acceleration (m/s²) · v<sub>f</sub> = final velocity · v<sub>o</sub> = original velocity · t = time (s)</div></div>
+    <div class="q">
+      <p class="qt">A: A striker starts from rest and reaches 8.0 m/s in 2.5 s. What is her acceleration?</p>
+      <div class="calc"><input type="number" id="ans1" step="any" aria-label="Answer A"><span class="mono">m/s²</span><button class="btn" id="chk1">Check</button></div>
+      <p class="fb" id="fb1"></p>
+    </div>
+    <div class="q">
+      <p class="qt">B: A ball rolls at 12 m/s, then slows to 0 m/s over 4.0 s. What is its acceleration? (Watch the sign.)</p>
+      <div class="calc"><input type="number" id="ans2" step="any" aria-label="Answer B"><span class="mono">m/s²</span><button class="btn" id="chk2">Check</button></div>
+      <p class="fb" id="fb2"></p>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="step" id="s3">
+    <div class="step-head"><span class="step-num">3</span><h2 class="step-title">Read the Graphs</h2><span class="step-time">⏱ 4 min</span></div>
+    <p>Pick an answer. Whether you're right or wrong, you'll see the work that proves it.</p>
+
+    <div class="q" data-q="q1">
+      <p class="qt">1. An object has a constant, positive acceleration and starts from rest. What shape is its position-time graph?</p>
+      <div class="opts"><button class="opt" data-v="line">Straight, horizontal</button><button class="opt" data-v="diag">Straight, diagonal</button><button class="opt" data-v="parabola">Parabolic (curving upward)</button></div>
+      <div class="why"></div>
+    </div>
+    <div class="q" data-q="q2">
+      <p class="qt">2. A velocity-time graph is a straight line sloping <em>downward</em>. What does that tell you about acceleration?</p>
+      <div class="opts"><button class="opt" data-v="zero">It is zero</button><button class="opt" data-v="up">Positive and increasing</button><button class="opt" data-v="down">Negative and constant</button></div>
+      <div class="why"></div>
+    </div>
+    <div class="q" data-q="q3">
+      <p class="qt">3. On a v-t graph a soccer ball is at 2 m/s at t = 0 s and 10 m/s at t = 4 s. What is its acceleration?</p>
+      <div class="opts"><button class="opt" data-v="8">8 m/s²</button><button class="opt" data-v="2">2 m/s²</button><button class="opt" data-v="2.5">2.5 m/s²</button></div>
+      <div class="why"></div>
+    </div>
+    <div class="q" data-q="q4">
+      <p class="qt">4. A player runs at a steady 5 m/s down the wing. What does her acceleration-time graph look like?</p>
+      <div class="opts"><button class="opt" data-v="up">Rising diagonal line</button><button class="opt" data-v="flat">Flat at zero</button><button class="opt" data-v="parab">A curve</button></div>
+      <div class="why"></div>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="step" id="s4">
+    <div class="step-head"><span class="step-num">4</span><h2 class="step-title">Soccer Wrap</h2><span class="step-time">⏱ 1 min</span></div>
+    <div class="card">
+      <p style="margin-bottom:8px;">A goalkeeper's goal kick leaves the ground fast, then slows as it rolls. In one or two sentences, which of the three graphs would show that slowing most clearly, and why?</p>
+      <textarea class="jot" id="wrap" placeholder="Type your answer here, then be ready to share it."></textarea>
+    </div>
+    <div class="callout" style="margin-top:14px;"><span class="icon">Next</span><p>Keep these three graphs in mind. In the Moving Man lab you'll build them yourself and describe their shapes with exact geometry terms.</p></div>
+  </section>
+
+  <footer>Intro activity · about 10 minutes · pairs with the Moving Man virtual lab.</footer>
+</div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg', T=5;
+  var RM=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+  function clear(s){while(s.firstChild)s.removeChild(s.firstChild);}
+  var sl={x0:document.getElementById('x0'),v0:document.getElementById('v0'),a0:document.getElementById('a0')};
+  var P={x0:0,v0:0,a:2};
+  var charts=[], S={};
+
+  /* ---------- charts ---------- */
+  function drawChart(svgId,fn,cls,label,shapeId,describe){
+    var svg=document.getElementById(svgId); clear(svg);
+    var L=34,R=212,Tp=10,B=138,n=60,pts=[],mn=Infinity,mx=-Infinity,i,t,y;
+    for(i=0;i<=n;i++){t=T*i/n;y=fn(t);pts.push([t,y]);mn=Math.min(mn,y);mx=Math.max(mx,y);}
+    mn=Math.min(mn,0);mx=Math.max(mx,0); if(mx-mn<2){mx+=1;mn-=1;}
+    var pad=(mx-mn)*0.08;mn-=pad;mx+=pad;
+    function X(t){return L+(R-L)*t/T;} function Y(v){return B-(B-Tp)*(v-mn)/(mx-mn);}
+    for(i=0;i<=T;i++){el('line',{x1:X(i),y1:Tp,x2:X(i),y2:B,'class':'ax'},svg);el('text',{x:X(i),y:B+12,'text-anchor':'middle','class':'tick'},svg).textContent=i;}
+    var step=(mx-mn)>14?5:((mx-mn)>6?2:1);
+    for(var v=Math.ceil(mn/step)*step;v<=mx;v+=step){el('line',{x1:L,y1:Y(v),x2:R,y2:Y(v),'class':v===0?'axmain':'ax'},svg);el('text',{x:L-4,y:Y(v)+3,'text-anchor':'end','class':'tick'},svg).textContent=v;}
+    el('line',{x1:L,y1:Tp,x2:L,y2:B,'class':'axmain'},svg);
+    el('text',{x:(L+R)/2,y:156,'text-anchor':'middle','class':'tick'},svg).textContent='time (s)';
+    el('text',{x:8,y:(Tp+B)/2,'text-anchor':'middle','class':'tick',transform:'rotate(-90 8 '+((Tp+B)/2)+')'},svg).textContent=label;
+    el('polyline',{points:pts.map(function(p){return X(p[0])+','+Y(p[1]);}).join(' '),'class':'curve '+cls},svg);
+    var dot=el('circle',{r:4.5,'class':'mk',cx:X(0),cy:Y(fn(0))},svg);
+    charts.push({X:X,Y:Y,fn:fn,dot:dot});
+    document.getElementById(shapeId).textContent=describe();
+  }
+
+  /* ---------- field stage ---------- */
+  var VW=700, SL=50, SR=570, BALLY=74;
+  function arrow(g,cls){
+    var line=el('line',{'class':'arrow-line '+cls,y1:0,y2:0},g), head=el('polygon',{'class':cls},g);
+    return {g:g,line:line,head:head};
+  }
+  function setArrow(A,x,y,len){
+    if(Math.abs(len)<1.5){A.g.style.display='none';return;}
+    A.g.style.display='';
+    var d=len>0?1:-1, e=x+len;
+    A.line.setAttribute('x1',x); A.line.setAttribute('x2',e-d*6); A.line.setAttribute('y1',y); A.line.setAttribute('y2',y);
+    A.head.setAttribute('points',e+','+y+' '+(e-d*11)+','+(y-6)+' '+(e-d*11)+','+(y+6));
+  }
+  function niceStep(span){var s=[1,2,5,10,20,50];for(var i=0;i<s.length;i++){if(span/s[i]<=8)return s[i];}return 50;}
+  function buildStage(){
+    var svg=document.getElementById('stage'); clear(svg);
+    var x0=P.x0,v0=P.v0,a=P.a,lo=Infinity,hi=-Infinity,i,x;
+    for(i=0;i<=50;i++){x=x0+v0*(T*i/50)+0.5*a*Math.pow(T*i/50,2);lo=Math.min(lo,x);hi=Math.max(hi,x);}
+    lo-=1;hi+=1; if(hi-lo<8){var c=(hi+lo)/2;lo=c-4;hi=c+4;}
+    function PX(x){return SL+(SR-SL)*(x-lo)/(hi-lo);}
+    el('rect',{x:0,y:44,width:VW,height:62,rx:10,'class':'grass'},svg);
+    var st=niceStep(hi-lo);
+    for(var m=Math.ceil(lo/st)*st;m<=hi;m+=st){
+      el('line',{x1:PX(m),y1:44,x2:PX(m),y2:106,'class':'yard'},svg);
+      el('text',{x:PX(m),y:122,'text-anchor':'middle','class':'tick'},svg).textContent=m+' m';
+    }
+    var lastLbl=-99;
+    for(i=0;i<=T;i++){
+      var gx=x0+v0*i+0.5*a*i*i, px=PX(gx);
+      el('circle',{cx:px,cy:BALLY+22,r:3.5,'class':'ghost'},svg);
+      if(Math.abs(px-lastLbl)>26){el('text',{x:px,y:BALLY+38,'text-anchor':'middle','class':'tick'},svg).textContent=i+' s';lastLbl=px;}
+    }
+    var vg=el('g',{},svg), ag=el('g',{},svg);
+    S.vA=arrow(vg,'v-arrow'); S.aA=arrow(ag,'a-arrow');
+    el('text',{x:6,y:19,'class':'lbl lbl-v'},svg).textContent='velocity';
+    el('text',{x:6,y:35,'class':'lbl lbl-a'},svg).textContent='acceleration';
+    var ball=el('g',{},svg);
+    el('circle',{cx:0,cy:BALLY,r:12,'class':'ball-fill'},ball);
+    el('polygon',{points:'0,-5 5,-1.5 3,4.5 -3,4.5 -5,-1.5',transform:'translate(0,'+BALLY+')','class':'ball-patch'},ball);
+    S.ball=ball; S.PX=PX;
+  }
+  function setT(t){
+    var x=P.x0+P.v0*t+0.5*P.a*t*t, v=P.v0+P.a*t, px=S.PX(x);
+    S.ball.setAttribute('transform','translate('+px+',0)');
+    var vl=Math.max(-150,Math.min(150,v*9)), al=Math.max(-110,Math.min(110,P.a*24));
+    setArrow(S.vA,px,17,vl); setArrow(S.aA,px,33,al);
+    document.getElementById('readout').textContent='t='+t.toFixed(1)+' s   x='+x.toFixed(1)+' m   v='+v.toFixed(1)+' m/s   a='+P.a+' m/s²';
+    charts.forEach(function(c){var val=c.fn(t);c.dot.setAttribute('cx',c.X(t));c.dot.setAttribute('cy',c.Y(val));});
+  }
+  var raf=null;
+  function play(){
+    if(raf)cancelAnimationFrame(raf);
+    if(RM){setT(T);return;}
+    var start=null; setT(0);
+    function f(ts){if(start===null)start=ts;var t=Math.min((ts-start)/1000,T);setT(t);if(t<T)raf=requestAnimationFrame(f);}
+    raf=requestAnimationFrame(f);
+  }
+  function sceneText(){
+    var a=P.a,v0=P.v0,mag=Math.abs(a),size=mag>=3?'large':(mag>=1.5?'moderate':'small');
+    var speedingUp=(v0*a>0)||(v0===0&&a!==0);
+    if(a===0&&v0===0)return 'Nothing is changing: the ball just sits there. Velocity is 0 and acceleration is 0.';
+    if(a===0)return 'Gliding at a steady pace, like a ball rolling with no friction. The dots are evenly spaced (same distance every second), and there is no orange arrow because velocity never changes.';
+    if(speedingUp)return 'Speeding up with a '+size+' '+(a>0?'positive':'negative')+' acceleration'+(size==='large'?', like a striker exploding off the mark. ':', like a jog building into a run. ')+'The green arrow keeps growing and the dots spread farther apart each second.';
+    var ts=-v0/a;
+    return 'Slowing down, like a pass rolling to a stop. The orange arrow points against the motion, the green arrow shrinks, and the dots bunch together.'+(ts<T?' The ball stops at t = '+ts.toFixed(1)+' s, then turns around.':'');
+  }
+  function render(){
+    P.x0=+sl.x0.value;P.v0=+sl.v0.value;P.a=+sl.a0.value;
+    var x0=P.x0,v0=P.v0,a=P.a;
+    document.getElementById('x0o').textContent=x0+' m';
+    document.getElementById('v0o').textContent=v0+' m/s';
+    document.getElementById('a0o').textContent=a+' m/s²';
+    charts=[];
+    drawChart('cx',function(t){return x0+v0*t+0.5*a*t*t;},'c-x','position (m)','sx',function(){
+      if(a!==0)return 'Shape: parabolic, '+(a>0?'curving upward (getting steeper).':'curving downward.');
+      return v0===0?'Shape: linear, horizontal. Not moving.':'Shape: linear, diagonal, '+(v0>0?'increasing.':'decreasing.');});
+    drawChart('cv',function(t){return v0+a*t;},'c-v','velocity (m/s)','sv',function(){
+      if(a===0)return 'Shape: linear, horizontal. Constant velocity.';
+      return 'Shape: linear, diagonal, '+(a>0?'increasing.':'decreasing.')+' Slope = acceleration.';});
+    drawChart('ca',function(){return a;},'c-a','accel. (m/s²)','sa',function(){
+      return 'Shape: linear, horizontal'+(a===0?', on zero.':(a>0?', above zero.':', below zero.'));});
+    buildStage();
+    document.getElementById('scene').textContent=sceneText();
+    play();
+  }
+  Object.keys(sl).forEach(function(k){sl[k].addEventListener('input',render);});
+  document.querySelectorAll('.presets .btn[data-p]').forEach(function(b){b.addEventListener('click',function(){var p=b.getAttribute('data-p').split(',');sl.x0.value=p[0];sl.v0.value=p[1];sl.a0.value=p[2];render();});});
+  document.getElementById('replay').addEventListener('click',play);
+  render();
+
+  /* ---------- formula checks ---------- */
+  function numCheck(btn,input,fb,target,okMsg,hint){
+    document.getElementById(btn).addEventListener('click',function(){
+      var v=parseFloat(document.getElementById(input).value),f=document.getElementById(fb);
+      if(isNaN(v)){f.textContent='Type a number first.';f.style.color='var(--muted)';return;}
+      if(Math.abs(v-target)<0.06){f.textContent=okMsg;f.style.color='var(--good)';}
+      else{f.textContent=hint;f.style.color='var(--accel)';}
+    });
+  }
+  numCheck('chk1','ans1','fb1',3.2,'Correct: (8.0 − 0) ÷ 2.5 = 3.2 m/s².','Not yet. Plug in a = (vf − vo) ÷ t with vf = 8.0, vo = 0, t = 2.5.');
+  numCheck('chk2','ans2','fb2',-3,'Correct: (0 − 12) ÷ 4.0 = −3.0 m/s². Negative because the ball is slowing down.','Not yet. vf = 0, vo = 12, t = 4.0. Keep the negative sign.');
+
+  /* ---------- worked proofs for "Read the Graphs" ---------- */
+  function mini(o){
+    var w=250,h=150,L=38,R=w-14,Tp=12,B=h-28,i;
+    function X(t){return L+(R-L)*t/o.tmax;} function Y(v){return B-(B-Tp)*(v-o.ymin)/(o.ymax-o.ymin);}
+    var s='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+o.label+'">';
+    for(i=0;i<=o.tmax;i++)s+='<line class="ax" x1="'+X(i)+'" y1="'+Tp+'" x2="'+X(i)+'" y2="'+B+'"/><text class="tick" x="'+X(i)+'" y="'+(B+12)+'" text-anchor="middle">'+i+'</text>';
+    o.yticks.forEach(function(v){s+='<line class="'+(v===0?'axmain':'ax')+'" x1="'+L+'" y1="'+Y(v)+'" x2="'+R+'" y2="'+Y(v)+'"/><text class="tick" x="'+(L-4)+'" y="'+(Y(v)+3)+'" text-anchor="end">'+v+'</text>';});
+    s+='<line class="axmain" x1="'+L+'" y1="'+Tp+'" x2="'+L+'" y2="'+B+'"/>';
+    s+='<text class="tick" x="'+((L+R)/2)+'" y="'+(h-3)+'" text-anchor="middle">time (s)</text>';
+    s+='<text class="tick" x="9" y="'+((Tp+B)/2)+'" text-anchor="middle" transform="rotate(-90 9 '+((Tp+B)/2)+')">'+o.ylabel+'</text>';
+    if(o.tri){var a=o.tri.a,b=o.tri.b;
+      s+='<path class="tri" d="M'+X(a[0])+' '+Y(a[1])+' L'+X(b[0])+' '+Y(a[1])+' L'+X(b[0])+' '+Y(b[1])+'"/>';
+      s+='<text class="tri-lbl" x="'+((X(a[0])+X(b[0]))/2)+'" y="'+(Y(a[1])+(o.tri.runBelow?13:-5))+'" text-anchor="middle">'+o.tri.run+'</text>';
+      s+='<text class="tri-lbl" x="'+(X(b[0])-5)+'" y="'+((Y(a[1])+Y(b[1]))/2+3)+'" text-anchor="end">'+o.tri.rise+'</text>';}
+    s+='<polyline class="curve '+o.cls+'" points="'+o.pts.map(function(p){return X(p[0])+','+Y(p[1]);}).join(' ')+'"/>';
+    (o.marks||[]).forEach(function(m){s+='<circle class="pt" r="4.5" cx="'+X(m[0])+'" cy="'+Y(m[1])+'" fill="'+(m[3]||'var(--ink)')+'"/>'+(m[2]?'<text class="tri-lbl" x="'+(X(m[0])+(m[4]||6))+'" y="'+(Y(m[1])-6)+'">'+m[2]+'</text>':'');});
+    return s+'</svg>';
+  }
+  function lines(arr){return arr.map(function(l){return '<p class="wl'+(l.res?' res':'')+'">'+(l.t||l)+'</p>';}).join('');}
+  function work(title,linesHtml,graphHtml,note){
+    return '<div class="work"><p class="work-title">'+title+'</p><div class="work-grid"><div>'+linesHtml+(note?'<p class="wnote">'+note+'</p>':'')+'</div><div>'+graphHtml+'</div></div></div>';
+  }
+  var q1pts=[];for(var qi=0;qi<=30;qi++){var qt=3*qi/30;q1pts.push([qt,qt*qt]);}
+  var Q={
+    q1:{ans:'parabola',
+      why:{line:'A horizontal position-time line means the position never changes, so the velocity would be 0. But this object starts from rest and keeps speeding up, so it is moving.',
+           diag:'A straight diagonal line has one constant slope, and the slope of a position graph is velocity. Constant velocity means a = (v<sub>f</sub> − v<sub>o</sub>) ÷ t = 0. Here the velocity keeps growing, so the slope must keep growing too.',
+           parabola:'The velocity keeps growing, so the slope of the position graph keeps getting steeper. A slope that keeps changing makes a curve: a parabola.'},
+      work:function(){return work('The proof',
+        lines(['Graph data: t = 0, 1, 2, 3 s → position = 0, 1, 4, 9 m','v = distance ÷ time, each 1 s interval:','0→1 s: 1 ÷ 1 = 1 m/s','1→2 s: 3 ÷ 1 = 3 m/s','2→3 s: 5 ÷ 1 = 5 m/s','a = (v<sub>f</sub> − v<sub>o</sub>) ÷ t = (3 − 1) ÷ 1 = 2 m/s²',{t:'Velocity keeps rising → slope keeps rising → curve',res:true}]),
+        mini({tmax:3,ymin:-1,ymax:10,yticks:[0,3,6,9],ylabel:'position (m)',cls:'c-x',label:'Position-time graph curving upward',pts:q1pts,marks:[[0,0,'0'],[1,1,'1'],[2,4,'4'],[3,9,'9',null,-14]]}),
+        'Each second covers more ground (1 m, then 3 m, then 5 m), so the graph gets steeper.');}},
+    q2:{ans:'down',
+      why:{zero:'Zero acceleration would give a flat, horizontal v-t line (no slope). This line slopes, so velocity is changing.',
+           up:'Positive acceleration slopes upward on a v-t graph. This line slopes downward, and a straight line has the same slope everywhere, so it is not increasing.',
+           down:'The slope of a v-t graph is the acceleration. A straight line has a constant slope, and a downward slope is negative.'},
+      work:function(){return work('The proof',
+        lines(['a = slope = rise ÷ run = (v<sub>f</sub> − v<sub>o</sub>) ÷ t','Example: 8 m/s at 0 s, 0 m/s at 4 s','a = (0 − 8) ÷ 4',{t:'a = −2 m/s² (negative, constant)',res:true}]),
+        mini({tmax:4,ymin:-1,ymax:10,yticks:[0,4,8],ylabel:'velocity (m/s)',cls:'c-v',label:'Velocity-time line sloping downward',pts:[[0,8],[4,0]],tri:{a:[0,8],b:[4,0],run:'run = 4 s',rise:'rise = −8 m/s'},marks:[[0,8,null,'var(--vel)'],[4,0,null,'var(--vel)']]}),
+        'Downhill line, steady slope: constant negative acceleration.');}},
+    q3:{ans:'2',
+      why:{'8':'8 is the change in velocity (10 − 2), but acceleration is the change in velocity per second. You still have to divide by the 4 s.',
+           '2':'Change in velocity is 10 − 2 = 8 m/s, spread over 4 s, so each second adds 2 m/s.',
+           '2.5':'2.5 is 10 ÷ 4, which uses only the final velocity. Acceleration needs the change in velocity, so subtract the starting 2 m/s first.'},
+      work:function(){return work('The proof',
+        lines(['a = (v<sub>f</sub> − v<sub>o</sub>) ÷ t','a = (10 − 2) ÷ 4','a = 8 ÷ 4',{t:'a = 2 m/s²',res:true}]),
+        mini({tmax:4,ymin:0,ymax:12,yticks:[0,4,8,12],ylabel:'velocity (m/s)',cls:'c-v',label:'Velocity-time line from 2 to 10 meters per second',pts:[[0,2],[4,10]],tri:{a:[0,2],b:[4,10],run:'run = 4 s',rise:'rise = 8 m/s',runBelow:false},marks:[[0,2,'2',null,6],[4,10,'10',null,-18]]}),
+        'Same answer from the slope triangle: rise ÷ run = 8 ÷ 4 = 2.');}},
+    q4:{ans:'flat',
+      why:{up:'A rising a-t line would mean the acceleration itself keeps growing. She is at a steady speed, so her velocity is not changing at all.',
+           flat:'Steady velocity means no change in velocity, so a = 0 the whole time: a flat line sitting on zero.',
+           parab:'A curve would mean the acceleration keeps changing. Her velocity is not even changing, so acceleration is zero and stays zero.'},
+      work:function(){return work('The proof',
+        lines(['a = (v<sub>f</sub> − v<sub>o</sub>) ÷ t','v<sub>f</sub> = 5, v<sub>o</sub> = 5 → a = (5 − 5) ÷ t','a = 0 ÷ t',{t:'a = 0 m/s² at every moment',res:true}]),
+        '<div class="pair"><div><p class="cap">Velocity vs. time</p>'+mini({tmax:4,ymin:0,ymax:8,yticks:[0,4,8],ylabel:'v (m/s)',cls:'c-v',label:'Flat velocity-time line at 5 meters per second',pts:[[0,5],[4,5]]})+'</div><div><p class="cap">Acceleration vs. time</p>'+mini({tmax:4,ymin:-2,ymax:2,yticks:[-2,0,2],ylabel:'a (m/s²)',cls:'c-a',label:'Flat acceleration-time line at zero',pts:[[0,0],[4,0]]})+'</div></div>',
+        'Moving is not the same as accelerating. Flat v-t line means a = 0.');}}
+  };
+  document.querySelectorAll('#s3 .q').forEach(function(q){
+    var cfg=Q[q.getAttribute('data-q')], why=q.querySelector('.why'), done=false, shown=false;
+    q.querySelectorAll('.opt').forEach(function(o){o.addEventListener('click',function(){
+      if(done)return;
+      var v=o.getAttribute('data-v'), ok=(v===cfg.ans);
+      if(ok){done=true;o.classList.add('correct');}else{o.classList.add('wrong');}
+      var verdict=(ok?'<div class="why-verdict ok"><b>✓ Correct.</b> ':'<div class="why-verdict no"><b>✗ Not quite.</b> ')+cfg.why[v]+(ok?'':' Here is the work for the right answer:')+'</div>';
+      why.innerHTML=verdict+cfg.work();
+    });});
+  });
+
+  var w=document.getElementById('wrap');
+  try{var s=localStorage.getItem('accel_wrap');if(s)w.value=s;}catch(e){}
+  w.addEventListener('input',function(){try{localStorage.setItem('accel_wrap',w.value);}catch(e){}});
+})();
+</script>
