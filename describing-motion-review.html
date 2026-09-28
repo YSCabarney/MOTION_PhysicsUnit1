@@ -1,0 +1,789 @@
+<title>Describing Motion Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --pitch: #17301F;
+    --stripe: #1B3624;
+    --surface: #1F3D29;
+    --surface-2: #26492F;
+    --line: rgba(238, 240, 230, 0.16);
+    --chalk: #EEF0E6;
+    --muted: #B5C0AE;
+    --gold: #E0B04A;
+    --red: #D9634A;
+    --good: #7FCB85;
+    --bad: #EE8A72;
+    --display: "Fraunces", Georgia, "Times New Roman", serif;
+    --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  html, body { min-height: 100%; }
+  body {
+    background-color: var(--pitch);
+    background-image: repeating-linear-gradient(90deg, var(--pitch) 0 80px, var(--stripe) 80px 160px);
+    color: var(--chalk);
+    font: 16px/1.55 var(--body);
+    padding-inline: 16px;
+    padding-block: 0 48px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  /* Scoreboard */
+  .board {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    background: #0F2216; border-bottom: 2px solid var(--gold);
+    margin-inline: -16px; padding: 10px 16px;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .board .brand { color: var(--gold); font-weight: 600; }
+  .board .stats { display: flex; gap: 18px; font-variant-numeric: tabular-nums; }
+  .board .stats b { color: var(--chalk); font-size: 15px; margin-left: 6px; }
+  .board .stats span { color: var(--muted); }
+
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; text-wrap: balance; margin: 0; line-height: 1.12; }
+  h1 { font-size: clamp(2.2rem, 7vw, 3.6rem); }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.2rem; }
+  p { margin: 0; }
+  .muted { color: var(--muted); }
+
+  /* Home */
+  .hero { padding-block: 36px 24px; display: grid; gap: 12px; }
+  .hero p { max-width: 58ch; color: var(--muted); }
+  .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .mode {
+    text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px; display: grid; gap: 6px; align-content: start;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .mode:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .mode.primary { background: var(--gold); color: #1A1A10; border-color: var(--gold); }
+  .mode.primary .muted, .mode.primary .eyebrow { color: #3D3517; }
+  .mode[disabled] { opacity: .45; cursor: not-allowed; transform: none; border-color: var(--line); }
+  .section-title { margin-block: 32px 12px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .topics { display: grid; gap: 8px; }
+  .topic {
+    display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; text-align: left;
+    background: rgba(15, 34, 22, .6); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+  }
+  .topic:hover { border-color: var(--gold); }
+  .topic .src { grid-column: 1; font-size: 13px; color: var(--muted); }
+  .topic .meta { grid-row: 1 / span 2; grid-column: 2; font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+  .topic .meta b { display: block; font-size: 15px; color: var(--chalk); }
+
+  /* Progress course */
+  .course { position: relative; height: 34px; margin-block: 20px 8px; }
+  .course .tape { position: absolute; left: 0; right: 0; top: 16px; height: 2px; background: var(--line); }
+  .course .done { position: absolute; left: 0; top: 16px; height: 2px; background: var(--gold); transition: width .3s ease; }
+  .course .cone { position: absolute; top: 9px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 13px solid var(--red); transform: translateX(-6px); }
+  .course .cone-label { position: absolute; top: 24px; transform: translateX(-50%); font: 10px var(--mono); color: var(--muted); }
+  .course .ball { position: absolute; top: 8px; width: 16px; height: 16px; border-radius: 50%; background: var(--chalk); box-shadow: inset -3px -3px 0 rgba(0,0,0,.25); transform: translateX(-8px); transition: left .3s ease; }
+  .qcount { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; display: flex; justify-content: space-between; margin-top: 16px; }
+
+  /* Question card */
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; display: grid; gap: 16px; margin-top: 12px; }
+  .qtext { font-size: 1.18rem; line-height: 1.45; font-weight: 500; }
+  .graph { background: #F4F1E6; border-radius: 8px; padding: 8px; overflow-x: auto; color: #2B3A2E; }
+  .graph svg { display: block; width: 100%; max-width: 480px; height: auto; margin: 0 auto; }
+  .opts { display: grid; gap: 10px; }
+  .opt {
+    display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: center; text-align: left;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+  }
+  .opt:hover:not([disabled]) { border-color: var(--gold); }
+  .opt .key { font-family: var(--mono); font-weight: 600; width: 30px; height: 30px; border-radius: 6px; display: grid; place-items: center; background: rgba(0,0,0,.25); color: var(--gold); }
+  .opt[disabled] { cursor: default; }
+  .opt.right { border-color: var(--good); background: rgba(127, 203, 133, .16); }
+  .opt.right .key { background: var(--good); color: #10240F; }
+  .opt.wrong { border-color: var(--bad); background: rgba(238, 138, 114, .14); }
+  .opt.wrong .key { background: var(--bad); color: #2A0E08; }
+  .opt.dim { opacity: .55; }
+  .numrow { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .numrow input {
+    flex: 1 1 160px; min-width: 0; font: 600 1.2rem var(--mono); color: var(--chalk);
+    background: #0F2216; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+  }
+  .numrow .unit { font-family: var(--mono); color: var(--muted); }
+  .btn { background: var(--gold); color: #1A1A10; border: 0; border-radius: 8px; padding: 11px 18px; font-weight: 600; }
+  .btn.ghost { background: transparent; color: var(--chalk); border: 1px solid var(--line); }
+  .btn.ghost:hover { border-color: var(--gold); }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+  .hint { font-size: 14px; color: var(--muted); border-left: 3px solid var(--gold); padding-left: 12px; }
+  .feedback { border-radius: 8px; padding: 14px 16px; display: grid; gap: 6px; }
+  .feedback.good { background: rgba(127, 203, 133, .14); border: 1px solid var(--good); }
+  .feedback.bad { background: rgba(238, 138, 114, .12); border: 1px solid var(--bad); }
+  .feedback .verdict { font-family: var(--mono); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 13px; }
+  .feedback.good .verdict { color: var(--good); }
+  .feedback.bad .verdict { color: var(--bad); }
+  .feedback .src { font-size: 13px; color: var(--muted); }
+
+  /* Lightning */
+  .lightning { text-align: center; justify-items: center; }
+  .timer { font: 600 2.4rem var(--mono); font-variant-numeric: tabular-nums; color: var(--gold); }
+  .timer.low { color: var(--red); }
+  .item { font-family: var(--display); font-size: clamp(1.5rem, 5vw, 2.1rem); line-height: 1.25; min-height: 3.2em; display: grid; place-items: center; max-width: 24ch; }
+  .sv { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 480px; }
+  .sv button { border-radius: 10px; padding: 18px 10px; border: 2px solid var(--line); background: var(--surface-2); display: grid; gap: 2px; }
+  .sv button:hover { border-color: var(--gold); }
+  .sv button b { font-family: var(--mono); letter-spacing: .1em; font-size: 1.1rem; }
+  .sv button small { color: var(--muted); font-size: 12px; }
+  .flash { min-height: 1.5em; font-size: 14px; }
+  .flash.good { color: var(--good); }
+  .flash.bad { color: var(--bad); }
+
+  /* Results */
+  .scoreline { display: flex; gap: 28px; flex-wrap: wrap; }
+  .scoreline div { display: grid; }
+  .scoreline b { font: 700 2.4rem var(--display); font-variant-numeric: tabular-nums; }
+  .scoreline span { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .bars { display: grid; gap: 10px; }
+  .bar { display: grid; grid-template-columns: minmax(120px, 190px) 1fr 52px; gap: 10px; align-items: center; font-size: 14px; }
+  .bar .track { height: 10px; background: rgba(0,0,0,.3); border-radius: 5px; overflow: hidden; }
+  .bar .fill { height: 100%; border-radius: 5px; }
+  .bar .pct { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+  .missed { display: grid; gap: 10px; }
+  .miss { background: rgba(15, 34, 22, .6); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 4px; font-size: 15px; }
+  .miss .ans { color: var(--good); font-weight: 600; }
+  .miss .yours { color: var(--bad); font-size: 13px; }
+  .study { border-left: 3px solid var(--red); padding-left: 12px; display: grid; gap: 4px; }
+  @media (max-width: 520px) {
+    .card { padding: 16px; }
+    .bar { grid-template-columns: 1fr 52px; }
+    .bar .track { grid-column: 1 / -1; grid-row: 2; }
+    .board .stats { gap: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="board">
+    <span class="brand">PHYS · Week 1 Review</span>
+    <span class="stats" id="stats"></span>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+const TOPICS = {
+  sv:  { name: "Scalars & Vectors",       src: "Notes §01 · Heat Map activity" },
+  dd:  { name: "Distance & Displacement", src: "Notes §02 · Practice Q2 · Lab Part C" },
+  spv: { name: "Speed & Velocity",        src: "Notes §03–04 · Practice Q3 · Heat Map card" },
+  gr:  { name: "Position-Time Graphs",    src: "Notes §05 · Practice Q4 · Lab Graphs A & B" },
+  un:  { name: "Units & Conversions",     src: "Notes units table · Practice Q5" },
+  lab: { name: "Motion Lab & Vectors",    src: "Lab #1: variables, video timing, tip-to-tail, acceleration" }
+};
+
+// Graph presets (drawn to scale)
+const G = {
+  movingMan: { xmax: 10, ymax: 50, xstep: 2, ystep: 10, series: [{ pts: [[0,0],[10,50]], color: "#B8452F", dots: [[0,0],[2,10],[4,20],[6,30],[8,40]] }] },
+  ab: { xmax: 6, ymax: 60, xstep: 1, ystep: 10, series: [
+    { pts: [[0,0],[6,60]], color: "#B8452F", label: "PLAYER A" },
+    { pts: [[0,0],[6,30]], color: "#2F5A3A", label: "PLAYER B" } ] },
+  flatten: { xmax: 6, ymax: 25, xstep: 1, ystep: 5, series: [{ pts: curve(t => 25 * (1 - Math.pow(1 - t / 6, 2))), color: "#B8452F" }] },
+  steepen: { xmax: 6, ymax: 25, xstep: 1, ystep: 5, series: [{ pts: curve(t => 25 * Math.pow(t / 6, 2)), color: "#B8452F" }] },
+  flat:    { xmax: 6, ymax: 25, xstep: 1, ystep: 5, series: [{ pts: [[0,15],[6,15]], color: "#B8452F" }] }
+};
+function curve(f) { const p = []; for (let t = 0; t <= 6.0001; t += 0.25) p.push([t, f(t)]); return p; }
+
+const Q = [
+  // Scalars & vectors
+  { id: "sv1", t: "sv", q: "Four lines from a match report. Which one describes a vector quantity?",
+    opts: ["The free kick curled 22 m toward the far post.", "The keeper's goal kick traveled 55 m.", "The match lasted 94 minutes.", "The squad covered 108 km combined over the 90 minutes."],
+    ex: "Only the free kick gives a direction (toward the far post). The other three have a number and a unit, but no direction." },
+  { id: "sv2", t: "sv", q: "What does a vector need that a scalar does not?",
+    opts: ["A direction", "A unit", "A larger number", "A time measurement"],
+    ex: "Scalar = number + unit. Vector = number + unit + direction. Drop any one of the three and it's no longer a vector." },
+  { id: "sv3", t: "sv", q: "Which pair of Week 1 quantities are both vectors?",
+    opts: ["Displacement and velocity", "Distance and speed", "Speed and velocity", "Distance and displacement"],
+    ex: "Displacement and velocity carry a direction. Distance, speed and time are scalars." },
+  { id: "sv4", t: "sv", q: "“The team ran 8.2 km total during the match.” This describes a…",
+    opts: ["Scalar: distance", "Vector: displacement", "Vector: velocity", "Scalar: speed"],
+    ex: "Total ground covered with no direction is distance, a scalar." },
+  { id: "sv5", t: "sv", q: "A GPS vest reports that a winger covered 9.4 km in the match. Scalar or vector?",
+    opts: ["Scalar", "Vector"],
+    ex: "9.4 km has no direction. It's the total distance covered, so it's a scalar." },
+  { id: "sv6", t: "sv", q: "On the #7 winger's GPS card, which stat is the vector?",
+    opts: ["Displacement: 45 m, NE toward net", "Distance run: 62 m", "Top speed hit: 8.4 m/s", "Time on the ball: 8.2 s"],
+    ex: "Only the displacement names a direction (NE toward net)." },
+  { id: "sv7", t: "sv", q: "Time is a…", opts: ["Scalar", "Vector"],
+    ex: "Time has a size and a unit (seconds) but no direction." },
+  { id: "sv8", t: "sv", q: "A student writes a player's velocity as “7.5 m/s.” What's wrong with that answer?",
+    opts: ["It is missing a direction, so it only gives the speed", "The unit should be km/h", "Velocity can't be measured in m/s", "Nothing, it's complete"],
+    ex: "When a question asks for a vector, a number without a direction is only half an answer. It should read 7.5 m/s toward goal." },
+
+  // Distance & displacement
+  { id: "dd1", t: "dd", type: "num", q: "A midfielder sprints 25 m straight toward goal, then jogs 10 m straight back along the same line. What total distance did she cover?",
+    a: 35, tol: 0, unit: "m", ex: "Distance adds every bit of ground: 25 m + 10 m = 35 m." },
+  { id: "dd2", t: "dd", q: "Same midfielder: 25 m toward goal, then 10 m straight back. What is her displacement?",
+    opts: ["15 m toward goal", "35 m toward goal", "15 m", "35 m"],
+    ex: "Displacement is the net change in position: 25 m − 10 m = 15 m, and as a vector it needs the direction (toward goal)." },
+  { id: "dd3", t: "dd", q: "Distance and displacement have the same size only when…",
+    opts: ["You move in a straight line and never turn back", "You move at a constant speed", "You run for a long time", "You finish where you started"],
+    ex: "Any turn or backtrack adds distance without adding displacement." },
+  { id: "dd4", t: "dd", q: "A player's run covers 65 m of ground and ends 40 m from where she started, angled toward goal. What is her displacement?",
+    opts: ["40 m toward goal", "65 m toward goal", "65 m", "25 m toward goal"],
+    ex: "Displacement is the straight line from start to stop, with direction: 40 m toward goal. The 65 m is her distance." },
+  { id: "dd5", t: "dd", q: "Can the size of a displacement ever be larger than the distance traveled?",
+    opts: ["No. A straight line is the shortest path, so displacement is always less than or equal to distance", "Yes, if the player runs fast enough", "Yes, if the path curves", "Only on a position-time graph"],
+    ex: "The straight line from start to end is the shortest possible path, so distance is always at least as large." },
+  { id: "dd6", t: "dd", q: "Why does a GPS vest report both distance and displacement?",
+    opts: ["Distance shows how much work the body did; displacement shows how effectively the player changed position", "They're the same number in two units", "Distance is for the coach; displacement is for the referee", "Displacement measures fatigue; distance measures direction"],
+    ex: "Distance tracks fitness and fatigue. Displacement tracks how effective the movement was at changing position." },
+  { id: "dd7", t: "dd", q: "A winger covers 11 km over 90 minutes, but her net displacement is almost zero. What does that tell you?",
+    opts: ["She ran a lot without going anywhere in particular", "The GPS vest was broken", "She barely moved during the match", "Her average speed was zero"],
+    ex: "Large distance, near-zero displacement: plenty of running, but she ended up about where she started." },
+  { id: "dd8", t: "dd", q: "A heat map shows where a player spent the match. What kind of data is it built from?",
+    opts: ["Distance-style data: every point the player was", "Displacement from start to finish", "Only the player's top speed", "The player's velocity at full time"],
+    ex: "A heat map stacks thousands of GPS position points. A huge heat map can still come with a tiny displacement." },
+  { id: "dd9", t: "dd", type: "num", q: "Lab Part C: you walk 15 m East, 20 m North, then 10 m West. What total distance did you travel?",
+    a: 45, tol: 0, unit: "m", ex: "Add every leg: 15 + 20 + 10 = 45 m." },
+  { id: "dd10", t: "dd", type: "num", q: "Same Part C path (15 m E, 20 m N, 10 m W). What is the size of your displacement, to the nearest meter?",
+    a: 21, tol: 1, unit: "m", hint: "Net east = 15 − 10. Net north = 20. Resultant = √(east² + north²).",
+    ex: "Net 5 m east and 20 m north. √(5² + 20²) = √425 ≈ 20.6 m, so about 21 m." },
+  { id: "dd11", t: "dd", type: "num", q: "Part C direction: the displacement is 5 m east and 20 m north. Use tan⁻¹(north ÷ east). How many degrees north of east? Round to the nearest degree.",
+    a: 76, tol: 1, unit: "°", hint: "north ÷ east = 20 ÷ 5 = 4. Find tan⁻¹(4).",
+    ex: "tan⁻¹(20 ÷ 5) = tan⁻¹(4) ≈ 76° north of east." },
+  { id: "dd12", t: "dd", q: "In a shuttle drill a player covers 48 m of ground and stops 12 m from her start cone, toward the sideline. What is her displacement?",
+    opts: ["12 m toward the sideline", "48 m toward the sideline", "12 m", "36 m toward the sideline"],
+    ex: "Displacement is start to finish with a direction: 12 m toward the sideline. 48 m is her distance." },
+
+  // Speed & velocity
+  { id: "spv1", t: "spv", q: "Which formula gives average speed?",
+    opts: ["v = d / t, with d = total distance", "v = Δx / t, with Δx = displacement", "v = t / d", "v = d × t"],
+    ex: "Average speed = total distance ÷ time. It's a scalar." },
+  { id: "spv2", t: "spv", q: "Which formula gives average velocity?",
+    opts: ["v = Δx / t, with Δx = displacement", "v = d / t, with d = total distance", "v = Δx × t", "v = t / Δx"],
+    ex: "Average velocity = displacement ÷ time, and it keeps the displacement's direction." },
+  { id: "spv3", t: "spv", type: "num", q: "A player drives 90 m in a straight line toward goal in 12 s. What is the size of her average velocity?",
+    a: 7.5, tol: 0.05, unit: "m/s", hint: "GIVEN Δx = 90 m, t = 12 s. EQUATION v = Δx / t.",
+    ex: "v = 90 m ÷ 12 s = 7.5 m/s toward goal (about 27 km/h)." },
+  { id: "spv4", t: "spv", type: "num", q: "In a shuttle drill a player covers 48 m of ground in 8.0 s. What is her average speed?",
+    a: 6, tol: 0.05, unit: "m/s", ex: "Average speed = 48 m ÷ 8.0 s = 6.0 m/s." },
+  { id: "spv5", t: "spv", q: "Same drill: she finishes 12 m from her start cone, toward the sideline, after 8.0 s. What is her average velocity?",
+    opts: ["1.5 m/s toward the sideline", "6.0 m/s toward the sideline", "1.5 m/s", "4.0 m/s toward the sideline"],
+    ex: "Average velocity = 12 m ÷ 8.0 s = 1.5 m/s, and it keeps the direction: toward the sideline." },
+  { id: "spv6", t: "spv", q: "A teammate says the shuttle drill's average speed and average velocity “should be the same number.” Why aren't they?",
+    opts: ["Speed uses total ground covered (48 m); velocity uses net change in position (12 m)", "Velocity uses a different time", "Speed is always larger because it includes direction", "They are the same; the teammate is right"],
+    ex: "Same time, different numerator. Distance (48 m) and displacement (12 m) are different, so the answers are too." },
+  { id: "spv7", t: "spv", type: "num", q: "Counterattack card: the winger ran 62 m in 8.2 s. What was her average speed? Round to one decimal place.",
+    a: 7.6, tol: 0.05, unit: "m/s", ex: "62 m ÷ 8.2 s ≈ 7.56, so about 7.6 m/s." },
+  { id: "spv8", t: "spv", type: "num", q: "Same play: her displacement was 45 m NE toward the net, in 8.2 s. What is the size of her average velocity? One decimal place.",
+    a: 5.5, tol: 0.05, unit: "m/s", ex: "45 m ÷ 8.2 s ≈ 5.49, so about 5.5 m/s NE toward the net." },
+  { id: "spv9", t: "spv", q: "For which path would average speed and average velocity have the same size?",
+    opts: ["A straight run in one direction with no turning back", "A loop that ends at the start", "A zig-zag dribble past defenders", "Any path, as long as the time is short"],
+    ex: "Only a straight, one-way path makes distance equal displacement." },
+  { id: "spv10", t: "spv", q: "The winger's top speed was 8.4 m/s, higher than her average speed. How is that possible?",
+    opts: ["Top speed is her fastest moment; average speed spreads the total distance over the whole time", "Top speed includes a direction", "Average speed uses displacement", "The GPS measures top speed in a different unit"],
+    ex: "Average speed blends fast and slow moments. Her fastest instant can beat the average." },
+  { id: "spv11", t: "spv", type: "num", q: "Lab Part A: a dribbled ball covers the 25 m course in 10.0 s. What is its overall average speed?",
+    a: 2.5, tol: 0.05, unit: "m/s", ex: "Overall average speed = 25 m ÷ 10.0 s = 2.5 m/s." },
+
+  // Graphs
+  { id: "gr1", t: "gr", q: "On a position-time graph, what does the slope of the line tell you?",
+    opts: ["The velocity", "The distance", "The acceleration", "The time"],
+    ex: "Slope = Δposition ÷ Δtime, which is velocity." },
+  { id: "gr2", t: "gr", graph: "movingMan", q: "The Moving Man trial made this graph. What does a straight, rising line mean?",
+    opts: ["Constant velocity", "Speeding up", "Slowing down", "At rest"],
+    ex: "A straight line has one steady slope, so the velocity doesn't change." },
+  { id: "gr3", t: "gr", graph: "movingMan", type: "num", q: "The data points are (0 s, 0 m), (2 s, 10 m), (4 s, 20 m), (6 s, 30 m), (8 s, 40 m). What is the velocity?",
+    a: 5, tol: 0.05, unit: "m/s", hint: "Slope = rise ÷ run = Δposition ÷ Δtime.",
+    ex: "10 m every 2 s gives a slope of 10 ÷ 2 = 5 m/s." },
+  { id: "gr4", t: "gr", graph: "ab", q: "Which player is moving faster, and how can you tell without calculating?",
+    opts: ["Player A, because its line is steeper", "Player B, because its line is lower", "Player A, because its line is longer", "Neither: both lines are straight"],
+    ex: "The steeper the slope, the faster the object is moving." },
+  { id: "gr5", t: "gr", graph: "ab", type: "num", q: "Use the graph. What is Player A's velocity?",
+    a: 10, tol: 0.05, unit: "m/s", ex: "Player A reaches 60 m at 6 s: 60 ÷ 6 = 10 m/s." },
+  { id: "gr6", t: "gr", graph: "ab", type: "num", q: "Use the graph. What is Player B's velocity?",
+    a: 5, tol: 0.05, unit: "m/s", ex: "Player B reaches 30 m at 6 s: 30 ÷ 6 = 5 m/s." },
+  { id: "gr7", t: "gr", graph: "ab", q: "How do you know from this graph that neither player is speeding up or slowing down?",
+    opts: ["Both lines are straight, so each slope stays constant", "Both lines start at zero", "Both lines go upward", "Player A is above Player B"],
+    ex: "A curve would mean a changing slope (changing velocity). Straight lines mean constant velocity." },
+  { id: "gr8", t: "gr", graph: "flatten", q: "A kicked ball rolls freely down the course and makes this position-time graph. What is the ball doing?",
+    opts: ["Slowing down", "Speeding up", "Moving at constant speed", "At rest"],
+    ex: "The curve flattens, so the slope (velocity) gets smaller. This is Graph B from the lab." },
+  { id: "gr9", t: "gr", graph: "steepen", q: "What motion does this position-time graph show?",
+    opts: ["Speeding up", "Slowing down", "Constant velocity", "At rest"],
+    ex: "The curve gets steeper, so the velocity is increasing." },
+  { id: "gr10", t: "gr", graph: "flat", q: "What motion does this position-time graph show?",
+    opts: ["At rest", "Constant velocity", "Speeding up", "Slowing down"],
+    ex: "The position never changes, so the slope is zero: the object is at rest." },
+  { id: "gr11", t: "gr", q: "Slope = rise ÷ run. On a position-time graph, the rise and the run are…",
+    opts: ["Δposition and Δtime", "Δtime and Δposition", "Distance and speed", "Speed and time"],
+    ex: "Position is on the y-axis (rise) and time is on the x-axis (run)." },
+  { id: "gr12", t: "gr", q: "In a data table, position goes up by +10 m every 2 s. What kind of motion is that?",
+    opts: ["Constant velocity: equal changes over equal time intervals", "Speeding up", "Slowing down", "At rest"],
+    ex: "Equal position changes over equal time intervals are the signature of constant velocity." },
+
+  // Units
+  { id: "un1", t: "un", q: "1 m/s is about…",
+    opts: ["3.6 km/h and 2.24 mph", "2.24 km/h and 3.6 mph", "36 km/h and 22 mph", "1 km/h and 1 mph"],
+    ex: "1 m/s ≈ 3.6 km/h ≈ 2.24 mph." },
+  { id: "un2", t: "un", type: "num", q: "A winger's velocity is 8.5 m/s toward the corner flag. Convert the number to km/h.",
+    a: 30.6, tol: 0.1, unit: "km/h", hint: "Multiply m/s by 3.6.", ex: "8.5 × 3.6 = 30.6 km/h." },
+  { id: "un3", t: "un", type: "num", q: "Convert 8.5 m/s to mph, rounded to the nearest whole number.",
+    a: 19, tol: 0, unit: "mph", hint: "Multiply m/s by 2.24.", ex: "8.5 × 2.24 = 19.04, so about 19 mph." },
+  { id: "un4", t: "un", q: "An elite sprinter's top speed of about 10 m/s is roughly…",
+    opts: ["36 km/h (22 mph)", "3.6 km/h (2.2 mph)", "100 km/h (62 mph)", "22 km/h (36 mph)"],
+    ex: "10 × 3.6 = 36 km/h and 10 × 2.24 ≈ 22 mph." },
+  { id: "un5", t: "un", type: "num", q: "The worked example's answer was 7.5 m/s. About how many km/h is that?",
+    a: 27, tol: 0.1, unit: "km/h", ex: "7.5 × 3.6 = 27 km/h." },
+  { id: "un6", t: "un", q: "You convert “8.5 m/s toward the corner flag” into km/h. What happens to the direction?",
+    opts: ["It stays: 30.6 km/h toward the corner flag", "It's dropped, because km/h is a scalar unit", "It reverses", "It becomes northeast"],
+    ex: "Converting units changes the number in front, never the motion itself or its direction." },
+  { id: "un7", t: "un", q: "What is the SI unit for velocity?",
+    opts: ["m/s, plus a direction", "km/h", "mph", "m"],
+    ex: "SI units are meters and seconds, so velocity is m/s with a direction." },
+  { id: "un8", t: "un", q: "What is the SI unit for time?",
+    opts: ["second (s)", "minute (min)", "hour (h)", "meter per second (m/s)"],
+    ex: "The SI unit of time is the second." },
+  { id: "un9", t: "un", q: "What is the SI unit for displacement?",
+    opts: ["meter (m), plus a direction", "meter (m), no direction", "yard (yd)", "kilometer per hour (km/h)"],
+    ex: "Displacement uses meters, and as a vector it also needs a direction." },
+
+  // Lab & vectors
+  { id: "lab1", t: "lab", q: "Soccer Motion Lab: what is the independent variable (what you change)?",
+    opts: ["How the ball is set in motion: steady dribble vs. one free-rolling kick", "The ball's speed in each 5 m interval", "The length of the course", "The camera position"],
+    ex: "You change how the ball starts moving. Everything else is measured or kept the same." },
+  { id: "lab2", t: "lab", q: "What is the dependent variable (what you measure)?",
+    opts: ["The ball's speed in each 5 m interval", "How the ball is set in motion", "The type of ball", "The field surface"],
+    ex: "You measure interval speed (m/s) from the video." },
+  { id: "lab3", t: "lab", q: "Which of these is a controlled variable in the lab?",
+    opts: ["The same 25 m course with 5 m marker spacing", "Dribble vs. kick", "The interval speed", "The time the ball crosses each marker"],
+    ex: "Controlled variables stay the same: course, ball, field, camera position and the partner moving the ball." },
+  { id: "lab4", t: "lab", type: "num", q: "Your phone records at 30 frames per second. The ball crosses a marker at frame 150. What time is that?",
+    a: 5, tol: 0.01, unit: "s", hint: "time = frame number ÷ frames per second.", ex: "150 ÷ 30 = 5.0 s." },
+  { id: "lab5", t: "lab", q: "At 30 frames per second, about how much time passes between frames?",
+    opts: ["0.033 s", "0.3 s", "3.0 s", "0.0033 s"],
+    ex: "1 ÷ 30 ≈ 0.033 s per frame." },
+  { id: "lab6", t: "lab", q: "In Part B, the kicked ball slows down with nobody touching it. What force causes that, and which way does it point?",
+    opts: ["Friction from the ground, pointing opposite the ball's motion", "Gravity, pointing forward", "The kick, pointing forward", "The air, pointing up"],
+    ex: "Friction between the ball and the grass pushes against the motion, so the ball slows (accelerates)." },
+  { id: "lab7", t: "lab", q: "Acceleration is…",
+    opts: ["Any change in velocity: speed, direction, or both", "Only speeding up", "Only a change in direction", "Another word for speed"],
+    ex: "Slowing down and turning both count as acceleration." },
+  { id: "lab8", t: "lab", q: "Where in the lab did velocity change because of direction only?",
+    opts: ["Part C, turning the corners of the three-leg path", "Part B, the ball rolling to a stop", "Part A, the steady dribble", "Measuring A→D with the tape"],
+    ex: "Turning from East to North to West changes direction, so velocity changes." },
+  { id: "lab9", t: "lab", q: "Where did velocity change because of speed only?",
+    opts: ["Part B, the free-rolling kick slowing down", "Part C, turning the corners", "Part A, the steady dribble", "Setting out the cones"],
+    ex: "The rolling ball kept its direction but lost speed." },
+  { id: "lab10", t: "lab", q: "Your partner jogs alongside the dribbled ball at exactly the ball's speed while filming. How does the ball look in that video?",
+    opts: ["At rest, because the camera's frame of reference moves with the ball", "Twice as fast", "Moving backward at the same speed", "Speeding up"],
+    ex: "Motion depends on the frame of reference. Moving with the ball, it appears still." },
+  { id: "lab11", t: "lab", q: "Adding vectors tip to tail: where does the resultant arrow go?",
+    opts: ["From the tail of the first arrow to the tip of the last arrow", "From the tip of the first arrow to the tail of the last", "Along the longest arrow", "From the last arrow back to the first"],
+    ex: "The resultant runs from the first tail to the last tip. It's the overall displacement." },
+  { id: "lab12", t: "lab", type: "num", q: "Walk 4 m East, then 3 m North. How long is the resultant displacement?",
+    a: 5, tol: 0.05, unit: "m", hint: "√(4² + 3²)", ex: "√(4² + 3²) = √25 = 5 m, pointing up and to the right (north of east)." },
+  { id: "lab13", t: "lab", type: "num", q: "Grid C's scale is 1 square = 2 m. How many squares long is the 15 m East leg?",
+    a: 7.5, tol: 0.01, unit: "squares", ex: "15 ÷ 2 = 7½ squares." },
+  { id: "lab14", t: "lab", q: "Why can't you just add 15 + 20 + 10 to get the Part C displacement?",
+    opts: ["The legs point in different directions, so the arrows must be added tip to tail", "You forgot to divide by the time", "Displacement only counts the longest leg", "You can: the displacement is 45 m"],
+    ex: "Adding 15 + 20 + 10 gives distance (45 m). Directions matter for displacement (about 21 m)." },
+  { id: "lab15", t: "lab", q: "If you plotted the Part B ball's speed vs. time, what would the slope tell you, and what sign would it have?",
+    opts: ["Acceleration; negative, because the ball slows down", "Velocity; positive", "Distance; positive", "Acceleration; positive, because the ball is moving"],
+    ex: "The slope of speed vs. time is acceleration. Slowing down gives a negative slope." },
+  { id: "lab16", t: "lab", q: "A pro player's GPS vest records their position how often?",
+    opts: ["10–20 times every second", "Once a minute", "Only at six cones", "30 times every minute"],
+    ex: "It's the same idea as your video: position sampled over time, just much more often." },
+  { id: "lab17", t: "lab", q: "Which change would reduce timing error in your video analysis?",
+    opts: ["Keep the camera still and average two trials", "Walk alongside the ball while filming", "Film in portrait so the ball looks bigger", "Start recording after the ball starts moving"],
+    ex: "A still camera and averaged trials both make your times more reliable." }
+];
+
+const SV_ITEMS = [
+  ["24 m toward the near post", "V", "It has a direction."],
+  ["The match lasted 94 minutes", "S", "Time has no direction."],
+  ["36 km/h", "S", "A speed with no direction."],
+  ["7.5 m/s toward goal", "V", "A velocity: speed plus direction."],
+  ["65 m of ground covered", "S", "That's distance."],
+  ["40 m, angled toward goal", "V", "That's displacement."],
+  ["Top speed: 8.4 m/s", "S", "No direction given."],
+  ["45 m NE toward the net", "V", "Displacement with a direction."],
+  ["21 m toward the northeast", "V", "Size plus direction."],
+  ["45 m of walking", "S", "Plain distance."],
+  ["12 s", "S", "Time is a scalar."],
+  ["15 m East", "V", "A leg with a direction."],
+  ["22 mph", "S", "A speed with no direction."],
+  ["20 m North", "V", "Size plus direction."],
+  ["62 m run on the counterattack", "S", "Distance run."],
+  ["1.5 m/s toward the sideline", "V", "Velocity with a direction."],
+  ["8.2 s on the ball", "S", "Time has no direction."],
+  ["9.4 km covered in the match", "S", "Total distance."],
+  ["8.5 m/s toward the corner flag", "V", "Velocity with a direction."],
+  ["30.6 km/h", "S", "No direction given."],
+  ["5 m north of east", "V", "Size plus direction."],
+  ["The squad covered 108 km", "S", "Total distance."],
+  ["10 m back toward midfield", "V", "Size plus direction."],
+  ["25 m course length", "S", "A length with no direction."]
+];
+
+const LS_MISSED = "dm-review-missed", LS_BEST = "dm-review-best";
+function load(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+const app = document.getElementById("app");
+const statsEl = document.getElementById("stats");
+let S = null;       // current session state
+let timerId = null;
+
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function byId(id) { return Q.find(q => q.id === id); }
+function fmt(n) { return Number.isInteger(n) ? String(n) : String(n); }
+
+function buildExam() {
+  const pools = Object.keys(TOPICS).map(t => shuffle(Q.filter(q => q.t === t)));
+  const out = [];
+  while (out.length < 20) { for (const p of pools) if (p.length && out.length < 20) out.push(p.shift()); }
+  return shuffle(out).map(q => q.id);
+}
+
+function startQuiz(mode, ids, label) {
+  S = { screen: "quiz", mode, label, ids, idx: 0, score: 0, streak: 0, best: 0, results: [], answered: null, hinted: false,
+        order: {} };
+  ids.forEach(id => { const q = byId(id); if (q.opts) S.order[id] = shuffle(q.opts.map((_, i) => i)); });
+  render();
+}
+
+function startLightning() {
+  S = { screen: "lightning", items: shuffle(SV_ITEMS.map((_, i) => i)), pos: 0, score: 0, wrong: [], timeLeft: 60, flash: null };
+  render();
+  runTimer();
+}
+function runTimer() {
+  clearInterval(timerId);
+  timerId = setInterval(() => {
+    if (!S || S.screen !== "lightning") { clearInterval(timerId); return; }
+    S.timeLeft--;
+    if (S.timeLeft <= 0) { clearInterval(timerId); finishLightning(); return; }
+    const t = document.getElementById("timer");
+    if (t) { t.textContent = "0:" + String(S.timeLeft).padStart(2, "0"); t.classList.toggle("low", S.timeLeft <= 10); }
+  }, 1000);
+}
+
+function setStats(parts) {
+  statsEl.innerHTML = parts.map(([k, v]) => `<span>${k}<b>${v}</b></span>`).join("");
+}
+
+function render() {
+  window.scrollTo({ top: 0 });
+  if (!S || S.screen === "home") return renderHome();
+  if (S.screen === "quiz") return renderQuestion();
+  if (S.screen === "results") return renderResults();
+  if (S.screen === "lightning") return renderLightning();
+  if (S.screen === "lresults") return renderLightningResults();
+}
+
+function renderHome() {
+  S = { screen: "home" };
+  const missed = load(LS_MISSED, []).filter(byId);
+  const best = load(LS_BEST, {});
+  setStats([["Questions", Q.length], ["Missed", missed.length]]);
+  const topicRows = Object.entries(TOPICS).map(([k, t]) => {
+    const n = Q.filter(q => q.t === k).length;
+    const b = best["topic-" + k];
+    return `<button class="topic" data-topic="${k}">
+      <h3>${t.name}</h3>
+      <span class="meta"><b>${n} Qs</b>${b != null ? "best " + b + "%" : "not played"}</span>
+      <span class="src">${t.src}</span>
+    </button>`;
+  }).join("");
+  app.innerHTML = `
+    <section class="hero">
+      <span class="eyebrow">Hybrid Physics · Unit 1 exam review</span>
+      <h1>Describing Motion</h1>
+      <p>Quiz yourself on scalars and vectors, distance and displacement, speed and velocity, position-time graphs, units, and the Soccer Motion Lab. Every answer comes with an explanation, and your missed questions are saved so you can come back to them.</p>
+    </section>
+    <div class="modes">
+      <button class="mode primary" id="m-exam">
+        <span class="eyebrow">20 questions · all topics</span>
+        <h2>Exam Warm-Up</h2>
+        <span class="muted">A mixed set like the real test.${best.exam != null ? " Best: " + best.exam + "%." : ""}</span>
+      </button>
+      <button class="mode" id="m-light">
+        <span class="eyebrow">60 seconds</span>
+        <h2>Scalar or Vector?</h2>
+        <span class="muted">Sort as many quantities as you can.${best.lightning != null ? " Best: " + best.lightning + "." : ""}</span>
+      </button>
+      <button class="mode" id="m-missed" ${missed.length ? "" : "disabled"}>
+        <span class="eyebrow">${missed.length} saved</span>
+        <h2>Fix My Misses</h2>
+        <span class="muted">${missed.length ? "Replay the questions you got wrong." : "Questions you miss will show up here."}</span>
+      </button>
+    </div>
+    <div class="section-title">
+      <h2>Drill one topic</h2>
+      <span class="muted">Every question in the topic, in random order</span>
+    </div>
+    <div class="topics">${topicRows}</div>
+  `;
+  document.getElementById("m-exam").onclick = () => startQuiz("exam", buildExam(), "Exam Warm-Up");
+  document.getElementById("m-light").onclick = startLightning;
+  document.getElementById("m-missed").onclick = () => startQuiz("missed", shuffle(missed), "Fix My Misses");
+  app.querySelectorAll("[data-topic]").forEach(b => b.onclick = () => {
+    const k = b.dataset.topic;
+    startQuiz("topic-" + k, shuffle(Q.filter(q => q.t === k).map(q => q.id)), TOPICS[k].name);
+  });
+}
+
+function courseHTML(done, total) {
+  const pct = total ? done / total * 100 : 0;
+  let cones = "";
+  for (let m = 0; m <= 25; m += 5) cones += `<span class="cone" style="left:${m * 4}%"></span><span class="cone-label" style="left:${m * 4}%">${m} m</span>`;
+  return `<div class="course" aria-hidden="true"><div class="tape"></div><div class="done" style="width:${pct}%"></div>${cones}<span class="ball" style="left:${pct}%"></span></div>`;
+}
+
+function graphSVG(key) {
+  const g = G[key], W = 460, H = 270, L = 52, R = 76, T = 16, B = 44;
+  const x = t => L + t / g.xmax * (W - L - R), y = p => H - B - p / g.ymax * (H - T - B);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Position-time graph" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">`;
+  for (let p = 0; p <= g.ymax; p += g.ystep) {
+    s += `<line x1="${L}" x2="${W - R}" y1="${y(p)}" y2="${y(p)}" stroke="#C9C6B6" stroke-width="1"/>`;
+    s += `<text x="${L - 8}" y="${y(p) + 4}" text-anchor="end" fill="#2B3A2E">${p}</text>`;
+  }
+  for (let t = 0; t <= g.xmax; t += g.xstep) s += `<text x="${x(t)}" y="${H - B + 18}" text-anchor="middle" fill="#2B3A2E">${t}</text>`;
+  s += `<line x1="${L}" x2="${L}" y1="${T}" y2="${H - B}" stroke="#2B3A2E" stroke-width="2"/>`;
+  s += `<line x1="${L}" x2="${W - R + 8}" y1="${H - B}" y2="${H - B}" stroke="#2B3A2E" stroke-width="2"/>`;
+  s += `<text x="${(L + W - R) / 2}" y="${H - 6}" text-anchor="middle" fill="#2B3A2E">time (s)</text>`;
+  s += `<text transform="translate(14 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle" fill="#2B3A2E">position (m)</text>`;
+  g.series.forEach(se => {
+    s += `<polyline fill="none" stroke="${se.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${se.pts.map(([a, b]) => x(a) + "," + y(b)).join(" ")}"/>`;
+    (se.dots || []).forEach(([a, b]) => s += `<circle cx="${x(a)}" cy="${y(b)}" r="4" fill="${se.color}"/>`);
+    if (se.label) { const [a, b] = se.pts[se.pts.length - 1]; s += `<text x="${x(a) + 8}" y="${y(b) + 4}" fill="${se.color}" font-weight="600">${se.label}</text>`; }
+  });
+  return s + "</svg>";
+}
+
+function renderQuestion() {
+  const id = S.ids[S.idx], q = byId(id), total = S.ids.length;
+  setStats([["Score", S.score], ["Streak", S.streak], ["Q", `${S.idx + 1}/${total}`]]);
+  const letters = "ABCD";
+  let body = "";
+  if (q.type === "num") {
+    const done = S.answered;
+    body = `<form class="numrow" id="numform" autocomplete="off">
+      <label class="sr" for="numin" hidden>Your answer</label>
+      <input id="numin" inputmode="decimal" placeholder="Your answer" ${done ? "disabled" : ""} value="${done ? esc(done.given) : ""}">
+      <span class="unit">${esc(q.unit)}</span>
+      ${done ? "" : `<button class="btn" type="submit">Check</button>`}
+    </form>`;
+  } else {
+    body = `<div class="opts">` + S.order[id].map((oi, k) => {
+      let cls = "opt";
+      if (S.answered) {
+        if (oi === 0) cls += " right";
+        else if (oi === S.answered.pick) cls += " wrong";
+        else cls += " dim";
+      }
+      return `<button class="${cls}" data-oi="${oi}" ${S.answered ? "disabled" : ""}><span class="key">${letters[k]}</span><span>${esc(q.opts[oi])}</span></button>`;
+    }).join("") + `</div>`;
+  }
+  let fb = "";
+  if (S.answered) {
+    const ok = S.answered.ok;
+    const ans = q.type === "num" ? `${fmt(q.a)} ${q.unit}` : q.opts[0];
+    fb = `<div class="feedback ${ok ? "good" : "bad"}" role="status">
+      <span class="verdict">${ok ? "Correct" + (S.answered.pts ? " · +" + S.answered.pts : "") : "Not quite"}</span>
+      ${ok ? "" : `<p><strong>Answer:</strong> ${esc(ans)}</p>`}
+      <p>${esc(q.ex)}</p>
+      <span class="src">Review: ${TOPICS[q.t].src}</span>
+    </div>`;
+  }
+  const canHint = q.hint && !S.answered && !S.hinted;
+  app.innerHTML = `
+    <div class="qcount"><span>${esc(S.label)}</span><span>${S.idx + 1} of ${total}</span></div>
+    ${courseHTML(S.idx + (S.answered ? 1 : 0), total)}
+    <article class="card">
+      <span class="eyebrow">${TOPICS[q.t].name}</span>
+      <p class="qtext">${esc(q.q)}</p>
+      ${q.graph ? `<div class="graph">${graphSVG(q.graph)}</div>` : ""}
+      ${S.hinted ? `<p class="hint">${esc(q.hint)}</p>` : ""}
+      ${body}
+      ${fb}
+      <div class="actions">
+        <span>${canHint ? `<button class="btn ghost" id="hintbtn">Show a hint (half points)</button>` : ""}</span>
+        <span style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn ghost" id="quit">Quit</button>
+          ${S.answered ? `<button class="btn" id="next">${S.idx + 1 < total ? "Next question" : "See results"}</button>` : ""}
+        </span>
+      </div>
+    </article>
+    <p class="muted" style="margin-top:12px;font-size:13px">Keyboard: A–D or 1–4 to answer, Enter for the next question.</p>
+  `;
+  app.querySelectorAll("[data-oi]").forEach(b => b.onclick = () => answer(+b.dataset.oi));
+  const f = document.getElementById("numform");
+  if (f) f.onsubmit = e => { e.preventDefault(); if (!S.answered) answer(document.getElementById("numin").value); };
+  const inp = document.getElementById("numin");
+  if (inp && !S.answered) inp.focus();
+  const hb = document.getElementById("hintbtn");
+  if (hb) hb.onclick = () => { S.hinted = true; renderQuestion(); };
+  document.getElementById("quit").onclick = () => { S = null; render(); };
+  const nx = document.getElementById("next");
+  if (nx) { nx.onclick = nextQuestion; nx.focus(); }
+}
+
+function answer(v) {
+  const id = S.ids[S.idx], q = byId(id);
+  let ok, given = v, pick = null;
+  if (q.type === "num") {
+    const n = parseFloat(String(v).replace(/,/g, "").replace(/[^\d.\-]/g, ""));
+    if (isNaN(n)) { const i = document.getElementById("numin"); i.value = ""; i.placeholder = "Enter a number"; i.focus(); return; }
+    ok = Math.abs(n - q.a) <= q.tol + 1e-9;
+    given = String(v).trim();
+  } else { pick = v; ok = v === 0; given = q.opts[v]; }
+  let pts = 0;
+  if (ok) { S.streak++; S.best = Math.max(S.best, S.streak); pts = (S.hinted ? 50 : 100) + Math.min(S.streak - 1, 5) * 10; S.score += pts; }
+  else S.streak = 0;
+  S.answered = { ok, given, pick, pts };
+  S.results.push({ id, ok, given });
+  const missed = new Set(load(LS_MISSED, []));
+  ok ? missed.delete(id) : missed.add(id);
+  save(LS_MISSED, [...missed]);
+  renderQuestion();
+}
+
+function nextQuestion() {
+  if (S.idx + 1 < S.ids.length) { S.idx++; S.answered = null; S.hinted = false; render(); }
+  else { S.screen = "results"; render(); }
+}
+
+function renderResults() {
+  const n = S.results.length, right = S.results.filter(r => r.ok).length, pct = n ? Math.round(right / n * 100) : 0;
+  const best = load(LS_BEST, {});
+  const isBest = best[S.mode] == null || pct > best[S.mode];
+  if (isBest && !S.saved) { best[S.mode] = pct; save(LS_BEST, best); }
+  S.saved = true;
+  setStats([["Score", S.score], ["Correct", `${right}/${n}`]]);
+  const by = {};
+  S.results.forEach(r => { const t = byId(r.id).t; by[t] = by[t] || { n: 0, ok: 0 }; by[t].n++; if (r.ok) by[t].ok++; });
+  const bars = Object.entries(by).map(([t, v]) => {
+    const p = Math.round(v.ok / v.n * 100), col = p >= 80 ? "var(--good)" : p >= 50 ? "var(--gold)" : "var(--bad)";
+    return `<div class="bar"><span>${TOPICS[t].name}</span><div class="track"><div class="fill" style="width:${p}%;background:${col}"></div></div><span class="pct">${v.ok}/${v.n}</span></div>`;
+  }).join("");
+  const weak = Object.entries(by).filter(([, v]) => v.ok / v.n < 0.8);
+  const miss = S.results.filter(r => !r.ok);
+  const verdict = pct >= 90 ? "Match ready." : pct >= 75 ? "Solid. Clean up the misses below." : pct >= 50 ? "Getting there. Drill your weakest topic next." : "Go back to the notes, then try again.";
+  app.innerHTML = `
+    <section class="hero">
+      <span class="eyebrow">${esc(S.label)} · full time</span>
+      <h1>${verdict}</h1>
+    </section>
+    <div class="scoreline">
+      <div><b>${pct}%</b><span>accuracy${isBest && n ? " · personal best" : ""}</span></div>
+      <div><b>${S.score}</b><span>points</span></div>
+      <div><b>${S.best}</b><span>best streak</span></div>
+    </div>
+    <div class="section-title"><h2>By topic</h2></div>
+    <div class="bars">${bars}</div>
+    ${weak.length ? `<div class="section-title"><h2>Study before the exam</h2></div>
+      <div class="missed">${weak.map(([t]) => `<div class="study"><strong>${TOPICS[t].name}</strong><span class="muted">${TOPICS[t].src}</span></div>`).join("")}</div>` : ""}
+    ${miss.length ? `<div class="section-title"><h2>Questions you missed</h2><span class="muted">Saved to Fix My Misses</span></div>
+      <div class="missed">${miss.map(r => { const q = byId(r.id); const ans = q.type === "num" ? `${fmt(q.a)} ${q.unit}` : q.opts[0];
+        return `<div class="miss"><span>${esc(q.q)}</span><span class="yours">You said: ${esc(r.given || "(blank)")}</span><span class="ans">${esc(ans)}</span><span class="muted">${esc(q.ex)}</span></div>`; }).join("")}</div>` : ""}
+    <div class="actions" style="margin-top:28px;justify-content:flex-start">
+      ${miss.length ? `<button class="btn" id="retry">Retry the ${miss.length} I missed</button>` : ""}
+      <button class="btn ${miss.length ? "ghost" : ""}" id="again">Play again</button>
+      <button class="btn ghost" id="home">Back to menu</button>
+    </div>
+  `;
+  const rt = document.getElementById("retry");
+  if (rt) rt.onclick = () => startQuiz("missed", shuffle(miss.map(r => r.id)), "Fix My Misses");
+  const mode = S.mode, label = S.label;
+  document.getElementById("again").onclick = () => {
+    if (mode === "exam") startQuiz("exam", buildExam(), label);
+    else if (mode.startsWith("topic-")) { const k = mode.slice(6); startQuiz(mode, shuffle(Q.filter(q => q.t === k).map(q => q.id)), label); }
+    else { S = null; render(); }
+  };
+  document.getElementById("home").onclick = () => { S = null; render(); };
+}
+
+function renderLightning() {
+  setStats([["Sorted", S.score], ["Misses", S.wrong.length]]);
+  const item = SV_ITEMS[S.items[S.pos % S.items.length]];
+  app.innerHTML = `
+    <section class="card lightning" style="margin-top:28px">
+      <span class="eyebrow">Scalar or Vector?</span>
+      <div class="timer ${S.timeLeft <= 10 ? "low" : ""}" id="timer">0:${String(S.timeLeft).padStart(2, "0")}</div>
+      <p class="item">${esc(item[0])}</p>
+      <div class="sv">
+        <button id="bs"><b>SCALAR</b><small>size only · press S</small></button>
+        <button id="bv"><b>VECTOR</b><small>size + direction · press V</small></button>
+      </div>
+      <p class="flash ${S.flash ? S.flash.cls : ""}" role="status">${S.flash ? esc(S.flash.text) : "Does it have a direction?"}</p>
+      <button class="btn ghost" id="quit">Quit</button>
+    </section>`;
+  document.getElementById("bs").onclick = () => sortItem("S");
+  document.getElementById("bv").onclick = () => sortItem("V");
+  document.getElementById("quit").onclick = () => { clearInterval(timerId); S = null; render(); };
+}
+
+function sortItem(choice) {
+  const item = SV_ITEMS[S.items[S.pos % S.items.length]];
+  if (choice === item[1]) { S.score++; S.flash = { cls: "good", text: "Yes. " + item[2] }; }
+  else { S.wrong.push(S.items[S.pos % S.items.length]); S.flash = { cls: "bad", text: `No: ${item[1] === "V" ? "vector" : "scalar"}. ${item[2]}` }; }
+  S.pos++;
+  if (S.pos % S.items.length === 0) S.items = shuffle(S.items);
+  renderLightning();
+}
+
+function finishLightning() {
+  const best = load(LS_BEST, {});
+  S.isBest = best.lightning == null || S.score > best.lightning;
+  if (S.isBest) { best.lightning = S.score; save(LS_BEST, best); }
+  S.screen = "lresults";
+  render();
+}
+
+function renderLightningResults() {
+  setStats([["Sorted", S.score], ["Misses", S.wrong.length]]);
+  const uniq = [...new Set(S.wrong)];
+  app.innerHTML = `
+    <section class="hero">
+      <span class="eyebrow">Scalar or Vector? · time</span>
+      <h1>${S.score} sorted correctly</h1>
+      <p>${S.isBest ? "That's your best so far." : "Try to beat your best of " + load(LS_BEST, {}).lightning + "."} Remember: if it has a direction, it's a vector.</p>
+    </section>
+    ${uniq.length ? `<div class="section-title"><h2>Ones you missed</h2></div>
+      <div class="missed">${uniq.map(i => { const it = SV_ITEMS[i]; return `<div class="miss"><span>${esc(it[0])}</span><span class="ans">${it[1] === "V" ? "Vector" : "Scalar"}</span><span class="muted">${esc(it[2])}</span></div>`; }).join("")}</div>` : ""}
+    <div class="actions" style="margin-top:28px;justify-content:flex-start">
+      <button class="btn" id="again">Play again</button>
+      <button class="btn ghost" id="home">Back to menu</button>
+    </div>`;
+  document.getElementById("again").onclick = startLightning;
+  document.getElementById("home").onclick = () => { S = null; render(); };
+}
+
+document.addEventListener("keydown", e => {
+  if (!S || e.metaKey || e.ctrlKey || e.altKey) return;
+  const inInput = e.target && e.target.tagName === "INPUT";
+  if (S.screen === "lightning" && !inInput) {
+    if (e.key === "s" || e.key === "S" || e.key === "ArrowLeft") { e.preventDefault(); sortItem("S"); }
+    if (e.key === "v" || e.key === "V" || e.key === "ArrowRight") { e.preventDefault(); sortItem("V"); }
+    return;
+  }
+  if (S.screen !== "quiz" || inInput) return;
+  const q = byId(S.ids[S.idx]);
+  if (!S.answered && q.opts) {
+    const k = "abcd".indexOf(e.key.toLowerCase()), d = "1234".indexOf(e.key), i = k >= 0 ? k : d;
+    if (i >= 0 && i < q.opts.length) { e.preventDefault(); answer(S.order[q.id][i]); }
+  }
+});
+
+function start(data) {
+  if (data && data.S) {
+    S = data.S;
+    render();
+    if (S.screen === "lightning") runTimer();
+  } else render();
+}
+try { window.claude?.hot?.snapshot?.(() => ({ S })); } catch (e) {}
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+</script>
