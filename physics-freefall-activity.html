@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Feather & the Bowling Ball — Physics Activity</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pitch:#0D1F0F; --lime:#7ED348; --white:#F2F7F2; --fog:#C8DCC9;
+  --red:#D64045; --gold:#E8B84B; --navy:#071018;
+  --line:rgba(126,211,72,0.18); --cb:rgba(126,211,72,0.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--pitch);color:var(--white);font-family:'DM Sans',sans-serif;line-height:1.65;}
+
+/* ── HERO ─────────────────────────────────────── */
+.hero{
+  min-height:88vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:56px 28px 48px;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% 110%,rgba(26,107,42,.65) 0%,transparent 62%),
+    var(--pitch);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 54px,rgba(126,211,72,.035) 54px,rgba(126,211,72,.035) 55px),
+    repeating-linear-gradient(90deg,transparent,transparent 54px,rgba(126,211,72,.035) 54px,rgba(126,211,72,.035) 55px);
+}
+.hero-tag{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--lime);letter-spacing:.1em;margin-bottom:20px;display:block;position:relative;z-index:1;}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(36px,7vw,70px);line-height:1.06;margin-bottom:14px;max-width:16ch;position:relative;z-index:1;}
+.hero-lede{font-size:17px;color:var(--fog);max-width:46ch;margin:0 auto 36px;position:relative;z-index:1;}
+
+/* video link card */
+.video-link{text-decoration:none;display:block;width:100%;max-width:520px;margin:0 auto 32px;}
+.video-thumb-card{
+  display:flex;align-items:center;gap:20px;
+  background:rgba(0,0,0,.45);border:1px solid var(--cb);
+  padding:22px 24px;
+  transition:border-color .15s,background .15s;
+}
+.video-link:hover .video-thumb-card{border-color:var(--lime);background:rgba(126,211,72,.07);}
+.vid-play-btn{
+  width:54px;height:54px;border-radius:50%;
+  background:var(--lime);color:var(--pitch);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;padding-left:4px;
+}
+.vid-title{font-family:'DM Serif Display',serif;font-size:17px;color:var(--white);margin-bottom:6px;line-height:1.3;}
+.vid-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:.04em;}
+
+.time-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  border:1px solid rgba(126,211,72,.3);color:var(--lime);
+  padding:8px 18px;margin-bottom:28px;position:relative;z-index:1;
+}
+.scroll-cue{
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(126,211,72,.5);
+  position:relative;z-index:1;animation:bobble 2s ease-in-out infinite;
+}
+@keyframes bobble{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+/* ── WRAP ──────────────────────────────────────── */
+.wrap{max-width:860px;margin:0 auto;padding:0 28px 80px;}
+
+/* ── SECTION DIVIDER ───────────────────────────── */
+.sec-divider{
+  display:flex;align-items:center;gap:16px;
+  padding:56px 0 36px;
+}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--lime),rgba(126,211,72,.08));}
+.sec-line.r{background:linear-gradient(90deg,rgba(126,211,72,.08),transparent);}
+.sec-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:.1em;white-space:nowrap;}
+
+h2{font-family:'DM Serif Display',serif;font-size:clamp(24px,4vw,36px);margin-bottom:14px;line-height:1.12;}
+h3{font-family:'DM Serif Display',serif;font-size:21px;margin:36px 0 10px;}
+p{font-size:16px;color:var(--fog);max-width:66ch;margin-bottom:14px;}
+p strong{color:var(--white);}
+ul{padding-left:20px;margin-bottom:14px;}
+li{font-size:16px;color:var(--fog);margin-bottom:8px;max-width:62ch;}
+li strong{color:var(--white);}
+
+.callout{background:rgba(126,211,72,.06);border-left:3px solid var(--lime);padding:16px 20px;margin:20px 0;border-radius:0 4px 4px 0;}
+.callout p{margin:0;color:var(--white);}
+.callout .k{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);margin-bottom:6px;display:block;}
+.callout-gold{border-left-color:var(--gold);background:rgba(232,184,75,.07);}
+
+/* ── PREDICTION PANEL ──────────────────────────── */
+.predict-panel{
+  background:rgba(0,0,0,.28);border:1px solid var(--cb);
+  padding:24px 28px;margin:20px 0;
+}
+.predict-panel .pk{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.06em;margin-bottom:12px;display:block;}
+.predict-q{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:18px;}
+.predict-opts{display:flex;flex-direction:column;gap:10px;}
+.popt{
+  background:rgba(255,255,255,.04);border:2px solid rgba(126,211,72,.14);
+  padding:13px 18px;cursor:pointer;font-size:15px;color:var(--white);
+  font-family:'DM Sans',sans-serif;text-align:left;
+  transition:border-color .15s,background .15s;
+}
+.popt:hover:not(.locked){border-color:rgba(126,211,72,.45);background:rgba(126,211,72,.06);}
+.popt.right{border-color:var(--lime)!important;background:rgba(126,211,72,.1)!important;}
+.popt.wrong{border-color:var(--red)!important;background:rgba(214,64,69,.08)!important;}
+.popt.locked{cursor:default;}
+.popt .ol{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--fog);display:block;margin-bottom:3px;}
+.reveal{display:none;margin-top:16px;padding:14px 18px;background:rgba(126,211,72,.06);border-left:3px solid var(--lime);}
+.reveal p{font-size:15px;color:var(--fog);margin:0;}
+.reveal p strong{color:var(--white);}
+.reveal.bad-reveal{border-left-color:var(--gold);}
+
+/* ── VACUUM ANIMATION ───────────────────────────── */
+.anim-wrap{margin:24px 0;}
+.anim-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.anim-btn{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  background:rgba(0,0,0,.35);border:1px solid var(--cb);
+  color:var(--lime);padding:8px 18px;cursor:pointer;transition:background .15s;
+}
+.anim-btn:hover{background:rgba(126,211,72,.08);}
+.anim-btn.on{background:rgba(126,211,72,.14);border-color:var(--lime);}
+canvas#vac{display:block;width:100%;max-width:680px;background:#000;border:1px solid var(--cb);}
+.anim-key{display:flex;gap:18px;margin-top:10px;flex-wrap:wrap;}
+.anim-key-item{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--fog);}
+.akey-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+
+/* ── EXPLAINER CARDS ────────────────────────────── */
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:14px;margin:22px 0;}
+.exp-card{background:rgba(0,0,0,.28);border:1px solid var(--cb);padding:20px;}
+.exp-card .icon{font-size:32px;margin-bottom:10px;display:block;}
+.exp-card h4{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:8px;}
+.exp-card p{font-size:14px;margin:0;max-width:none;}
+
+/* ── CHECK QUESTIONS ───────────────────────────── */
+.check-q{background:rgba(0,0,0,.22);border:1px solid var(--cb);padding:22px 26px;margin:16px 0;}
+.check-tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);margin-bottom:10px;display:block;}
+.check-text{font-family:'DM Serif Display',serif;font-size:19px;margin-bottom:6px;line-height:1.35;}
+.check-sub{font-size:14px;color:var(--fog);margin-bottom:16px;}
+.check-opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.copt{background:rgba(255,255,255,.03);border:2px solid rgba(126,211,72,.13);padding:11px 14px;cursor:pointer;font-size:14px;color:var(--white);font-family:'DM Sans',sans-serif;text-align:left;transition:border-color .15s,background .15s;}
+.copt:hover:not(.locked){border-color:rgba(126,211,72,.4);background:rgba(126,211,72,.05);}
+.copt.right{border-color:var(--lime)!important;background:rgba(126,211,72,.09)!important;}
+.copt.wrong{border-color:var(--red)!important;background:rgba(214,64,69,.07)!important;}
+.copt.locked{cursor:default;}
+.copt .cl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--fog);display:block;margin-bottom:2px;}
+.check-fb{display:none;margin-top:14px;padding:12px 16px;border-left:3px solid var(--lime);background:rgba(126,211,72,.05);font-size:14px;color:var(--fog);}
+.check-fb.bad{border-left-color:var(--red);background:rgba(214,64,69,.05);}
+.check-fb strong{color:var(--white);}
+
+footer{padding:32px 28px 56px;border-top:1px solid var(--line);max-width:860px;margin:0 auto;}
+footer p{color:#3a5c3b;font-size:13px;font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+
+<!-- ════════════ HERO ════════════ -->
+<header class="hero">
+  <span class="hero-tag">Physics · Unit 1 · Introductory Activity</span>
+  <h1>The Feather &amp; the Bowling Ball</h1>
+  <p class="hero-lede">Watch the clip below, make your predictions, explore the animation, and check your understanding — all before the math begins.</p>
+
+  <span class="time-badge">⏱ 10–15 minutes</span>
+
+  <a href="https://www.youtube.com/watch?v=E43-CfukEgs" target="_blank" class="video-link" style="position:relative;z-index:1;">
+    <div class="video-thumb-card">
+      <div class="vid-play-btn">▶</div>
+      <div class="vid-info">
+        <div class="vid-title">Brian Cox — Feather &amp; Bowling Ball in a Vacuum</div>
+        <div class="vid-sub">BBC · World's largest vacuum chamber · NASA · Click to watch on YouTube</div>
+      </div>
+    </div>
+  </a>
+
+  <p class="scroll-cue">↓ scroll to begin</p>
+</header>
+
+<div class="wrap">
+
+<!-- ════════════ PART 1 — PREDICTIONS ════════════ -->
+<div class="sec-divider">
+  <div class="sec-line"></div>
+  <span class="sec-label">PART 1 — YOUR PREDICTIONS</span>
+  <div class="sec-line r"></div>
+</div>
+
+<h2>Before we explain anything — what do you think?</h2>
+<p>In the video, Brian Cox drops a <strong>bowling ball and a feather</strong> at the same time inside NASA's massive vacuum chamber. He does it twice — once with air inside, once with all air pumped out. Make your predictions first, then we'll reveal the answers.</p>
+
+<!-- Prediction 1 -->
+<div class="predict-panel">
+  <span class="pk">🔮 PREDICTION 1 — WITH AIR IN THE CHAMBER</span>
+  <div class="predict-q">Which hits the ground first when the chamber is full of air?</div>
+  <div class="predict-opts" id="p1opts">
+    <button class="popt" onclick="predict('p1',0,0)"><span class="ol">A</span>The bowling ball hits first</button>
+    <button class="popt" onclick="predict('p1',1,0)"><span class="ol">B</span>The feather hits first</button>
+    <button class="popt" onclick="predict('p1',2,0)"><span class="ol">C</span>They hit at exactly the same time</button>
+  </div>
+  <div class="reveal" id="p1reveal">
+    <p><strong>The bowling ball hits first.</strong> With air present, air resistance slows the feather dramatically — its large surface area and tiny mass mean it practically floats down. The bowling ball is so heavy that the same air drag barely matters. This matches everyday experience. ✓</p>
+  </div>
+</div>
+
+<!-- Prediction 2 -->
+<div class="predict-panel" id="p2panel" style="display:none;">
+  <span class="pk">🔮 PREDICTION 2 — WITH ALL AIR PUMPED OUT (VACUUM)</span>
+  <div class="predict-q">Now all air is removed. Which hits first?</div>
+  <div class="predict-opts" id="p2opts">
+    <button class="popt" onclick="predict('p2',0,2)"><span class="ol">A</span>The bowling ball still hits first</button>
+    <button class="popt" onclick="predict('p2',1,2)"><span class="ol">B</span>The feather hits first this time</button>
+    <button class="popt" onclick="predict('p2',2,2)"><span class="ol">C</span>They hit at exactly the same time</button>
+  </div>
+  <div class="reveal" id="p2reveal">
+    <p><strong>They hit at exactly the same time.</strong> Without air resistance, the only force acting is gravity — and gravity pulls all objects toward Earth at the same rate, regardless of mass. The feather and the bowling ball are identical in free fall. <strong>That's the central discovery of this unit.</strong></p>
+  </div>
+</div>
+
+<!-- ════════════ PART 2 — ANIMATION ════════════ -->
+<div class="sec-divider">
+  <div class="sec-line"></div>
+  <span class="sec-label">PART 2 — SEE IT ANIMATED</span>
+  <div class="sec-line r"></div>
+</div>
+
+<h2>With air vs. without air</h2>
+<p>The animation below shows what's happening inside each chamber. Watch how <strong>air particles</strong> collide with the falling objects and slow the feather — then see what happens when every particle is removed.</p>
+
+<div class="anim-wrap">
+  <div class="anim-controls">
+    <button class="anim-btn on" id="btn-both" onclick="setMode('both')">Both Chambers</button>
+    <button class="anim-btn" id="btn-air"  onclick="setMode('air')">With Air Only</button>
+    <button class="anim-btn" id="btn-vac"  onclick="setMode('vacuum')">Vacuum Only</button>
+    <button class="anim-btn" id="btn-reset" onclick="resetAnim()">↺ Restart</button>
+  </div>
+  <canvas id="vac" width="680" height="340"></canvas>
+  <div class="anim-key">
+    <span class="anim-key-item"><span class="akey-dot" style="background:#5AADFF;"></span>Bowling ball</span>
+    <span class="anim-key-item"><span class="akey-dot" style="background:#FFD966;"></span>Feather</span>
+    <span class="anim-key-item"><span class="akey-dot" style="background:rgba(200,220,200,0.4);"></span>Air particles</span>
+  </div>
+</div>
+
+<!-- Explainer cards -->
+<div class="exp-grid">
+  <div class="exp-card">
+    <span class="icon">💨</span>
+    <h4>Air Resistance</h4>
+    <p>Air particles collide with falling objects and push back against their motion. A <strong>feather</strong> has a huge surface area relative to its tiny mass — air resistance dominates. A <strong>bowling ball</strong> is so massive that the same air drag is nearly meaningless.</p>
+  </div>
+  <div class="exp-card">
+    <span class="icon">🌍</span>
+    <h4>Gravity</h4>
+    <p>Gravity pulls every object toward Earth's center at the same rate: <strong>g = 9.8 m/s²</strong>. It doesn't care about mass. The feather and bowling ball feel gravity equally — it's only air resistance that creates the difference we normally see.</p>
+  </div>
+  <div class="exp-card">
+    <span class="icon">🏛️</span>
+    <h4>Galileo's Discovery</h4>
+    <p>Around 1590, Galileo Galilei claimed all objects fall at the same rate regardless of mass. People thought he was wrong — because in real life, heavy things DO fall faster (thanks to air). He had to think beyond what he could see. <strong>He was right.</strong></p>
+  </div>
+  <div class="exp-card">
+    <span class="icon">🚀</span>
+    <h4>Free Fall</h4>
+    <p>"Free fall" means <strong>gravity is the only force acting</strong> — no air, no friction, nothing else. Every object in free fall accelerates at 9.8 m/s² downward. After 1 second: 9.8 m/s fast. After 2 seconds: 19.6 m/s. It keeps growing — that's acceleration.</p>
+  </div>
+</div>
+
+<div class="callout callout-gold">
+  <span class="k">NASA confirmed it on the Moon</span>
+  <p>Apollo 15 astronaut David Scott dropped a hammer and a feather on the airless surface of the Moon in 1971. They hit at exactly the same time — broadcast live on television. Galileo's 400-year-old prediction, confirmed in front of the whole world.</p>
+</div>
+
+<!-- ════════════ PART 3 — CHECK UNDERSTANDING ════════════ -->
+<div class="sec-divider">
+  <div class="sec-line"></div>
+  <span class="sec-label">PART 3 — CHECK YOUR UNDERSTANDING</span>
+  <div class="sec-line r"></div>
+</div>
+
+<h2>Five questions — discuss as a class before clicking</h2>
+<p>Don't rush these. Talk through each one together before selecting an answer. The explanation that appears after each question is part of the activity.</p>
+
+<!-- Q1 -->
+<div class="check-q">
+  <span class="check-tag">QUESTION 1 OF 5</span>
+  <div class="check-text">In the video with air, why does the feather fall so much slower than the bowling ball?</div>
+  <div class="check-sub">Think about what force — other than gravity — is acting on both objects.</div>
+  <div class="check-opts" id="q1opts">
+    <button class="copt" onclick="checkQ('q1',0,1)"><span class="cl">A</span>Gravity pulls heavier things harder</button>
+    <button class="copt" onclick="checkQ('q1',1,1)"><span class="cl">B</span>Air resistance affects the light, wide feather far more than the heavy ball</button>
+    <button class="copt" onclick="checkQ('q1',2,1)"><span class="cl">C</span>The feather has less gravity acting on it</button>
+    <button class="copt" onclick="checkQ('q1',3,1)"><span class="cl">D</span>The bowling ball was dropped harder</button>
+  </div>
+  <div class="check-fb" id="q1fb"></div>
+</div>
+
+<!-- Q2 -->
+<div class="check-q">
+  <span class="check-tag">QUESTION 2 OF 5</span>
+  <div class="check-text">When all the air is pumped out, what changes — and why?</div>
+  <div class="check-sub">What was slowing the feather before? What happens when that's removed?</div>
+  <div class="check-opts" id="q2opts">
+    <button class="copt" onclick="checkQ('q2',0,0)"><span class="cl">A</span>Both objects now fall at the same rate because gravity is the only force left</button>
+    <button class="copt" onclick="checkQ('q2',1,0)"><span class="cl">B</span>The feather still falls slower — gravity is weaker on light objects</button>
+    <button class="copt" onclick="checkQ('q2',2,0)"><span class="cl">C</span>The bowling ball slows down without air to push it</button>
+    <button class="copt" onclick="checkQ('q2',3,0)"><span class="cl">D</span>Nothing changes — air has no effect on falling objects</button>
+  </div>
+  <div class="check-fb" id="q2fb"></div>
+</div>
+
+<!-- Q3 -->
+<div class="check-q">
+  <span class="check-tag">QUESTION 3 OF 5</span>
+  <div class="check-text">What does g = 9.8 m/s² actually mean?</div>
+  <div class="check-sub">Look at the units carefully — m/s² means meters per second, per second.</div>
+  <div class="check-opts" id="q3opts">
+    <button class="copt" onclick="checkQ('q3',0,1)"><span class="cl">A</span>Every object in free fall moves exactly 9.8 meters per second</button>
+    <button class="copt" onclick="checkQ('q3',1,1)"><span class="cl">B</span>Every second of free fall, an object's speed increases by 9.8 m/s</button>
+    <button class="copt" onclick="checkQ('q3',2,1)"><span class="cl">C</span>Objects fall 9.8 meters total before stopping</button>
+    <button class="copt" onclick="checkQ('q3',3,1)"><span class="cl">D</span>Gravity is 9.8 times stronger than air resistance</button>
+  </div>
+  <div class="check-fb" id="q3fb"></div>
+</div>
+
+<!-- Q4 -->
+<div class="check-q">
+  <span class="check-tag">QUESTION 4 OF 5</span>
+  <div class="check-text">⚽ A soccer ball and a penny are dropped from the top of an empty stadium at the same moment — no wind, no air resistance. Which hits the ground first?</div>
+  <div class="check-sub">Apply Galileo's discovery to a real-world situation.</div>
+  <div class="check-opts" id="q4opts">
+    <button class="copt" onclick="checkQ('q4',0,2)"><span class="cl">A</span>The soccer ball — it's heavier</button>
+    <button class="copt" onclick="checkQ('q4',1,2)"><span class="cl">B</span>The penny — it's more aerodynamic</button>
+    <button class="copt" onclick="checkQ('q4',2,2)"><span class="cl">C</span>They hit at exactly the same time</button>
+    <button class="copt" onclick="checkQ('q4',3,2)"><span class="cl">D</span>It depends on how high the stadium is</button>
+  </div>
+  <div class="check-fb" id="q4fb"></div>
+</div>
+
+<!-- Q5 -->
+<div class="check-q">
+  <span class="check-tag">QUESTION 5 OF 5</span>
+  <div class="check-text">Why did most people in Galileo's time think he was wrong — even though he wasn't?</div>
+  <div class="check-sub">What do people observe in everyday life that would lead them to the wrong conclusion?</div>
+  <div class="check-opts" id="q5opts">
+    <button class="copt" onclick="checkQ('q5',0,1)"><span class="cl">A</span>People hadn't invented gravity yet</button>
+    <button class="copt" onclick="checkQ('q5',1,1)"><span class="cl">B</span>In everyday life, air resistance makes heavy things fall faster — so it looks like mass matters</button>
+    <button class="copt" onclick="checkQ('q5',2,1)"><span class="cl">C</span>Galileo only tested his idea once and got lucky</button>
+    <button class="copt" onclick="checkQ('q5',3,1)"><span class="cl">D</span>Heavy objects actually do fall faster — Galileo was wrong</button>
+  </div>
+  <div class="check-fb" id="q5fb"></div>
+</div>
+
+<div class="callout" style="margin-top:36px;">
+  <span class="k">The big idea you just discovered</span>
+  <p>Gravity accelerates all objects equally at <strong>g = 9.8 m/s²</strong>. Air resistance creates the differences we see in everyday life. Remove the air, and every falling object — feather, bowling ball, soccer ball, penny — falls in perfect unison. The formulas we'll learn next all flow from this single fact.</p>
+</div>
+
+</div><!-- end .wrap -->
+
+<footer>
+  <p>YSC Academy · Physics · Unit 1 · Free Fall Intro Activity · Based on BBC/Brian Cox vacuum chamber demonstration</p>
+</footer>
+
+<script>
+// ── PREDICTIONS ──────────────────────────────────────
+let p1done=false, p2done=false;
+
+function predict(which, chosen, correct){
+  correct = parseInt(correct, 10);
+  chosen  = parseInt(chosen,  10);
+  if(which==='p1' && p1done) return;
+  if(which==='p2' && p2done) return;
+  if(which==='p1') p1done=true;
+  if(which==='p2') p2done=true;
+
+  const container = document.getElementById(which+'opts');
+  if(!container) return;
+  const opts = container.querySelectorAll('.popt');
+  if(!opts.length) return;
+  opts.forEach(o=>o.classList.add('locked'));
+  opts[chosen].classList.add(chosen===correct?'right':'wrong');
+  if(chosen!==correct) opts[correct].classList.add('right');
+  document.getElementById(which+'reveal').style.display='block';
+
+  if(which==='p1'){
+    setTimeout(()=>{
+      document.getElementById('p2panel').style.display='block';
+      document.getElementById('p2panel').scrollIntoView({behavior:'smooth',block:'nearest'});
+    },700);
+  }
+}
+
+// ── QUESTIONS ────────────────────────────────────────
+const qData = {
+  q1:{correct:1, fb:{
+    right:'<strong>✓ Correct.</strong> Air resistance (drag) is the key. The feather\'s large surface area and tiny mass mean air slows it enormously. The bowling ball\'s mass is so great that the same air drag is almost meaningless.',
+    wrong:'<strong>Not quite.</strong> Gravity pulls all objects equally — mass doesn\'t change the gravitational acceleration. What\'s different is air resistance: the feather\'s wide, light shape makes it catch far more drag than the heavy, compact bowling ball.'
+  }},
+  q2:{correct:0, fb:{
+    right:'<strong>✓ Correct.</strong> With air resistance gone, gravity is the only force. And gravity doesn\'t care about mass — it accelerates everything at g = 9.8 m/s² equally. The feather and ball now fall identically.',
+    wrong:'<strong>Not quite.</strong> Air was the only thing slowing the feather. Remove the air, and gravity — which treats all masses equally — is the only force left. Both objects accelerate at exactly 9.8 m/s² and hit together.'
+  }},
+  q3:{correct:1, fb:{
+    right:'<strong>✓ Correct.</strong> The ² in m/s² is the giveaway — it\'s acceleration, not speed. After 1 s: 9.8 m/s. After 2 s: 19.6 m/s. After 3 s: 29.4 m/s. Speed keeps growing every second.',
+    wrong:'<strong>Not quite.</strong> g = 9.8 m/s² is an acceleration — a rate of change of speed. It means the object gains 9.8 m/s of speed for every second it falls. An object doesn\'t move at a fixed 9.8 m/s; it keeps speeding up.'
+  }},
+  q4:{correct:2, fb:{
+    right:'<strong>✓ Correct.</strong> In free fall (no air resistance), all objects accelerate at g = 9.8 m/s² regardless of mass. The soccer ball and penny hit at exactly the same time — same as the feather and bowling ball in the vacuum chamber.',
+    wrong:'<strong>Not quite.</strong> In free fall, mass is irrelevant. Both objects experience the same gravitational acceleration — g = 9.8 m/s². They hit simultaneously. This is Galileo\'s law applied directly.'
+  }},
+  q5:{correct:1, fb:{
+    right:'<strong>✓ Correct.</strong> In everyday life, air is always present — and air resistance does make heavy things fall faster than light ones. So people\'s observations were accurate for their environment. Galileo had to reason past what he could see to find the deeper truth: remove air, and mass doesn\'t matter at all.',
+    wrong:'<strong>Not quite.</strong> Everyday observations actually support the wrong conclusion — because air resistance IS real, and it DOES make heavy things land first. Galileo\'s genius was recognizing that air was masking the true behavior of gravity. He had to think beyond direct observation.'
+  }}
+};
+
+function checkQ(id, chosen, correct){
+  correct = parseInt(correct, 10);
+  chosen  = parseInt(chosen,  10);
+  const container = document.getElementById(id+'opts');
+  if(!container) return;
+  const opts = container.querySelectorAll('.copt');
+  if(!opts.length) return;
+  if(opts[0].classList.contains('locked')) return;
+  opts.forEach(o=>o.classList.add('locked'));
+  const isRight = chosen===correct;
+  opts[chosen].classList.add(isRight?'right':'wrong');
+  if(!isRight) opts[correct].classList.add('right');
+  const fb=document.getElementById(id+'fb');
+  if(!fb) return;
+  fb.style.display='block';
+  fb.className='check-fb'+(isRight?'':' bad');
+  fb.innerHTML=isRight ? qData[id].fb.right : qData[id].fb.wrong;
+}
+
+// ── VACUUM ANIMATION ──────────────────────────────────
+let vacMode='both', raf, state={};
+
+function setMode(m){
+  vacMode=m;
+  ['both','air','vacuum'].forEach(id=>{
+    document.getElementById('btn-'+id).classList.toggle('on', id===m);
+  });
+  resetAnim();
+}
+
+function resetAnim(){
+  cancelAnimationFrame(raf);
+  const c=document.getElementById('vac');
+  const W=c.width, H=c.height;
+
+  const makeParticles = (x0,x1)=>{
+    const ps=[];
+    for(let i=0;i<40;i++){
+      ps.push({
+        x:x0+Math.random()*(x1-x0),
+        y:16+Math.random()*(H-48),
+        vx:(Math.random()-.5)*1.8,
+        vy:(Math.random()-.5)*1.8,
+        r:1.8+Math.random()*1.8
+      });
+    }
+    return ps;
+  };
+
+  const mid=W/2;
+  state={
+    W,H,mid,
+    g:0.24,
+    airDragBall:0.002,
+    airDragFeat:0.2,
+    dropped:false,
+    t:0,
+    L:{  // with air
+      ball:{x:mid*0.38, y:38, vy:0, r:20, landed:false},
+      feat:{x:mid*0.68, y:38, vy:0, landed:false, angle:0},
+      particles: makeParticles(6, mid-6),
+      ground: H-28
+    },
+    R:{  // vacuum
+      ball:{x:mid+mid*0.38, y:38, vy:0, r:20, landed:false},
+      feat:{x:mid+mid*0.68, y:38, vy:0, landed:false, angle:0},
+      ground: H-28
+    }
+  };
+  setTimeout(()=>{if(state.dropped===false){state.dropped=true;}},300);
+  raf=requestAnimationFrame(tick);
+}
+
+function tick(){
+  const c=document.getElementById('vac');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const s=state;
+  const W=s.W, H=s.H, mid=s.mid;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#040d06'; ctx.fillRect(0,0,W,H);
+
+  const showL = vacMode==='both'||vacMode==='air';
+  const showR = vacMode==='both'||vacMode==='vacuum';
+
+  // determine chamber bounds
+  const lx0=6, lx1= showL&&showR ? mid-3 : W-6;
+  const rx0= showL&&showR ? mid+3 : 6, rx1=W-6;
+
+  // Draw chambers
+  function chamber(x0,x1,label,hasAir){
+    ctx.strokeStyle='rgba(126,211,72,0.28)'; ctx.lineWidth=1.5;
+    ctx.strokeRect(x0,8,x1-x0,H-16);
+    ctx.fillStyle=hasAir?'rgba(126,211,72,0.45)':'rgba(214,64,69,0.5)';
+    ctx.font='bold 10px JetBrains Mono,monospace';
+    ctx.fillText(label, x0+10, 24);
+    // ground
+    ctx.strokeStyle='rgba(126,211,72,0.35)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(x0,H-28); ctx.lineTo(x1,H-28); ctx.stroke();
+  }
+
+  if(showL) chamber(lx0, lx1, 'WITH AIR', true);
+  if(showR) chamber(rx0, rx1, 'VACUUM — no air', false);
+
+  // Physics
+  if(s.dropped){
+    s.t++;
+    const g=s.g;
+
+    // Left (air)
+    if(showL){
+      const L=s.L;
+      if(!L.ball.landed){
+        L.ball.vy += g - L.ball.vy*s.airDragBall;
+        L.ball.y  += L.ball.vy;
+        if(L.ball.y+L.ball.r >= L.ground){ L.ball.y=L.ground-L.ball.r; L.ball.landed=true; }
+      }
+      if(!L.feat.landed){
+        const drag=L.feat.vy*s.airDragFeat;
+        L.feat.vy += g-drag;
+        L.feat.y  += L.feat.vy;
+        L.feat.angle += 0.055;
+        if(L.feat.y+14 >= L.ground){ L.feat.y=L.ground-14; L.feat.landed=true; }
+      }
+      L.particles.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<lx0+4||p.x>lx1-4) p.vx*=-1;
+        if(p.y<12||p.y>H-32) p.vy*=-1;
+      });
+    }
+
+    // Right (vacuum)
+    if(showR){
+      const R=s.R;
+      // position objects based on mode
+      const bx = showL&&showR ? mid+mid*0.38 : W*0.38;
+      const fx = showL&&showR ? mid+mid*0.68 : W*0.68;
+      if(!R.ball.x_set){ R.ball.x=bx; R.feat.x=fx; R.ball.x_set=true; }
+      if(!R.ball.landed){
+        R.ball.vy += g;
+        R.ball.y  += R.ball.vy;
+        if(R.ball.y+R.ball.r >= R.ground){ R.ball.y=R.ground-R.ball.r; R.ball.landed=true; }
+      }
+      if(!R.feat.landed){
+        R.feat.vy += g;
+        R.feat.y  += R.feat.vy;
+        R.feat.angle += 0.02;
+        if(R.feat.y+14 >= R.ground){ R.feat.y=R.ground-14; R.feat.landed=true; }
+      }
+    }
+  }
+
+  // Draw air particles
+  if(showL && s.dropped){
+    s.L.particles.forEach(p=>{
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(190,215,195,0.22)'; ctx.fill();
+    });
+  }
+
+  // Draw objects
+  function ball(x,y,r){
+    const grd=ctx.createRadialGradient(x-r*.35,y-r*.35,r*.08,x,y,r);
+    grd.addColorStop(0,'#cce8ff'); grd.addColorStop(.45,'#5AADFF'); grd.addColorStop(1,'#001830');
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=grd; ctx.fill();
+  }
+  function feather(x,y,angle){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(angle);
+    ctx.strokeStyle='#FFD966'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(0,-13); ctx.lineTo(0,13); ctx.stroke();
+    for(let i=-11;i<=11;i+=3.5){
+      const xi=i/13;
+      ctx.beginPath(); ctx.moveTo(0,i);
+      ctx.bezierCurveTo(8*xi,i-3,9*xi,i+2,6*xi,i+5);
+      ctx.strokeStyle='rgba(255,217,102,0.65)'; ctx.lineWidth=1; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,i);
+      ctx.bezierCurveTo(-8*xi,i-3,-9*xi,i+2,-6*xi,i+5);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  if(showL){
+    ball(s.L.ball.x, s.L.ball.y, s.L.ball.r);
+    feather(s.L.feat.x, s.L.feat.y, s.L.feat.angle);
+  }
+  if(showR){
+    ball(s.R.ball.x, s.R.ball.y, s.R.ball.r);
+    feather(s.R.feat.x, s.R.feat.y, s.R.feat.angle);
+  }
+
+  // Speed labels
+  if(s.dropped && s.t>5){
+    ctx.font='10px JetBrains Mono,monospace';
+    ctx.fillStyle='rgba(126,211,72,0.7)';
+    if(showL){
+      ctx.fillText('ball '+(s.L.ball.vy*3.6).toFixed(1)+' m/s', lx0+8, H-8);
+      ctx.fillText('feather '+(s.L.feat.vy*3.6).toFixed(1)+' m/s', lx0+70, H-8);
+    }
+    if(showR){
+      ctx.fillText('ball '+(s.R.ball.vy*3.6).toFixed(1)+' m/s', rx0+8, H-8);
+      ctx.fillText('feather '+(s.R.feat.vy*3.6).toFixed(1)+' m/s', rx0+70, H-8);
+    }
+  }
+
+  // Auto reset when everything has landed
+  const lDone = !showL || (s.L.ball.landed && s.L.feat.landed);
+  const rDone = !showR || (s.R.ball.landed && s.R.feat.landed);
+  if(lDone && rDone && s.t > 30){
+    setTimeout(()=>{ if(document.getElementById('vac')) resetAnim(); }, 1400);
+    cancelAnimationFrame(raf); return;
+  }
+  raf=requestAnimationFrame(tick);
+}
+
+// Start animation when page loads
+window.addEventListener('load', ()=>{ resetAnim(); });
+</script>
+</body>
+</html>
