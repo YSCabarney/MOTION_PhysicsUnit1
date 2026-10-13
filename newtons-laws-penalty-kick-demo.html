@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penalty Kick Demo</title>
+<style>
+  :root{
+    --pitch:#0b6e4f; --pitch-d:#074a35; --pitch-l:#e6f2ec;
+    --navy:#14213d; --ink:#1d2433; --muted:#566074;
+    --bg:#f4f6f1; --card:#ffffff; --line:#dbe2d6;
+    --gold:#e9a200; --gold-l:#fff5da; --red:#c8372d; --red-l:#fdecea; --blue:#1f6fd1; --blue-l:#e8f0fb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:18px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+  a{color:var(--pitch)}
+
+  /* top bar */
+  .topbar{background:var(--navy);color:#fff;position:sticky;top:0;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+  .topbar .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+  .brand{font-weight:800;font-size:1.05rem;margin-right:auto}
+  .brand small{display:block;font-weight:600;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+  .timer{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border-radius:999px;padding:4px 6px 4px 14px;font-variant-numeric:tabular-nums}
+  .timer b{font-size:1.1rem}
+  .timer .goal{opacity:.7;font-size:.82rem}
+  .steps{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:10px}
+  .steps button{background:rgba(255,255,255,.1);color:#fff;font-size:.85rem;padding:6px 12px}
+  .steps button[aria-current=step]{background:var(--gold);color:var(--navy)}
+  .steps button.done{background:rgba(255,255,255,.22)}
+
+  button{font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;border:0;border-radius:999px;padding:8px 16px;background:var(--pitch);color:#fff}
+  button:hover{filter:brightness(1.08)}
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  button.ghost{background:transparent;color:var(--pitch);border:2px solid var(--pitch);padding:6px 14px}
+  button.mini{padding:4px 12px;font-size:.8rem}
+  button.seg{background:#eef1f5;color:var(--navy)}
+  button.seg[aria-pressed=true]{background:var(--navy);color:#fff}
+
+  /* layout */
+  .stage{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:18px;padding:18px 0 30px;align-items:start}
+  @media (max-width:980px){.stage{grid-template-columns:1fr}}
+  .scene{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;position:sticky;top:120px}
+  @media (max-width:980px){.scene{position:static}}
+  canvas{display:block;width:100%;border-radius:10px;background:#cfe6f5}
+  .ctrl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:10px}
+  .ctrl .grp{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .ctrl .lbl{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .readout{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .readout div{background:#f3f5f8;border-radius:10px;padding:5px 12px;font-size:.82rem;color:var(--muted)}
+  .readout b{display:block;font-size:1.05rem;color:var(--navy);font-variant-numeric:tabular-nums}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+  .panel .kicker{font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--pitch);display:flex;justify-content:space-between;gap:10px}
+  .panel h2{margin:.2em 0 .4em;color:var(--navy);font-size:1.7rem;line-height:1.2}
+  .panel p{margin:.55em 0}
+  .law{background:var(--navy);color:#fff;border-radius:12px;padding:14px 16px;margin:12px 0;font-size:1.08rem}
+  .law b{color:var(--gold)}
+  .eq{font-family:Georgia,"Times New Roman",serif;font-size:1.7rem;text-align:center;color:var(--navy);border:2px solid var(--pitch);border-radius:12px;padding:8px;margin:12px 0}
+  .tnote{background:var(--gold-l);border-left:5px solid var(--gold);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:.95rem}
+  .tnote .who{font-weight:800;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:#a06f00;display:block}
+  body.clean .tnote{display:none}
+  .ask{background:var(--blue-l);border-left:5px solid var(--blue);border-radius:10px;padding:10px 14px;margin:12px 0}
+  .ask .who{font-weight:800;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);display:block}
+  .check{border:2px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0}
+  .check h3{margin:0 0 6px;font-size:1rem;color:var(--navy);display:flex;align-items:center;gap:8px}
+  .qa{border-top:1px dashed var(--line);padding:8px 0}
+  .qa:first-of-type{border-top:0}
+  .qa .q{font-weight:600}
+  .qa .a{display:none;color:var(--pitch-d);font-weight:600;margin-top:4px}
+  .qa.open .a{display:block}
+  .qa button{margin-top:6px}
+  ul.tight{margin:.3em 0;padding-left:1.2em}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+  .card{background:#f7f9f6;border:2px solid var(--line);border-radius:12px;padding:12px;text-align:left;color:var(--ink);font-weight:500;font-size:.95rem;min-height:96px;display:block;width:100%}
+  .card .ans{display:none;margin-top:6px;font-weight:800}
+  .card[aria-pressed=true]{border-color:var(--pitch);background:var(--pitch-l)}
+  .card[aria-pressed=true] .ans{display:block}
+  .l1{color:var(--pitch)} .l2{color:#a06f00} .l3{color:var(--blue)}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .badge{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--pitch);color:#fff;font-size:.85rem;font-weight:800}
+  .bigq{font-size:1.25rem;font-weight:700;color:var(--navy);background:var(--pitch-l);border-radius:12px;padding:14px 16px;margin:12px 0}
+  .linklist a{display:block;padding:8px 12px;border:1px solid var(--line);border-radius:10px;margin:6px 0;text-decoration:none;font-weight:600}
+  .linklist a:hover{background:var(--pitch-l)}
+  .kbd{font-size:.78rem;color:var(--muted)}
+  @media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand"><small>Physics · Intro Demo · 10–15 min</small>⚽ The Penalty Kick: Newton's Laws in Half a Second</div>
+    <div class="timer" aria-live="off">
+      <span>⏱ <b id="clock">0:00</b> <span class="goal" id="goal">/ 15:00</span></span>
+      <button class="mini" id="clockBtn">Start</button>
+      <button class="mini ghost" id="clockReset" style="color:#fff;border-color:rgba(255,255,255,.5)">Reset</button>
+    </div>
+  </div>
+  <div class="wrap"><nav class="steps" id="steps" aria-label="Demo steps"></nav></div>
+</div>
+
+<div class="wrap stage">
+  <!-- ============ SCENE ============ -->
+  <div class="scene">
+    <canvas id="cv" aria-label="Animated side view of a penalty kick showing the forces involved at each moment"></canvas>
+    <div class="ctrl">
+      <div class="grp">
+        <button id="play">▶ Play</button>
+        <button class="ghost" id="replay">↺ Replay</button>
+        <button class="seg" id="slow" aria-pressed="false">🐢 Extra slow-mo</button>
+      </div>
+    </div>
+    <div class="ctrl">
+      <div class="grp"><span class="lbl">Jump to</span>
+        <button class="seg mini" data-jump="law1">Law 1 moment</button>
+        <button class="seg mini" data-jump="law2">Law 2 moment</button>
+        <button class="seg mini" data-jump="law3">Law 3 moment</button>
+      </div>
+    </div>
+    <div class="ctrl">
+      <div class="grp"><span class="lbl">Kick</span>
+        <button class="seg mini" data-kick="300" aria-pressed="false">Soft pass</button>
+        <button class="seg mini" data-kick="700" aria-pressed="true">Normal</button>
+        <button class="seg mini" data-kick="1200" aria-pressed="false">Power shot</button>
+      </div>
+      <div class="grp"><span class="lbl">Ball</span>
+        <button class="seg mini" data-mass="0.43" aria-pressed="true">Match ball</button>
+        <button class="seg mini" data-mass="3" aria-pressed="false">Medicine ball</button>
+      </div>
+      <div class="grp"><span class="lbl">Ending</span>
+        <button class="seg mini" data-out="save" aria-pressed="true">Keeper saves</button>
+        <button class="seg mini" data-out="goal" aria-pressed="false">Goal!</button>
+      </div>
+    </div>
+    <div class="readout">
+      <div>Kick force<b id="rF">700 N</b></div>
+      <div>Ball mass<b id="rM">0.43 kg</b></div>
+      <div>a = F ÷ m<b id="rA">1,628 m/s²</b></div>
+      <div>Launch speed<b id="rV">16 m/s (59 km/h)</b></div>
+    </div>
+    <p class="kbd">Keyboard: ← → change step · Space play/pause · R replay. The ball is drawn bigger than scale so it's easy to see.</p>
+  </div>
+
+  <!-- ============ PANEL ============ -->
+  <div class="panel" id="panel" aria-live="polite"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var GUIDE = 'https://yscabarney.github.io/MOTION_PhysicsUnit1/newtons-laws-study-guide.html';
+
+  /* =========================================================
+     STEP CONTENT
+     ========================================================= */
+  var STEPS = [
+    {nav:'Kickoff', min:1, preset:{reset:true},
+     html:
+      '<h2>A penalty takes less than half a second.</h2>'+
+      '<p>From the striker\'s boot to the back of the net, a penalty kick is over in roughly <strong>half a second</strong>. Today we slow it down and find <strong>three laws of physics</strong> hiding inside that half second.</p>'+
+      '<div class="ask"><span class="who">Ask the class (chat or unmute)</span>'+
+      '<ul class="tight"><li>The ball is sitting on the penalty spot. <strong>Why doesn\'t it move by itself?</strong></li>'+
+      '<li>After the ball leaves the boot, <strong>what keeps it moving</strong> toward the goal?</li></ul></div>'},
+
+    {nav:'Watch it', min:2, preset:{reset:true, play:true, kick:700, mass:0.43, out:'save'},
+     html:
+      '<h2>Watch the whole kick</h2>'+
+      '<p>The animation is in slow motion. The <strong>coloured arrows are forces</strong>, and the dashed black arrow is the ball\'s velocity (not a force).</p>'+
+      '<div class="ask"><span class="who">Ask</span><ul class="tight">'+
+      '<li>How many different <strong>pushes</strong> did the ball get?</li>'+
+      '<li>Who or what pushed it each time?</li>'+
+      '<li>Did anything push <em>back</em>?</li></ul></div>'},
+
+    {nav:'Law 1', min:3, preset:{jump:'law1', kick:700, mass:0.43},
+     html:
+      '<div class="kicker"><span><span class="badge">1</span> Newton\'s First Law · Inertia</span></div>'+
+      '<h2>Objects keep doing what they\'re doing</h2>'+
+      '<div class="law">An object at rest <b>stays at rest</b>, and an object in motion <b>stays in motion</b> (same speed, same direction) unless an <b>unbalanced force</b> acts on it.</div>'+
+      '<p><strong>On the spot:</strong> gravity pulls the ball down and the ground pushes it up just as hard. The forces are <strong>balanced</strong>, so the ball stays at rest.</p>'+
+      '<p><strong>In flight:</strong> once the boot leaves the ball, <em>nothing pushes it forward</em>. It keeps going because of <strong>inertia</strong>.</p>'+
+      '<div class="check"><h3>✅ Quick check</h3>'+
+      qa('A teammate plays a pass across a perfectly slick, frictionless surface. What happens to the ball?','It keeps rolling at the same speed, in a straight line, forever. No unbalanced force means no change in motion.')+
+      qa('On real grass the pass slows down and stops. Which force did that?','Friction from the grass. It\'s an unbalanced force acting opposite the motion.')+
+      qa('Why is a big centre-back harder to knock off the ball than a small winger?','More mass = more inertia, so they resist changes in motion more.')+
+      '</div>'},
+
+    {nav:'Law 2', min:3, preset:{jump:'law2', kick:700, mass:0.43},
+     html:
+      '<div class="kicker"><span><span class="badge" style="background:#a06f00">2</span> Newton\'s Second Law · F = m·a</span></div>'+
+      '<h2>Bigger force → bigger acceleration</h2>'+
+      '<div class="eq">a = F<sub>net</sub> ÷ m</div>'+
+      '<p>The boot applies a <strong>huge unbalanced force</strong> for about 0.01 s, and the ball accelerates.</p>'+
+      '<ul class="tight"><li><strong>More force</strong> → <strong>more acceleration</strong> (a faster shot)</li>'+
+      '<li><strong>More mass</strong> → <strong>less acceleration</strong> (a slower shot)</li></ul>'+
+      '<div class="ask"><span class="who">Predict, then test</span><ol class="tight">'+
+      '<li>"What will a <strong>Soft pass</strong> look like compared with a <strong>Power shot</strong>?" Run both.</li>'+
+      '<li>"Same power shot, but on a <strong>Medicine ball</strong>. Will it reach the goal?" Run it.</li></ol></div>'+
+      '<div class="check"><h3>✅ Quick check</h3>'+
+      qa('You kick the same ball twice as hard. What happens to its acceleration?','It doubles. Acceleration is directly proportional to net force.')+
+      qa('Why did the medicine ball move so slowly with the same kick?','It has about 7× more mass, so the same force gives about 7× less acceleration.')+
+      qa('A 1,200 N kick on a 0.43 kg ball: what\'s the acceleration?','a = 1,200 ÷ 0.43 ≈ 2,800 m/s²')+
+      '</div>'},
+
+    {nav:'Law 3', min:3, preset:{jump:'law3', kick:700, mass:0.43, out:'save'},
+     html:
+      '<div class="kicker"><span><span class="badge" style="background:var(--blue)">3</span> Newton\'s Third Law · Action–Reaction</span></div>'+
+      '<h2>Every push gets pushed back</h2>'+
+      '<div class="law">If object A pushes on object B, then <b>B pushes back on A</b> with a force that is <b>equal in size</b> and <b>opposite in direction</b>.</div>'+
+      '<ul class="tight"><li><strong>The kick:</strong> boot pushes ball forward → ball pushes boot backward (that "thud" you feel).</li>'+
+      '<li><strong>The save:</strong> gloves push ball back → ball pushes gloves forward (why saves sting).</li>'+
+      '<li><strong>The run-up:</strong> cleats push the ground backward → the ground pushes the striker forward.</li></ul>'+
+      '<p>The two forces <strong>don\'t cancel</strong> because they act on <strong>different objects</strong>.</p>'+
+      '<div class="check"><h3>✅ Quick check</h3>'+
+      qa('During the save, who pushes harder: the gloves on the ball, or the ball on the gloves?','Neither. The forces are exactly equal and opposite.')+
+      qa('Finish the pair: "Boot pushes ball forward…"','"…ball pushes boot backward."')+
+      qa('When you jump for a header, what pushes you up?','The ground. You push down on the ground, and it pushes up on you.')+
+      '</div>'},
+
+    {nav:'Rapid-fire review', min:2, preset:{},
+     html:
+      '<h2>Rapid fire: which law?</h2>'+
+      '<p>Read each card aloud. Students answer <strong>1, 2 or 3</strong> in the chat (or hold up fingers on camera). Then tap the card to reveal.</p>'+
+      '<div class="cards">'+
+      card('A pass keeps rolling on wet turf long after it leaves your foot.','<span class="l1">Law 1: inertia</span>')+
+      card('A harder strike makes a faster shot.','<span class="l2">Law 2: more force, more acceleration</span>')+
+      card('You push down on the ground and fly up for a header.','<span class="l3">Law 3: ground pushes back</span>')+
+      card('You get clipped from behind and your body keeps falling forward.','<span class="l1">Law 1: your body keeps moving</span>')+
+      card('The same kick sends a youth ball faster than a waterlogged ball.','<span class="l2">Law 2: less mass, more acceleration</span>')+
+      card('Heading the ball makes your head feel a push too.','<span class="l3">Law 3: equal and opposite</span>')+
+      '</div>'},
+
+    {nav:'Next up', min:1, preset:{reset:true},
+     html:
+      '<h2>Exit ticket &amp; what\'s next</h2>'+
+      '<div class="bigq">In one or two sentences, explain a penalty kick using <u>all three</u> of Newton\'s laws.</div>'+
+      '<p><strong>Now open your study guide.</strong> Each part goes deeper on what we previewed today, with interactive labs:</p>'+
+      '<div class="linklist">'+
+      '<a href="'+GUIDE+'#forces" target="_blank" rel="noopener">0 · What is a force? →</a>'+
+      '<a href="'+GUIDE+'#law1" target="_blank" rel="noopener">1 · First Law &amp; inertia (Lab 1: ground pass) →</a>'+
+      '<a href="'+GUIDE+'#net" target="_blank" rel="noopener">Net force &amp; free-body diagrams (Labs 2–3) →</a>'+
+      '<a href="'+GUIDE+'#law2" target="_blank" rel="noopener">2 · Second Law (Lab 4: kick lab) →</a>'+
+      '<a href="'+GUIDE+'#law3" target="_blank" rel="noopener">3 · Third Law (Lab 6: collisions) →</a>'+
+      '<a href="'+GUIDE+'#quiz" target="_blank" rel="noopener">Check-your-understanding quiz →</a>'+
+      '</div>'}
+  ];
+
+  function qa(q, a){
+    return '<div class="qa"><div class="q">'+q+'</div><div class="a">'+a+'</div><button class="mini ghost" data-reveal>Reveal answer</button></div>';
+  }
+  function card(q, a){
+    return '<button class="card" aria-pressed="false">'+q+'<span class="ans">'+a+'</span></button>';
+  }
+
+  /* =========================================================
+     SCENE / ANIMATION
+     ========================================================= */
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var LW = 1000, LH = 440, GROUND = 380, SPOT = 240, PX = 60; // 60 px per metre
+  var COL = {grav:'#7b3fb3', norm:'#1f6fd1', fric:'#c8372d', app:'#0b8a5a', react:'#c8372d', vel:'#14213d'};
+  var S = {t:0, playing:false, slow:false, kick:700, mass:0.43, out:'save', last:0};
+  var SLOW = 1.6; // screen seconds per real second during flight
+
+  function resize(){
+    var w = cv.clientWidth || 800, dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(w*LH/LW*dpr);
+    cv.style.height = (w*LH/LW) + 'px';
+    ctx.setTransform(w/LW*dpr, 0, 0, w/LW*dpr, 0, 0);
+    draw();
+  }
+
+  function v0(){ return S.kick / S.mass * 0.01; }
+  function radius(){ return S.mass > 1 ? 18 : 13; }
+  function TL(){
+    var v = v0(), roll = v < 5, D = S.out === 'save' ? 10.03 : 11, tf;
+    if (roll) tf = (v/1.5) * SLOW; else tf = (D/v) * SLOW;
+    tf = Math.max(tf, 0.5);
+    var t2 = 2.8, t3 = t2 + tf, t4 = roll ? t3 : t3 + 1.0;
+    return {v:v, roll:roll, D:D, t1:2.0, tc:2.3, t2:t2, t3:t3, t4:t4, end: roll ? t3 + 1.5 : t4 + 2.2};
+  }
+  function lerp(a,b,u){ return a + (b-a)*Math.max(0,Math.min(1,u)); }
+  function easeOut(u){ u = Math.max(0,Math.min(1,u)); return 1 - (1-u)*(1-u); }
+
+  function ballPos(t, T){
+    var r = radius(), y0 = GROUND - r, ty = S.out === 'save' ? 332 : 250;
+    if (t < T.t2) return {x:SPOT, y:y0};
+    if (T.roll){
+      var s = Math.min((t - T.t2)/SLOW, T.v/1.5), d = T.v*s - 0.75*s*s;
+      return {x:SPOT + d*PX, y:y0, d:d};
+    }
+    if (t < T.t3){
+      var d2 = Math.min(T.D, T.v*(t - T.t2)/SLOW);
+      return {x:SPOT + d2*PX, y:lerp(y0, ty, d2/T.D)};
+    }
+    var xEnd = SPOT + T.D*PX;
+    if (S.out === 'save'){
+      if (t < T.t4) return {x:xEnd, y:ty};
+      var u = (t - T.t4)/2.2, x = xEnd - 170*easeOut(u);
+      var fall = Math.min(1, u/0.35), y = ty + (y0 - ty)*fall*fall;
+      return {x:x, y:y};
+    } else {
+      if (t < T.t4) return {x:lerp(xEnd, xEnd + 48, easeOut((t - T.t3)/1.0)), y:ty};
+      var u2 = Math.min(1, (t - T.t4)/0.6);
+      return {x:xEnd + 48, y:ty + (y0 - ty)*u2*u2};
+    }
+  }
+
+  function arrow(x1,y1,x2,y2,color,w,label,lx,ly,dash){
+    var dx=x2-x1, dy=y2-y1, L=Math.sqrt(dx*dx+dy*dy); if (L<2) return;
+    var ux=dx/L, uy=dy/L, h=12+w;
+    ctx.save(); ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w; ctx.lineCap='round';
+    if (dash) ctx.setLineDash([8,7]);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*h*0.8, y2-uy*h*0.8); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-ux*h-uy*h*0.55, y2-uy*h+ux*h*0.55); ctx.lineTo(x2-ux*h+uy*h*0.55, y2-uy*h-ux*h*0.55); ctx.closePath(); ctx.fill();
+    if (label){
+      ctx.font='bold 21px Arial, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      var tw = ctx.measureText(label).width;
+      ctx.fillStyle='rgba(255,255,255,.88)'; ctx.fillRect(lx - tw/2 - 6, ly - 14, tw + 12, 28);
+      ctx.fillStyle=color; ctx.fillText(label, lx, ly);
+    }
+    ctx.restore();
+  }
+
+  function drawBall(x,y,r,ang){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(ang);
+    ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+    ctx.fillStyle = S.mass > 1 ? '#8a5a2b' : '#fff'; ctx.fill();
+    ctx.lineWidth=2; ctx.strokeStyle='#14213d'; ctx.stroke();
+    if (S.mass <= 1){
+      ctx.fillStyle='#14213d'; ctx.beginPath();
+      for (var i=0;i<5;i++){ var a=-Math.PI/2+i*2*Math.PI/5; var px=Math.cos(a)*r*.42, py=Math.sin(a)*r*.42; if(!i) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+      ctx.closePath(); ctx.fill();
+    } else {
+      ctx.strokeStyle='rgba(255,255,255,.45)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(0,0,r*.6,0.3,2.6); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function person(hx, footY, opts){
+    // simple stick figure; hx = hip x
+    var hipY = footY - 50, shY = hipY - 46, headY = shY - 17;
+    ctx.save(); ctx.lineCap='round';
+    // legs
+    ctx.strokeStyle = opts.shorts || '#14213d'; ctx.lineWidth = 8;
+    function leg(theta){ ctx.beginPath(); ctx.moveTo(hx, hipY); ctx.lineTo(hx + Math.sin(theta)*50, hipY + Math.cos(theta)*50); ctx.stroke(); }
+    leg(opts.legA || 0); leg(opts.legB || 0);
+    // boots
+    ctx.fillStyle = '#111';
+    [opts.legA||0, opts.legB||0].forEach(function(th){ ctx.beginPath(); ctx.arc(hx + Math.sin(th)*50, hipY + Math.cos(th)*50, 5, 0, Math.PI*2); ctx.fill(); });
+    // torso
+    ctx.strokeStyle = opts.shirt; ctx.lineWidth = 18;
+    ctx.beginPath(); ctx.moveTo(hx, hipY - 4); ctx.lineTo(hx + (opts.lean||0), shY + 4); ctx.stroke();
+    // arms
+    ctx.strokeStyle = opts.arms || opts.shirt; ctx.lineWidth = 7;
+    (opts.armAngles || [0.6, -0.6]).forEach(function(a){
+      ctx.beginPath(); ctx.moveTo(hx + (opts.lean||0), shY + 4); ctx.lineTo(hx + (opts.lean||0) + Math.sin(a)*42, shY + 4 + Math.cos(a)*42); ctx.stroke();
+      if (opts.gloves){ ctx.fillStyle = '#e9a200'; ctx.beginPath(); ctx.arc(hx + (opts.lean||0) + Math.sin(a)*44, shY + 4 + Math.cos(a)*44, 7, 0, Math.PI*2); ctx.fill(); }
+    });
+    // head
+    ctx.fillStyle = '#c68f6a'; ctx.beginPath(); ctx.arc(hx + (opts.lean||0), headY, 13, 0, Math.PI*2); ctx.fill();
+    if (opts.num){ ctx.fillStyle = '#fff'; ctx.font = 'bold 13px Arial'; ctx.textAlign = 'center'; ctx.textBaseline='middle'; ctx.fillText(opts.num, hx + (opts.lean||0)/2, hipY - 24); }
+    ctx.restore();
+    return {hipY:hipY, shY:shY};
+  }
+
+  function wrapText(text, x, y, maxW, lh){
+    var words = text.split(' '), line = '', lines = [];
+    words.forEach(function(w){ var test = line ? line + ' ' + w : w; if (ctx.measureText(test).width > maxW && line){ lines.push(line); line = w; } else line = test; });
+    if (line) lines.push(line);
+    lines.forEach(function(l, i){ ctx.fillText(l, x, y + i*lh); });
+    return lines.length;
+  }
+
+  function banner(badges, text){
+    ctx.save();
+    ctx.font = '600 25px Arial, sans-serif';
+    var bx = 16, by = 14, bw = LW - 32, badgeW = badges.length * 34 + (badges.length ? 6 : 0);
+    // measure lines
+    var words = text.split(' '), line = '', n = 1;
+    words.forEach(function(w){ var test = line ? line + ' ' + w : w; if (ctx.measureText(test).width > bw - badgeW - 28 && line){ n++; line = w; } else line = test; });
+    var bh = 22 + n*32;
+    ctx.fillStyle = 'rgba(20,33,61,.92)'; roundRect(bx, by, bw, bh, 12); ctx.fill();
+    badges.forEach(function(b, i){
+      var cx = bx + 26 + i*34, cy = by + bh/2;
+      ctx.fillStyle = b === 1 ? '#0b8a5a' : b === 2 ? '#e9a200' : '#1f6fd1';
+      ctx.beginPath(); ctx.arc(cx, cy, 15, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = b === 2 ? '#14213d' : '#fff'; ctx.font = 'bold 17px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(b, cx, cy+1);
+    });
+    ctx.fillStyle = '#fff'; ctx.font = '600 25px Arial, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    wrapText(text, bx + 14 + badgeW, by + 38, bw - badgeW - 28, 32);
+    ctx.restore();
+  }
+  function roundRect(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+
+  function draw(){
+    var t = S.t, T = TL(), r = radius();
+    // sky + stands
+    var g = ctx.createLinearGradient(0,0,0,GROUND); g.addColorStop(0,'#a9d4f0'); g.addColorStop(1,'#e2f1fb');
+    ctx.fillStyle = g; ctx.fillRect(0,0,LW,LH);
+    ctx.fillStyle = '#c4d3df'; ctx.fillRect(0, 150, LW, 70);
+    for (var i=0;i<60;i++){ ctx.fillStyle = ['#e9a200','#14213d','#0b6e4f','#c8372d','#fff'][i%5]; ctx.beginPath(); ctx.arc(10 + i*17, 168 + (i%3)*16, 5, 0, Math.PI*2); ctx.fill(); }
+    // pitch
+    for (var x=0; x<LW; x+=50){ ctx.fillStyle = (x/50)%2 ? '#0d7a58' : '#0b6e4f'; ctx.fillRect(x, GROUND, 50, LH-GROUND); }
+    ctx.fillStyle = '#fff'; ctx.fillRect(SPOT-10, GROUND+2, 20, 4);
+    // distance marker
+    ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.font = 'bold 17px Arial'; ctx.textAlign = 'center';
+    ctx.fillText('← 11 m (12 yards) to the goal line →', (SPOT+900)/2 - 70, GROUND + 50);
+    ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.lineWidth=1.5; ctx.setLineDash([5,5]); ctx.beginPath(); ctx.moveTo(SPOT, GROUND+32); ctx.lineTo(900, GROUND+32); ctx.stroke(); ctx.setLineDash([]);
+
+    // goal (side view): post, crossbar, net
+    var bulge = 0, pos = ballPos(t, T);
+    if (S.out === 'goal' && !T.roll && t >= T.t3) bulge = (t < T.t4) ? 40*Math.sin(Math.min(1,(t-T.t3)/1.0)*Math.PI*0.5) : 40*(1 - Math.min(1,(t-T.t4)/1.2)*0.6);
+    ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1.2;
+    for (var k=0; k<=8; k++){ var yy = 230 + k*18.75; ctx.beginPath(); ctx.moveTo(900, yy); var bx = 975 + (Math.abs(yy - 250) < 40 ? bulge : bulge*0.3); ctx.quadraticCurveTo(940 + bulge*0.6, yy, bx, yy + (k*2)); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(900,230); ctx.lineTo(975 + bulge*0.3, 250); ctx.lineTo(975 + bulge*0.3, GROUND); ctx.stroke();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(900, GROUND); ctx.lineTo(900, 230); ctx.lineTo(940, 230); ctx.stroke();
+
+    // keeper
+    var kx = 872, kFoot = GROUND, kArms = [1.2, -1.2], kLean = 0;
+    if (!T.roll && t >= T.t2){
+      var react = Math.min(1, (t - T.t2)/Math.max(0.3,(T.t3 - T.t2)*0.8));
+      if (S.out === 'save'){ kArms = [lerp(-1.2, -Math.PI/2 + 0.02, react), lerp(-1.0, -Math.PI/2 - 0.12, react)]; kLean = lerp(0, -6, react); }
+      else { var jump = Math.sin(Math.min(1, react)*Math.PI*0.5)*22; kFoot = GROUND - jump; kArms = [lerp(1.2, Math.PI + 0.25, react), lerp(-1.2, -Math.PI + 0.15, react)]; }
+    }
+    if (S.out === 'save' && t >= T.t4 && !T.roll){ kArms = [-Math.PI/2 - 0.3, -Math.PI/2 - 0.5]; }
+    person(kx, kFoot, {shirt:'#e9a200', shorts:'#14213d', arms:'#e9a200', armAngles:kArms, lean:kLean, gloves:true, num:'1'});
+
+    // striker
+    var sx = 90, legA = 0, legB = 0, lean = 0;
+    if (t < 0.6) sx = 90;
+    else if (t < T.t1){ var u = (t - 0.6)/(T.t1 - 0.6); sx = lerp(90, 202, u); var ph = Math.sin(u*Math.PI*6); legA = ph*0.5; legB = -ph*0.5; lean = 5; }
+    else { sx = 202; legB = -0.08; lean = 4;
+      if (t < T.tc) legA = lerp(-1.1, 0.62, (t - T.t1)/(T.tc - T.t1));
+      else if (t < T.t2) legA = 0.62;
+      else legA = lerp(0.62, 1.4, (t - T.t2)/0.5);
+    }
+    if (t >= T.t1 && t < T.tc) legA = lerp(-1.1, 0.62, (t - T.t1)/(T.tc - T.t1));
+    person(sx, GROUND, {shirt:'#c8372d', shorts:'#fff', legA:legA, legB:legB, lean:lean, armAngles:[0.7 + lean*0.06, -0.7 - lean*0.06], num:'9'});
+
+    // ball
+    var ang = (pos.x - SPOT)/r * (S.out==='save' && t>=T.t4 ? -1 : 1);
+    drawBall(pos.x, pos.y, r, ang);
+
+    // ---------- forces + captions by phase ----------
+    var cap = null, badges = [];
+    if (t < T.t1){
+      arrow(pos.x, pos.y, pos.x, pos.y + 62, COL.grav, 5, 'gravity', pos.x + 62, pos.y + 44);
+      arrow(pos.x, pos.y, pos.x, pos.y - 80, COL.norm, 5, 'ground pushes up', pos.x + 4, pos.y - 98);
+      badges = [1]; cap = 'At rest, stays at rest. Gravity and the ground\'s push are BALANCED, so the ball doesn\'t move until something pushes it.';
+    } else if (t < T.t2){
+      if (t >= T.tc){
+        arrow(pos.x + r, pos.y - 20, pos.x + r + 140, pos.y - 20, COL.app, 7, 'boot pushes ball →', pos.x + r + 110, pos.y - 44);
+        arrow(pos.x - r - 6, pos.y - 100, pos.x - r - 140, pos.y - 100, COL.react, 7, '← ball pushes boot', pos.x - r - 90, pos.y - 124);
+        badges = [2,3]; cap = 'UNBALANCED force → huge acceleration (a = F ÷ m). And the ball pushes back on the boot just as hard: equal and opposite!';
+      } else { badges = [1]; cap = 'Here comes the boot…'; }
+    } else if (t < T.t3){
+      if (T.roll){
+        arrow(pos.x - r, pos.y, pos.x - r - 60, pos.y, COL.fric, 6, 'friction', pos.x - r - 34, pos.y - 26);
+        badges = [1,2]; cap = 'Too heavy! Small acceleration, so it rolls slowly, and friction (an unbalanced force) slows it down.';
+      } else {
+        var vl = Math.min(150, 40 + T.v*4);
+        arrow(pos.x, pos.y - r - 26, pos.x + vl, pos.y - r - 26, COL.vel, 3, 'velocity (not a force!)', pos.x + vl/2, pos.y - r - 48, true);
+        arrow(pos.x, pos.y, pos.x, pos.y + 44, COL.grav, 4, null);
+        badges = [1]; cap = 'The kick is OVER. Nothing pushes the ball forward. It keeps flying because of INERTIA.';
+      }
+    } else if (T.roll){
+      badges = [1,2]; cap = 'Friction stopped it short of the goal. Same kick force, ~7× the mass → ~7× less acceleration.';
+    } else if (t < T.t4){
+      if (S.out === 'save'){
+        arrow(pos.x - r, pos.y - 70, pos.x - r - 130, pos.y - 70, COL.react, 7, '← gloves push ball', pos.x - r - 80, pos.y - 94);
+        arrow(pos.x + 4, pos.y - 26, pos.x + 120, pos.y - 26, COL.app, 7, 'ball pushes gloves →', pos.x + 30, pos.y - 50);
+        badges = [3]; cap = 'SAVE! Gloves push the ball, the ball pushes the gloves. Equal size, opposite directions, on DIFFERENT objects.';
+      } else {
+        arrow(pos.x - r, pos.y - 34, pos.x - r - 110, pos.y - 34, COL.react, 7, 'net pushes ball', pos.x - r - 60, pos.y - 56);
+        badges = [2,3]; cap = 'The net pushes the ball backward (unbalanced force → it stops). The ball pushes the net → the net stretches.';
+      }
+    } else {
+      if (S.out === 'save'){ badges = [1,2]; cap = 'The rebound rolls away until friction stops it. Every moment of the kick was Newton\'s laws!'; }
+      else { badges = [1,2,3]; cap = 'GOAL! ⚽ All three of Newton\'s laws, in under half a second of real time.'; }
+    }
+    if (cap) banner(badges, cap);
+
+    // real-time clock
+    if (t >= T.t2){
+      var real = Math.min((Math.min(t, T.t3) - T.t2)/SLOW, T.roll ? T.v/1.5 : T.D/T.v);
+      ctx.fillStyle = 'rgba(20,33,61,.85)'; roundRect(LW - 330, LH - 46, 314, 38, 8); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('Real time since kick: ' + real.toFixed(2) + ' s', LW - 173, LH - 27);
+    }
+    if (!S.playing && t === 0){
+      ctx.fillStyle = 'rgba(20,33,61,.75)'; roundRect(LW/2 - 140, 240, 280, 60, 30); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 26px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('▶  Press Play', LW/2, 270);
+    }
+  }
+
+  function loop(ts){
+    if (!S.playing) return;
+    var dt = Math.min(0.05, (ts - S.last)/1000); S.last = ts;
+    S.t += dt * (S.slow ? 0.4 : 1);
+    var T = TL();
+    if (S.t >= T.end){ S.t = T.end; setPlaying(false); }
+    draw();
+    if (S.playing) requestAnimationFrame(loop);
+  }
+  var playBtn = document.getElementById('play');
+  function setPlaying(p){
+    S.playing = p; playBtn.textContent = p ? '❚❚ Pause' : '▶ Play';
+    if (p){ if (S.t >= TL().end) S.t = 0; S.last = performance.now(); requestAnimationFrame(loop); }
+  }
+  playBtn.addEventListener('click', function(){ setPlaying(!S.playing); });
+  document.getElementById('replay').addEventListener('click', function(){ S.t = 0; setPlaying(true); });
+  document.getElementById('slow').addEventListener('click', function(){ S.slow = !S.slow; this.setAttribute('aria-pressed', S.slow); });
+
+  function jump(which){
+    var T = TL(); setPlaying(false);
+    if (which === 'law1') S.t = 1.0;
+    else if (which === 'law2') S.t = (T.tc + T.t2)/2;
+    else if (which === 'law3'){ if (T.roll){ S.t = (T.tc + T.t2)/2; } else S.t = S.out === 'save' ? (T.t3 + T.t4)/2 : (T.tc + T.t2)/2; }
+    draw();
+  }
+  document.querySelectorAll('[data-jump]').forEach(function(b){ b.addEventListener('click', function(){ jump(b.getAttribute('data-jump')); }); });
+
+  function setOpt(attr, val){
+    document.querySelectorAll('[data-'+attr+']').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-'+attr) === String(val) ? 'true' : 'false'); });
+  }
+  function updateReadout(){
+    var v = v0();
+    document.getElementById('rF').textContent = S.kick.toLocaleString() + ' N';
+    document.getElementById('rM').textContent = S.mass + ' kg';
+    document.getElementById('rA').textContent = Math.round(S.kick/S.mass).toLocaleString() + ' m/s²';
+    document.getElementById('rV').textContent = v.toFixed(v < 10 ? 1 : 0) + ' m/s (' + Math.round(v*3.6) + ' km/h)';
+  }
+  function setKick(k){ S.kick = k; setOpt('kick', k); updateReadout(); }
+  function setMass(m){ S.mass = m; setOpt('mass', m); updateReadout(); }
+  function setOut(o){ S.out = o; setOpt('out', o); }
+  document.querySelectorAll('[data-kick]').forEach(function(b){ b.addEventListener('click', function(){ setKick(+b.getAttribute('data-kick')); S.t = 0; setPlaying(false); draw(); }); });
+  document.querySelectorAll('[data-mass]').forEach(function(b){ b.addEventListener('click', function(){ setMass(+b.getAttribute('data-mass')); S.t = 0; setPlaying(false); draw(); }); });
+  document.querySelectorAll('[data-out]').forEach(function(b){ b.addEventListener('click', function(){ setOut(b.getAttribute('data-out')); S.t = 0; setPlaying(false); draw(); }); });
+
+  /* =========================================================
+     STEPS / PANEL
+     ========================================================= */
+  var cur = 0, visited = {};
+  var stepsNav = document.getElementById('steps'), panel = document.getElementById('panel');
+  var totalMin = STEPS.reduce(function(a,s){ return a + s.min; }, 0);
+  STEPS.forEach(function(s, i){
+    var b = document.createElement('button'); b.textContent = (i+1) + '. ' + s.nav + ' · ' + s.min + "'";
+    b.addEventListener('click', function(){ go(i); }); stepsNav.appendChild(b);
+  });
+  function go(i){
+    cur = Math.max(0, Math.min(STEPS.length-1, i)); visited[cur] = true;
+    var s = STEPS[cur];
+    Array.prototype.forEach.call(stepsNav.children, function(b, j){
+      if (j === cur) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current');
+      b.classList.toggle('done', !!visited[j] && j !== cur);
+    });
+    panel.innerHTML = '<div class="kicker"><span>Step ' + (cur+1) + ' of ' + STEPS.length + '</span><span>~' + s.min + ' min</span></div>' + s.html +
+      '<div class="nav">' + (cur > 0 ? '<button class="ghost" id="prevStep">← Back</button>' : '<span></span>') +
+      (cur < STEPS.length-1 ? '<button id="nextStep">Next: ' + STEPS[cur+1].nav + ' →</button>' : '<a href="' + GUIDE + '" target="_blank" rel="noopener"><button>Open the study guide →</button></a>') + '</div>';
+    var p = document.getElementById('prevStep'); if (p) p.addEventListener('click', function(){ go(cur-1); });
+    var n = document.getElementById('nextStep'); if (n) n.addEventListener('click', function(){ go(cur+1); });
+    panel.querySelectorAll('[data-reveal]').forEach(function(b){ b.addEventListener('click', function(){ var q = b.parentNode; q.classList.toggle('open'); b.textContent = q.classList.contains('open') ? 'Hide answer' : 'Reveal answer'; }); });
+    panel.querySelectorAll('.card').forEach(function(c){ c.addEventListener('click', function(){ c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); }); });
+    // apply scene preset
+    var pr = s.preset || {};
+    if (pr.kick) setKick(pr.kick);
+    if (pr.mass) setMass(pr.mass);
+    if (pr.out) setOut(pr.out);
+    if (pr.reset){ setPlaying(false); S.t = 0; draw(); }
+    if (pr.jump) jump(pr.jump);
+    if (pr.play){ S.t = 0; setPlaying(true); }
+    if (window.innerWidth <= 980) panel.scrollIntoView({block:'start'});
+  }
+
+  /* timer */
+  var clockOn = false, elapsed = 0, cStart = 0, cInt = null;
+  var clockEl = document.getElementById('clock'), clockBtn = document.getElementById('clockBtn');
+  document.getElementById('goal').textContent = '/ ' + totalMin + ':00';
+  function fmt(s){ s = Math.floor(s); return Math.floor(s/60) + ':' + ('0' + (s%60)).slice(-2); }
+  function tick(){ var e = elapsed + (clockOn ? (Date.now() - cStart)/1000 : 0); clockEl.textContent = fmt(e); clockEl.style.color = e > totalMin*60 ? '#ff8a80' : ''; }
+  clockBtn.addEventListener('click', function(){
+    if (clockOn){ elapsed += (Date.now() - cStart)/1000; clockOn = false; clearInterval(cInt); clockBtn.textContent = 'Resume'; }
+    else { cStart = Date.now(); clockOn = true; cInt = setInterval(tick, 500); clockBtn.textContent = 'Pause'; }
+    tick();
+  });
+  document.getElementById('clockReset').addEventListener('click', function(){ elapsed = 0; cStart = Date.now(); tick(); });
+
+  /* keyboard */
+  document.addEventListener('keydown', function(e){
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight'){ go(cur+1); }
+    else if (e.key === 'ArrowLeft'){ go(cur-1); }
+    else if (e.key === ' ' && e.target.tagName !== 'BUTTON'){ e.preventDefault(); setPlaying(!S.playing); }
+    else if (e.key === 'r' || e.key === 'R'){ S.t = 0; setPlaying(true); }
+  });
+
+  window.addEventListener('resize', resize);
+  resize(); updateReadout(); go(0);
+})();
+</script>
+</body>
+</html>
