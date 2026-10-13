@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newton's Laws Study Guide</title>
+<style>
+  :root{
+    --pitch:#0b6e4f; --pitch-d:#074a35; --pitch-l:#e6f2ec;
+    --navy:#14213d; --ink:#1d2433; --muted:#566074;
+    --bg:#f4f6f1; --card:#ffffff; --line:#dbe2d6;
+    --gold:#e9a200; --gold-l:#fff5da;
+    --red:#c8372d; --red-l:#fdecea;
+    --blue-l:#e8f0fb;
+    /* force colour code (used in every diagram) */
+    --f-grav:#7b3fb3; --f-norm:#1f6fd1; --f-fric:#c8372d;
+    --f-app:#0b8a5a; --f-air:#e07b00; --f-tens:#5b6475; --f-net:#14213d;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:0 16px}
+  h1,h2,h3,h4{line-height:1.2;color:var(--navy);margin:1.4em 0 .5em}
+  h2{font-size:1.75rem}
+  h3{font-size:1.3rem}
+  h4{font-size:1.08rem}
+  p{margin:.6em 0}
+  a{color:var(--pitch)}
+  strong{color:var(--navy)}
+  .muted{color:var(--muted)}
+  sub{font-size:.7em}
+
+  /* ---------- hero ---------- */
+  header.hero{background:linear-gradient(160deg,var(--pitch) 0%,var(--pitch-d) 100%);color:#fff;padding:36px 0 0;overflow:hidden}
+  header.hero h1{color:#fff;font-size:clamp(2rem,5vw,3rem);margin:0 0 .2em}
+  header.hero p.sub{font-size:1.15rem;opacity:.92;margin:0 0 18px;max-width:640px}
+  .hero-svg{display:block;width:100%;height:auto;margin-top:6px}
+
+  /* ---------- nav ---------- */
+  nav.toc{position:sticky;top:0;z-index:20;background:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  nav.toc ul{list-style:none;margin:0 auto;padding:8px 16px;max-width:980px;display:flex;flex-wrap:wrap;gap:6px}
+  nav.toc a{display:block;color:#fff;text-decoration:none;font-size:.88rem;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.08)}
+  nav.toc a:hover,nav.toc a:focus{background:var(--gold);color:var(--navy)}
+  @media (max-width:700px){nav.toc ul{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}nav.toc li{flex:0 0 auto}section,.lab{scroll-margin-top:60px}}
+
+  section{padding:8px 0 24px;border-bottom:1px solid var(--line);scroll-margin-top:120px}
+  .lab{scroll-margin-top:120px}
+  section:last-of-type{border-bottom:0}
+  .law-badge{display:inline-flex;align-items:center;gap:10px;font-weight:700;color:var(--pitch);text-transform:uppercase;letter-spacing:.08em;font-size:.82rem;margin-top:28px}
+  .law-badge span{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--pitch);color:#fff;font-size:1rem;letter-spacing:0}
+  .law-badge + h2{margin-top:.3em}
+
+  /* ---------- cards / callouts ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:16px 0}
+  .statement{background:var(--navy);color:#fff;border-radius:14px;padding:20px 22px;margin:16px 0;font-size:1.12rem}
+  .statement strong{color:var(--gold)}
+  .statement .label{display:block;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.75;margin-bottom:4px}
+  .callout{border-radius:12px;padding:14px 18px 14px 18px;margin:16px 0;border-left:6px solid}
+  .callout h4{margin:0 0 4px;display:flex;align-items:center;gap:8px}
+  .callout.coach{background:var(--pitch-l);border-color:var(--pitch)}
+  .callout.myth{background:var(--red-l);border-color:var(--red)}
+  .callout.myth h4{color:var(--red)}
+  .callout.key{background:var(--gold-l);border-color:var(--gold)}
+  .callout.think{background:var(--blue-l);border-color:var(--f-norm)}
+  .callout ul{margin:.3em 0;padding-left:1.2em}
+
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .law-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;border-top:6px solid var(--pitch)}
+  .law-card h3{margin:.2em 0 .3em;font-size:1.1rem}
+  .law-card .nick{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .law-card .eq{font-family:Georgia,"Times New Roman",serif;font-size:1.25rem;color:var(--pitch-d);margin-top:6px}
+
+  figure{margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+  figure svg{display:block;width:100%;height:auto}
+  figcaption{font-size:.9rem;color:var(--muted);margin-top:8px}
+  .media-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:center}
+  @media (max-width:700px){.media-row{grid-template-columns:1fr}}
+
+  .eqbox{font-family:Georgia,"Times New Roman",serif;font-size:1.6rem;text-align:center;color:var(--navy);background:var(--card);border:2px solid var(--pitch);border-radius:14px;padding:14px;margin:16px 0}
+  .eqbox small{display:block;font-family:inherit;font-size:.95rem;color:var(--muted);margin-top:4px}
+
+  table{border-collapse:collapse;width:100%;font-size:.95rem;background:var(--card)}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--pitch-l);color:var(--navy)}
+  .table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line);margin:14px 0}
+  .table-wrap table{border:0}
+  .chip{display:inline-block;font-size:.78rem;font-weight:700;color:#fff;border-radius:6px;padding:1px 8px;white-space:nowrap}
+
+  /* ---------- interactive lab ---------- */
+  .lab{background:var(--card);border:2px solid var(--navy);border-radius:16px;margin:22px 0;overflow:hidden}
+  .lab-head{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .lab-head .tag{background:var(--gold);color:var(--navy);font-weight:800;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;border-radius:6px;padding:2px 8px}
+  .lab-head h4{color:#fff;margin:0;font-size:1.05rem}
+  .lab-body{padding:14px 16px}
+  .lab canvas{display:block;width:100%;border-radius:10px;background:#eef3ea}
+  .controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:12px 0 4px}
+  .controls label{font-size:.92rem;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .controls input[type=range]{width:180px;accent-color:var(--pitch)}
+  .controls select{font:inherit;font-size:.92rem;padding:4px 6px;border-radius:8px;border:1px solid var(--line)}
+  button{font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;border:0;border-radius:999px;padding:8px 16px;background:var(--pitch);color:#fff}
+  button:hover{background:var(--pitch-d)}
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  button.ghost{background:transparent;color:var(--pitch);border:2px solid var(--pitch);padding:6px 14px}
+  button.ghost:hover{background:var(--pitch-l)}
+  button.seg{background:#eef1f5;color:var(--navy)}
+  button.seg[aria-pressed=true]{background:var(--navy);color:#fff}
+  .readout{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+  .readout div{background:#f3f5f8;border-radius:10px;padding:6px 12px;font-size:.88rem}
+  .readout b{display:block;font-size:1.05rem;color:var(--navy);font-variant-numeric:tabular-nums}
+  .lab .try{font-size:.92rem;background:var(--gold-l);border-radius:10px;padding:8px 12px;margin-top:12px}
+
+  /* FBD gallery */
+  .fbd-wrap{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:16px;align-items:start}
+  @media (max-width:700px){.fbd-wrap{grid-template-columns:1fr}}
+  .fbd-buttons{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.95rem;margin:8px 0}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{display:inline-block;width:18px;height:4px;border-radius:2px}
+
+  /* third-law animation */
+  .anim-header .ball{animation:hdrBall 4s ease-in-out infinite}
+  .anim-header .head{animation:hdrHead 4s ease-in-out infinite;transform-origin:120px 120px}
+  .anim-header .pair{animation:hdrPair 4s linear infinite;opacity:0}
+  .anim-header.paused *{animation-play-state:paused}
+  @keyframes hdrBall{
+    0%{transform:translate(330px,-40px)} 38%{transform:translate(0,0)}
+    48%{transform:translate(0,0)} 100%{transform:translate(360px,-90px)}}
+  @keyframes hdrHead{0%,38%{transform:rotate(0)} 46%{transform:rotate(-7deg)} 60%,100%{transform:rotate(0)}}
+  @keyframes hdrPair{0%,37%{opacity:0} 40%,62%{opacity:1} 70%,100%{opacity:0}}
+
+  /* first-law intro animation: ball on frictionless plane vs grass */
+  .anim-roll .b1{animation:roll1 5s linear infinite}
+  .anim-roll .b2{animation:roll2 5s cubic-bezier(.15,.7,.35,1) infinite}
+  .anim-roll.paused *{animation-play-state:paused}
+  @keyframes roll1{0%{transform:translateX(0) rotate(0)}100%{transform:translateX(560px) rotate(1080deg)}}
+  @keyframes roll2{0%{transform:translateX(0) rotate(0)}60%,100%{transform:translateX(250px) rotate(480deg)}}
+  .anim-roll .b1,.anim-roll .b2{transform-box:fill-box;transform-origin:center}
+
+  /* bars for collision calc */
+  .bar-row{display:grid;grid-template-columns:150px 1fr 90px;align-items:center;gap:10px;margin:6px 0;font-size:.9rem}
+  .bar{height:20px;border-radius:6px;transition:width .35s}
+  @media (max-width:520px){.bar-row{grid-template-columns:100px 1fr 74px}}
+
+  /* details reveal */
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin:8px 0}
+  details summary{cursor:pointer;font-weight:600;color:var(--navy)}
+  details[open] summary{margin-bottom:6px}
+  details .ans{color:var(--pitch-d);font-weight:600}
+  .pairs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:4px 14px}
+
+  /* flip cards */
+  .flip{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left;color:var(--ink);font-weight:400;width:100%;min-height:118px;display:block}
+  .flip:hover{background:#fbfcfa}
+  .flip .side-b{display:none}
+  .flip[aria-pressed=true]{background:var(--pitch-l);border-color:var(--pitch)}
+  .flip[aria-pressed=true] .side-a{display:none}
+  .flip[aria-pressed=true] .side-b{display:block}
+  .flip .tag{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+  .flip[aria-pressed=true] .tag{color:var(--pitch)}
+
+  /* vocab */
+  dl.vocab{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:14px 0}
+  dl.vocab div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  dl.vocab dt{font-weight:800;color:var(--pitch-d)}
+  dl.vocab dd{margin:4px 0 0;font-size:.95rem}
+
+  /* quiz */
+  .q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+  .q p.stem{font-weight:600;margin-top:0}
+  .q .opts{display:grid;gap:6px}
+  .q .opts button{background:#f3f5f8;color:var(--ink);text-align:left;border-radius:10px;font-weight:500;border:2px solid transparent}
+  .q .opts button:hover{background:#e9edf3}
+  .q .opts button.right{background:#e3f4ea;border-color:var(--pitch)}
+  .q .opts button.wrong{background:var(--red-l);border-color:var(--red)}
+  .q .fb{margin-top:8px;font-size:.93rem;display:none}
+  .q.done .fb{display:block}
+  .score{position:sticky;bottom:10px;background:var(--navy);color:#fff;border-radius:999px;padding:8px 18px;display:inline-block;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+
+  footer{background:var(--navy);color:#cfd6e4;padding:22px 0;font-size:.9rem;margin-top:30px}
+  footer a{color:var(--gold)}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .anim-header *, .anim-roll *{animation:none!important}
+    .anim-header .pair{opacity:1}
+  }
+  @media print{
+    nav.toc,.lab,.score,button{display:none!important}
+    details{border:0}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================= HERO ======================= -->
+<header class="hero">
+  <div class="wrap">
+    <p style="margin:0 0 4px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem;opacity:.85">Physics · Unit Study Guide</p>
+    <h1>Newton's Laws of Motion</h1>
+    <p class="sub">The physics behind every pass, header, sprint and save. Read the notes, try the interactive labs, then check yourself with the quiz at the end.</p>
+  </div>
+  <svg class="hero-svg" viewBox="0 0 1000 200" role="img" aria-label="Illustration of a soccer pitch with a ball travelling in an arc toward a goal">
+    <defs>
+      <pattern id="stripes" width="80" height="200" patternUnits="userSpaceOnUse">
+        <rect width="40" height="200" fill="#0d7a58"/><rect x="40" width="40" height="200" fill="#0b6e4f"/>
+      </pattern>
+    </defs>
+    <rect y="70" width="1000" height="130" fill="url(#stripes)"/>
+    <line x1="0" y1="70" x2="1000" y2="70" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>
+    <circle cx="500" cy="200" r="70" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="3"/>
+    <!-- goal -->
+    <g stroke="#fff" stroke-width="5" fill="none"><path d="M880 150 V60 H990"/></g>
+    <g stroke="#fff" stroke-opacity=".35" stroke-width="1.5">
+      <line x1="900" y1="60" x2="900" y2="150"/><line x1="930" y1="60" x2="930" y2="150"/><line x1="960" y1="60" x2="960" y2="150"/>
+      <line x1="880" y1="90" x2="990" y2="90"/><line x1="880" y1="120" x2="990" y2="120"/>
+    </g>
+    <!-- trajectory -->
+    <path d="M120 160 Q 520 -60 900 105" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="8 10" stroke-opacity=".8"/>
+    <g transform="translate(120 160)"><circle r="14" fill="#fff" stroke="#14213d" stroke-width="2"/><polygon points="0,-6 5.7,-1.9 3.5,4.9 -3.5,4.9 -5.7,-1.9" fill="#14213d"/></g>
+    <!-- law markers -->
+    <g font-family="Arial,sans-serif" font-weight="700" font-size="15" fill="#14213d">
+      <g transform="translate(250 72)"><circle r="17" fill="#e9a200"/><text text-anchor="middle" y="5">1</text></g>
+      <g transform="translate(500 22)"><circle r="17" fill="#e9a200"/><text text-anchor="middle" y="5">2</text></g>
+      <g transform="translate(760 52)"><circle r="17" fill="#e9a200"/><text text-anchor="middle" y="5">3</text></g>
+    </g>
+  </svg>
+</header>
+
+<nav class="toc" aria-label="Study guide sections">
+  <ul>
+    <li><a href="#big-picture">Big picture</a></li>
+    <li><a href="#forces">What is a force?</a></li>
+    <li><a href="#law1">1st Law</a></li>
+    <li><a href="#net">Net force &amp; FBDs</a></li>
+    <li><a href="#law2">2nd Law</a></li>
+    <li><a href="#falling">Falling &amp; air</a></li>
+    <li><a href="#law3">3rd Law</a></li>
+    <li><a href="#myths">Myth busters</a></li>
+    <li><a href="#summary">Summary sheet</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+
+<!-- ======================= BIG PICTURE ======================= -->
+<section id="big-picture">
+  <h2>The big picture</h2>
+  <p>In earlier units you learned how to <em>describe</em> motion with words, graphs and numbers. This unit explains <em>why</em> things move the way they do. In the 1600s, Isaac Newton wrote three laws that predict how any object, whether a planet, a car or a soccer ball, responds to the forces acting on it.</p>
+
+  <div class="grid3">
+    <div class="law-card">
+      <div class="nick">Law 1 · Law of inertia</div>
+      <h3>Objects keep doing what they're doing</h3>
+      <p>…unless an <strong>unbalanced force</strong> acts on them.</p>
+      <div class="eq">ΣF = 0 → a = 0</div>
+    </div>
+    <div class="law-card" style="border-top-color:var(--gold)">
+      <div class="nick">Law 2 · Law of acceleration</div>
+      <h3>Net force causes acceleration</h3>
+      <p>More force means more acceleration. More mass means less acceleration.</p>
+      <div class="eq">a = F<sub>net</sub> / m</div>
+    </div>
+    <div class="law-card" style="border-top-color:var(--f-norm)">
+      <div class="nick">Law 3 · Action–reaction</div>
+      <h3>Forces come in pairs</h3>
+      <p>If A pushes on B, then B pushes back on A with an equal and opposite force.</p>
+      <div class="eq">F<sub>A on B</sub> = −F<sub>B on A</sub></div>
+    </div>
+  </div>
+
+  <div class="callout key">
+    <h4>🎯 By the end of this guide you should be able to…</h4>
+    <ul>
+      <li>Explain inertia and how it depends on mass.</li>
+      <li>Tell balanced forces from unbalanced forces and find the <strong>net force</strong>.</li>
+      <li>Draw and read <strong>free-body diagrams</strong>.</li>
+      <li>Use <strong>F<sub>net</sub> = m·a</strong> to find acceleration, force or mass.</li>
+      <li>Explain free fall, air resistance and terminal velocity.</li>
+      <li>Identify <strong>action–reaction force pairs</strong> and explain why they don't cancel.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= FORCES ======================= -->
+<section id="forces">
+  <div class="law-badge"><span>0</span> Foundation</div>
+  <h2>What is a force?</h2>
+  <p>A <strong>force</strong> is a push or a pull on an object that comes from its <strong>interaction</strong> with another object. When the interaction stops, the force stops. A force isn't something an object "has" or "carries." It only exists while two things are interacting.</p>
+  <p>Force is a <strong>vector</strong>, which means it has both a <em>size</em> (magnitude) and a <em>direction</em>. We draw forces as arrows: the length shows how strong the force is, and the arrowhead shows which way it acts. The SI unit of force is the <strong>newton (N)</strong>. One newton is about the weight of a small apple. A size-5 soccer ball weighs about 4.2 N.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">🤝 Contact forces</h4>
+      <p>The objects are touching.</p>
+      <p class="muted" style="margin-bottom:0">Applied, friction, normal, tension, air resistance, spring</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">📡 Action-at-a-distance forces</h4>
+      <p>The objects pull or push without touching.</p>
+      <p class="muted" style="margin-bottom:0">Gravitational, electric, magnetic. Even mid-header with both feet off the ground, Earth is still pulling you down.</p>
+    </div>
+  </div>
+
+  <h3>Types of forces (with a soccer example of each)</h3>
+  <p>Every diagram in this guide uses the same colours, so you can learn to spot each force type at a glance.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Force &amp; symbol</th><th>What it is</th><th>⚽ On the pitch</th></tr></thead>
+    <tbody>
+      <tr><td><span class="chip" style="background:var(--f-app)">Applied · F<sub>app</sub></span></td><td>A push or pull from a person or another object.</td><td>Your boot striking the ball; a keeper's palms pushing a shot over the bar.</td></tr>
+      <tr><td><span class="chip" style="background:var(--f-grav)">Gravity (weight) · F<sub>grav</sub></span></td><td>Earth's pull on an object toward its center. <strong>F<sub>grav</sub> = m·g</strong>, with g = 9.8 m/s² (≈ 10 m/s²).</td><td>A 70 kg player weighs 70 × 9.8 ≈ 686 N. It's what brings every lofted ball back down.</td></tr>
+      <tr><td><span class="chip" style="background:var(--f-norm)">Normal · F<sub>norm</sub></span></td><td>The support force a surface pushes with, at 90° to that surface.</td><td>The turf pushing up on a ball sitting on the penalty spot.</td></tr>
+      <tr><td><span class="chip" style="background:var(--f-fric)">Friction · F<sub>frict</sub></span></td><td>A surface resisting sliding or rolling. It opposes the motion (or attempted motion). <strong>F<sub>frict</sub> = μ·F<sub>norm</sub></strong></td><td>Long grass slowing a ground pass; cleats gripping the turf so you can cut.</td></tr>
+      <tr><td><span class="chip" style="background:var(--f-air)">Air resistance · F<sub>air</sub></span></td><td>Friction from the air. It grows as speed increases.</td><td>Why a beach ball floats and a driven shot dips and slows.</td></tr>
+      <tr><td><span class="chip" style="background:var(--f-tens)">Tension · F<sub>tens</sub></span></td><td>Pull carried through a rope, cable or string.</td><td>A resistance band or sled harness during speed training; the net holding the ball.</td></tr>
+      <tr><td><span class="chip" style="background:#8a6d3b">Spring · F<sub>spring</sub></span></td><td>Force from something compressed or stretched.</td><td>The ball itself! It squashes on your foot and springs back. So does a rebounder net.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout myth">
+    <h4>⚠️ Mass ≠ weight</h4>
+    <p><strong>Mass</strong> (kg) is how much matter is in an object, and it's the same everywhere. <strong>Weight</strong> (N) is the force of gravity on that mass. On the Moon your mass stays the same, but you'd weigh only about 1/6 as much.</p>
+  </div>
+</section>
+
+<!-- ======================= LAW 1 ======================= -->
+<section id="law1">
+  <div class="law-badge"><span>1</span> Newton's First Law</div>
+  <h2>The law of inertia</h2>
+
+  <div class="statement">
+    <span class="label">Newton's first law</span>
+    An object at rest stays at rest, and an object in motion stays in motion <strong>with the same speed and in the same direction</strong>, unless acted on by an <strong>unbalanced force</strong>.
+  </div>
+
+  <p>The first law has <strong>two parts</strong>:</p>
+  <ol>
+    <li><strong>At rest → stays at rest.</strong> A ball on the penalty spot won't move until something (your boot) applies an unbalanced force.</li>
+    <li><strong>In motion → stays in motion</strong> in a straight line at constant speed. A pass would roll forever if nothing slowed it. On Earth, the unbalanced force that eventually stops it is usually <strong>friction</strong>.</li>
+  </ol>
+  <p>Put simply: objects tend to <em>"keep on doing what they're doing."</em></p>
+
+  <figure>
+    <svg class="anim-roll" id="rollAnim" viewBox="0 0 640 210" role="img" aria-label="Animation: two identical balls are passed at the same speed. On a frictionless surface the ball keeps rolling at constant speed. On grass, friction slows the ball to a stop.">
+      <text x="10" y="22" font-size="14" font-weight="700" fill="#14213d" font-family="Arial">Frictionless surface (imagine ice in space)</text>
+      <rect x="0" y="70" width="640" height="10" fill="#bfe3f2"/>
+      <g class="b1"><circle cx="30" cy="52" r="18" fill="#fff" stroke="#14213d" stroke-width="2"/><polygon points="30,44 37.6,49.5 34.7,58.5 25.3,58.5 22.4,49.5" fill="#14213d"/></g>
+      <text x="10" y="122" font-size="14" font-weight="700" fill="#14213d" font-family="Arial">Real grass (friction acts)</text>
+      <rect x="0" y="170" width="640" height="14" fill="#0b6e4f"/>
+      <g fill="#0d7a58">
+        <path d="M0 170 l4 -8 l4 8 M60 170 l4 -9 l4 9 M120 170 l4 -7 l4 7 M180 170 l4 -9 l4 9 M240 170 l4 -8 l4 8 M300 170 l4 -9 l4 9 M360 170 l4 -7 l4 7 M420 170 l4 -9 l4 9 M480 170 l4 -8 l4 8 M540 170 l4 -9 l4 9 M600 170 l4 -7 l4 7"/>
+      </g>
+      <g class="b2"><circle cx="30" cy="152" r="18" fill="#fff" stroke="#14213d" stroke-width="2"/><polygon points="30,144 37.6,149.5 34.7,158.5 25.3,158.5 22.4,149.5" fill="#14213d"/></g>
+      <text x="630" y="205" text-anchor="end" font-size="12" fill="#566074" font-family="Arial">Same pass, same starting speed. Only the unbalanced force (friction) is different.</text>
+    </svg>
+    <figcaption>Both balls start with the same pass. With no friction, nothing changes the ball's motion, so it keeps going at constant velocity. On grass, friction is an unbalanced force that slows the ball down. <button class="ghost" style="padding:2px 10px;font-size:.8rem" data-pause="rollAnim">Pause</button></figcaption>
+  </figure>
+
+  <h3>Inertia and mass</h3>
+  <p><strong>Inertia</strong> is an object's resistance to a change in its motion. It describes how much an object "wants" to keep doing what it's already doing.</p>
+  <ul>
+    <li>The <strong>greater the mass</strong>, the <strong>greater the inertia</strong>, and the more force you need to start it, stop it, or change its direction.</li>
+    <li>Since an object's <em>state of motion</em> is its <strong>velocity</strong> (speed + direction), inertia is really resistance to changes in velocity. In other words, it's resistance to <strong>acceleration</strong>.</li>
+  </ul>
+
+  <div class="callout think">
+    <h4>📜 A bit of history: Galileo's ramps</h4>
+    <p>For about 2,000 years people believed the "natural" state of objects was rest, and that you needed a force to <em>keep</em> something moving. Galileo rolled balls down one ramp and up another. The smoother the ramps, the closer the ball came to its starting height. He reasoned that with <em>zero</em> friction, a ball rolling onto a flat surface would never stop. Friction, not some natural tendency, is what stops moving objects. Newton built his first law on this idea.</p>
+  </div>
+
+  <h3>Inertia in everyday life</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">🚗 The sharp turn and the sudden stop</h4>
+      <p>When a car turns sharply, your body feels pulled toward the outside. Really, it's trying to keep going straight. When a car stops suddenly, your body keeps moving forward. That's why seatbelts matter: the belt supplies the unbalanced force that stops you.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">🍅 The ketchup bottle</h4>
+      <p>Thrust the upside-down bottle downward fast and stop it abruptly. The bottle stops, but the ketchup keeps moving downward and out.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">🏂 Snowboard catches ice</h4>
+      <p>The board and feet stop suddenly, but the rider's upper body keeps moving forward, often face-first into the snow.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">🥤 The full water glass</h4>
+      <p>Start walking: the water stays behind and spills <em>backward</em>. Turn: the water keeps going straight and spills to the <em>side</em>. Stop: the water keeps going and spills <em>forward</em>.</p>
+    </div>
+  </div>
+
+  <div class="callout coach">
+    <h4>⚽ Coach's corner: inertia on the pitch</h4>
+    <ul>
+      <li><strong>Cutting and changing direction:</strong> when a winger plants and cuts, their body "wants" to keep going straight. That's why you drop your hips, lean into the cut, and rely on cleat grip (friction) to supply the unbalanced force that turns you.</li>
+      <li><strong>Strength on the ball:</strong> a heavier centre-back has more inertia, so they're harder to knock off the ball. They also take more force to accelerate and turn, which is one reason smaller, quicker players can beat them on the dribble.</li>
+      <li><strong>Getting clipped:</strong> when a defender catches your trailing foot, your feet stop but your upper body keeps moving forward, just like the snowboarder.</li>
+      <li><strong>Pitch conditions:</strong> on a slick, wet surface a ground pass skips and keeps its speed much longer (less friction). On long, dry grass it dies quickly. Try it in the lab below.</li>
+    </ul>
+  </div>
+
+  <!-- LAB 1 -->
+  <div class="lab" id="lab1">
+    <div class="lab-head"><span class="tag">Lab 1</span><h4>Ground pass: how far does inertia carry the ball?</h4></div>
+    <div class="lab-body">
+      <canvas id="cvRoll" aria-label="Simulation of a soccer ball rolling across a 50 metre surface"></canvas>
+      <div class="controls">
+        <span style="font-size:.92rem;font-weight:600;color:var(--navy)">Surface:</span>
+        <button class="seg" data-surf="0" aria-pressed="true">Long dry grass</button>
+        <button class="seg" data-surf="1" aria-pressed="false">Wet artificial turf</button>
+        <button class="seg" data-surf="2" aria-pressed="false">No friction (imaginary)</button>
+        <button id="btnPass">Play the pass ▶</button>
+      </div>
+      <div class="readout">
+        <div>Speed<b id="r1v">0.0 m/s</b></div>
+        <div>Distance rolled<b id="r1d">0.0 m</b></div>
+        <div>Friction force on ball<b id="r1f">0.00 N</b></div>
+        <div>Status<b id="r1s">At rest, stays at rest</b></div>
+      </div>
+      <p class="try">🔎 <strong>Try it:</strong> Play the same 8 m/s pass on each surface. Which surface has the biggest unbalanced force? On the frictionless surface, does the ball ever slow down? What does that tell you about whether a moving object <em>needs</em> a force to keep moving? The black arrow is velocity (not a force). The red arrow is friction.</p>
+    </div>
+  </div>
+
+  <div class="callout key">
+    <h4>🔑 Key takeaways: First Law</h4>
+    <ul>
+      <li><strong>Balanced forces</strong> → the object stays at rest <em>or</em> keeps a constant velocity (same speed, same direction).</li>
+      <li><strong>Unbalanced force</strong> → the object accelerates (speeds up, slows down, or changes direction).</li>
+      <li>More mass = more inertia = harder to change its motion.</li>
+      <li>A moving object does <strong>not</strong> need a force to keep moving. It needs a force to <em>change</em> its motion.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= NET FORCE & FBD ======================= -->
+<section id="net">
+  <div class="law-badge"><span>1</span> Forces in balance</div>
+  <h2>Balanced forces, unbalanced forces &amp; net force</h2>
+  <p>More than one force can act on an object at the same time. The vector sum of <em>all</em> the forces acting on one object is the <strong>net force</strong> (F<sub>net</sub> or ΣF).</p>
+  <div class="grid2">
+    <div class="card" style="border-left:6px solid var(--f-norm)">
+      <h4 style="margin-top:0">Balanced forces (equilibrium)</h4>
+      <p><strong>F<sub>net</sub> = 0.</strong> The object's motion does <em>not</em> change. It stays at rest or keeps moving at a constant velocity.</p>
+    </div>
+    <div class="card" style="border-left:6px solid var(--red)">
+      <h4 style="margin-top:0">Unbalanced forces</h4>
+      <p><strong>F<sub>net</sub> ≠ 0.</strong> The object <em>accelerates</em> in the direction of the net force.</p>
+    </div>
+  </div>
+
+  <h3>Adding forces is (mostly) arithmetic</h3>
+  <figure>
+    <svg viewBox="0 0 760 300" role="img" aria-label="Three diagrams. Same direction: 5 newtons plus 10 newtons equals 15 newtons. Opposite directions, equal: 400 newtons right and 400 newtons left equals zero, balanced. Opposite directions, unequal: 300 newtons right and 500 newtons left equals 200 newtons left.">
+      <defs>
+        <marker id="ahT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0b8a5a"/></marker>
+        <marker id="ahN" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#14213d"/></marker>
+        <marker id="ahR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c8372d"/></marker>
+      </defs>
+      <g font-family="Arial" font-size="14" fill="#1d2433">
+        <!-- row 1 -->
+        <text x="10" y="30" font-weight="700" fill="#14213d">Same direction → ADD</text>
+        <line x1="20" y1="60" x2="90" y2="60" stroke="#0b8a5a" stroke-width="7" marker-end="url(#ahT)"/><text x="40" y="50">5 N</text>
+        <text x="120" y="66" font-size="22">+</text>
+        <line x1="150" y1="60" x2="290" y2="60" stroke="#0b8a5a" stroke-width="7" marker-end="url(#ahT)"/><text x="200" y="50">10 N</text>
+        <text x="320" y="66" font-size="22">=</text>
+        <line x1="350" y1="60" x2="560" y2="60" stroke="#14213d" stroke-width="9" marker-end="url(#ahN)"/><text x="410" y="48" font-weight="700">F<tspan font-size="10" dy="3">net</tspan><tspan dy="-3"> = 15 N →</tspan></text>
+        <text x="590" y="58" fill="#566074" font-size="13">You + a friend push a</text><text x="590" y="74" fill="#566074" font-size="13">stalled car together</text>
+
+        <!-- row 2 -->
+        <text x="10" y="128" font-weight="700" fill="#14213d">Opposite &amp; equal → CANCEL</text>
+        <line x1="20" y1="158" x2="200" y2="158" stroke="#0b8a5a" stroke-width="7" marker-end="url(#ahT)"/><text x="70" y="148">400 N</text>
+        <line x1="380" y1="158" x2="200" y2="158" stroke="#c8372d" stroke-width="7" marker-end="url(#ahR)"/><text x="250" y="148">400 N</text>
+        <text x="400" y="164" font-size="22">=</text>
+        <text x="435" y="164" font-weight="700" fill="#14213d">F<tspan font-size="10" dy="3">net</tspan><tspan dy="-3"> = 0 (balanced)</tspan></text>
+        <text x="590" y="156" fill="#566074" font-size="13">Evenly matched arm</text><text x="590" y="172" fill="#566074" font-size="13">wrestle or tug-of-war</text>
+
+        <!-- row 3 -->
+        <text x="10" y="226" font-weight="700" fill="#14213d">Opposite &amp; unequal → SUBTRACT (bigger one wins)</text>
+        <line x1="20" y1="258" x2="140" y2="258" stroke="#0b8a5a" stroke-width="7" marker-end="url(#ahT)"/><text x="50" y="248">300 N</text>
+        <line x1="340" y1="258" x2="140" y2="258" stroke="#c8372d" stroke-width="7" marker-end="url(#ahR)"/><text x="215" y="248">500 N</text>
+        <text x="360" y="264" font-size="22">=</text>
+        <line x1="550" y1="258" x2="400" y2="258" stroke="#14213d" stroke-width="9" marker-end="url(#ahN)"/><text x="420" y="246" font-weight="700">← 200 N</text>
+        <text x="590" y="254" fill="#566074" font-size="13">You vs. a bodybuilder:</text><text x="590" y="270" fill="#566074" font-size="13">their force − your force</text>
+      </g>
+    </svg>
+    <figcaption>Force arrows add like numbers on a number line: forces in the same direction add, and opposite directions subtract. The net force points in the direction of the larger force.</figcaption>
+  </figure>
+
+  <div class="callout coach">
+    <h4>⚽ Coach's corner: shoulder-to-shoulder</h4>
+    <p>Two players chasing a through-ball lean into each other. If each pushes sideways with the same force, the sideways forces are <strong>balanced</strong> and neither gets knocked off their line. If one pushes harder, the sideways forces are <strong>unbalanced</strong>, and the weaker player accelerates sideways and off the ball. That's why building core and lower-body strength matters for winning duels.</p>
+  </div>
+
+  <!-- LAB 2 -->
+  <div class="lab" id="lab2">
+    <div class="lab-head"><span class="tag">Lab 2</span><h4>Tug-of-war sled: balanced vs. unbalanced</h4></div>
+    <div class="lab-body">
+      <p style="margin-top:0;font-size:.95rem">Two teammates pull on a 200 kg training sled sitting on a super-slick surface (ignore friction). Set each pull and watch what the sled does.</p>
+      <canvas id="cvTug" aria-label="Simulation of a sled pulled in two directions with force arrows"></canvas>
+      <div class="controls">
+        <label>⬅ Left pull <input type="range" id="fL" min="0" max="800" step="50" value="400"> <span id="fLv">400 N</span></label>
+        <label>Right pull ➡ <input type="range" id="fR" min="0" max="800" step="50" value="400"> <span id="fRv">400 N</span></label>
+      </div>
+      <div class="controls">
+        <button id="btnShove">Give it a shove ➡ (+1 m/s)</button>
+        <button class="ghost" id="btnTugReset">Reset</button>
+      </div>
+      <div class="readout">
+        <div>Net force<b id="r2n">0 N</b></div>
+        <div>Acceleration<b id="r2a">0.00 m/s²</b></div>
+        <div>Velocity<b id="r2v">0.00 m/s</b></div>
+        <div>Forces are<b id="r2s">Balanced</b></div>
+      </div>
+      <p class="try">🔎 <strong>Try it:</strong> (1) Make the forces unbalanced and watch the sled's speed <em>change</em>. (2) Reset, keep the forces balanced, and give it a shove. Does the sled stop? <strong>Balanced forces don't mean "not moving." They mean "not accelerating."</strong> (3) While it's moving right, increase the left pull. What happens to its speed?</p>
+    </div>
+  </div>
+
+  <h3>Drawing free-body diagrams (FBDs)</h3>
+  <p>A <strong>free-body diagram</strong> shows <em>all</em> the forces acting on <em>one</em> object. Physicists use them to work out the net force.</p>
+  <ol>
+    <li>Draw the object as a box (or dot) and focus on <strong>only that object</strong>.</li>
+    <li>Identify every force acting <strong>on</strong> it. Ask: what's touching it, and is gravity acting? (Always yes on Earth.)</li>
+    <li>Draw each force as an arrow pointing <strong>away from the center</strong> in the direction it acts.</li>
+    <li>Make arrow <strong>lengths</strong> show relative sizes. Balanced pairs should have equal lengths.</li>
+    <li><strong>Label</strong> every arrow (F<sub>grav</sub>, F<sub>norm</sub>…). Only draw forces that actually exist; there's no fixed number.</li>
+  </ol>
+
+  <!-- LAB 3 FBD gallery -->
+  <div class="lab" id="lab3">
+    <div class="lab-head"><span class="tag">Lab 3</span><h4>Free-body diagram gallery: soccer edition</h4></div>
+    <div class="lab-body">
+      <p style="margin-top:0;font-size:.95rem">Pick a situation. <strong>Before you look</strong>, sketch the FBD on paper, then compare.</p>
+      <div class="fbd-buttons" id="fbdBtns"></div>
+      <div class="fbd-wrap">
+        <svg id="fbdSvg" viewBox="0 0 300 300" role="img" aria-label="Free-body diagram"></svg>
+        <div>
+          <h4 id="fbdTitle" style="margin-top:0"></h4>
+          <p id="fbdDesc"></p>
+          <p id="fbdNet" style="font-weight:700;color:var(--navy)"></p>
+          <div class="legend">
+            <span><i style="background:var(--f-grav)"></i>F<sub>grav</sub></span>
+            <span><i style="background:var(--f-norm)"></i>F<sub>norm</sub></span>
+            <span><i style="background:var(--f-fric)"></i>F<sub>frict</sub></span>
+            <span><i style="background:var(--f-app)"></i>F<sub>app</sub></span>
+            <span><i style="background:var(--f-air)"></i>F<sub>air</sub></span>
+            <span><i style="background:var(--f-tens)"></i>F<sub>tens</sub></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Determining the net force from an FBD</h3>
+  <p>Add up the vertical forces (up vs. down) and the horizontal forces (left vs. right) separately. If both sets cancel, F<sub>net</sub> = 0. If either set doesn't cancel, there's an unbalanced force.</p>
+  <div class="card">
+    <p style="margin-top:0"><strong>Example:</strong> A sprinting player has F<sub>grav</sub> = 700 N down, F<sub>norm</sub> = 700 N up, a forward push from the ground (friction on the cleats) of 300 N, and air resistance of 20 N backward.</p>
+    <p>Vertical: 700 N up − 700 N down = <strong>0</strong> (balanced).<br>
+       Horizontal: 300 N forward − 20 N backward = <strong>280 N forward</strong>.</p>
+    <p style="margin-bottom:0">F<sub>net</sub> = <strong>280 N forward</strong>, so the player is <strong>accelerating</strong> forward.</p>
+  </div>
+</section>
+
+<!-- ======================= LAW 2 ======================= -->
+<section id="law2">
+  <div class="law-badge"><span>2</span> Newton's Second Law</div>
+  <h2>Force, mass &amp; acceleration</h2>
+  <p>The first law tells us what happens when forces are <em>balanced</em>: no acceleration. The second law tells us exactly <em>how much</em> an object accelerates when the forces are <em>unbalanced</em>.</p>
+
+  <div class="statement">
+    <span class="label">Newton's second law</span>
+    The acceleration of an object is <strong>directly proportional</strong> to the net force acting on it, is in the <strong>same direction</strong> as the net force, and is <strong>inversely proportional</strong> to the object's mass.
+  </div>
+
+  <div class="eqbox">a = F<sub>net</sub> / m &nbsp;&nbsp;⟺&nbsp;&nbsp; F<sub>net</sub> = m · a
+    <small>a in m/s² · F<sub>net</sub> in newtons (N) · m in kilograms (kg) · 1 N = 1 kg·m/s²</small>
+  </div>
+
+  <h3>Vocabulary you need</h3>
+  <dl class="vocab">
+    <div><dt>Acceleration</dt><dd>The rate at which velocity changes with time. The change can be in speed, direction, or both. Acceleration is a change in motion caused by an unbalanced force.</dd></div>
+    <div><dt>Mass</dt><dd>The quantity of matter ("stuff") in an object. To find acceleration, divide the net force by the mass.</dd></div>
+    <div><dt>Directly proportional</dt><dd>As one quantity increases, the other increases too, and when one decreases the other decreases. <strong>a ∝ F</strong>: double the net force, double the acceleration.</dd></div>
+    <div><dt>Inversely proportional</dt><dd>As one quantity increases, the other decreases proportionally, and vice versa. <strong>a ∝ 1/m</strong>: double the mass, half the acceleration.</dd></div>
+    <div><dt>Force</dt><dd>A push or a pull. Any force can cause an object to move or accelerate.</dd></div>
+    <div><dt>Net force</dt><dd>The resultant (vector sum) of <em>all</em> the forces acting on an object. The key word is "<strong>net</strong>."</dd></div>
+  </dl>
+
+  <figure>
+    <svg viewBox="0 0 760 230" role="img" aria-label="Diagram: same mass, double the force gives double the acceleration. Same force, double the mass gives half the acceleration.">
+      <defs>
+        <marker id="ahG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0b8a5a"/></marker>
+        <marker id="ahGo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e9a200"/></marker>
+      </defs>
+      <g font-family="Arial" font-size="13" fill="#1d2433">
+        <text x="190" y="22" text-anchor="middle" font-weight="700" font-size="15" fill="#14213d">a ∝ F (same mass)</text>
+        <text x="570" y="22" text-anchor="middle" font-weight="700" font-size="15" fill="#14213d">a ∝ 1/m (same force)</text>
+        <line x1="380" y1="10" x2="380" y2="220" stroke="#dbe2d6" stroke-width="2"/>
+        <!-- left top -->
+        <line x1="20" y1="70" x2="80" y2="70" stroke="#0b8a5a" stroke-width="6" marker-end="url(#ahG)"/><text x="22" y="58">F</text>
+        <circle cx="110" cy="70" r="20" fill="#fff" stroke="#14213d" stroke-width="2"/><text x="110" y="74" text-anchor="middle" font-size="11">m</text>
+        <line x1="145" y1="70" x2="205" y2="70" stroke="#e9a200" stroke-width="6" marker-end="url(#ahGo)"/><text x="215" y="74">a</text>
+        <!-- left bottom -->
+        <line x1="20" y1="160" x2="140" y2="160" stroke="#0b8a5a" stroke-width="6" marker-end="url(#ahG)"/><text x="22" y="148">2F</text>
+        <circle cx="170" cy="160" r="20" fill="#fff" stroke="#14213d" stroke-width="2"/><text x="170" y="164" text-anchor="middle" font-size="11">m</text>
+        <line x1="205" y1="160" x2="325" y2="160" stroke="#e9a200" stroke-width="6" marker-end="url(#ahGo)"/><text x="335" y="164">2a</text>
+        <!-- right top -->
+        <line x1="400" y1="70" x2="480" y2="70" stroke="#0b8a5a" stroke-width="6" marker-end="url(#ahG)"/><text x="402" y="58">F</text>
+        <circle cx="510" cy="70" r="20" fill="#fff" stroke="#14213d" stroke-width="2"/><text x="510" y="74" text-anchor="middle" font-size="11">m</text>
+        <line x1="545" y1="70" x2="665" y2="70" stroke="#e9a200" stroke-width="6" marker-end="url(#ahGo)"/><text x="675" y="74">a</text>
+        <!-- right bottom -->
+        <line x1="400" y1="160" x2="480" y2="160" stroke="#0b8a5a" stroke-width="6" marker-end="url(#ahG)"/><text x="402" y="148">F</text>
+        <circle cx="518" cy="160" r="28" fill="#8a6d3b" stroke="#14213d" stroke-width="2"/><text x="518" y="164" text-anchor="middle" font-size="11" fill="#fff">2m</text>
+        <line x1="560" y1="160" x2="620" y2="160" stroke="#e9a200" stroke-width="6" marker-end="url(#ahGo)"/><text x="630" y="164">½a</text>
+        <text x="190" y="212" text-anchor="middle" fill="#566074">Kick twice as hard → ball accelerates twice as much</text>
+        <text x="570" y="212" text-anchor="middle" fill="#566074">Same kick on a heavier ball → less acceleration</text>
+      </g>
+    </svg>
+  </figure>
+
+  <!-- LAB 4 -->
+  <div class="lab" id="lab4">
+    <div class="lab-head"><span class="tag">Lab 4</span><h4>Kick lab: F = m·a off the boot</h4></div>
+    <div class="lab-body">
+      <p style="margin-top:0;font-size:.95rem">Your boot is in contact with the ball for only about <strong>0.01 s</strong> (10 milliseconds). During that time the kick force accelerates the ball. Choose a kick force and a ball, then strike it.</p>
+      <canvas id="cvKick" aria-label="Simulation of a ball being kicked and travelling across 30 metres"></canvas>
+      <div class="controls">
+        <label>Kick force <input type="range" id="kF" min="100" max="1500" step="50" value="800"> <span id="kFv">800 N</span></label>
+        <label>Ball
+          <select id="kM">
+            <option value="0.30">Size 3 youth ball (0.30 kg)</option>
+            <option value="0.43" selected>Size 5 match ball (0.43 kg)</option>
+            <option value="0.60">Waterlogged old ball (0.60 kg)</option>
+            <option value="3.0">Medicine ball (3.0 kg), don't try this!</option>
+          </select>
+        </label>
+        <button id="btnKick">Strike it! ⚽</button>
+      </div>
+      <div class="readout">
+        <div>a = F / m<b id="r4a">–</b></div>
+        <div>Launch speed (v = a·t)<b id="r4v">–</b></div>
+        <div>In km/h<b id="r4k">–</b></div>
+      </div>
+      <div class="table-wrap" style="margin-top:12px">
+        <table>
+          <thead><tr><th>Trial</th><th>Force (N)</th><th>Mass (kg)</th><th>Acceleration (m/s²)</th><th>Launch speed (m/s)</th></tr></thead>
+          <tbody id="kickLog"><tr><td colspan="5" class="muted">Your kicks will be recorded here. Look for patterns!</td></tr></tbody>
+        </table>
+      </div>
+      <p class="try">🔎 <strong>Try it:</strong> (1) Keep the size 5 ball and kick at 400 N, then 800 N. What happens to the acceleration when force doubles? (2) Keep 800 N and switch between the size 3 and the waterlogged ball. How does mass affect acceleration? (3) Why does a pro's 1,200 N strike give a ~100 km/h shot? <span class="muted">(Simplified model: real kick forces rise and fall during contact.)</span></p>
+    </div>
+  </div>
+
+  <h3>Worked examples</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">① Finding acceleration</h4>
+      <p>A 0.43 kg ball is struck with an average force of 1,200 N. What is its acceleration?</p>
+      <p>a = F<sub>net</sub> / m = 1,200 N / 0.43 kg ≈ <strong>2,800 m/s²</strong></p>
+      <p class="muted" style="margin-bottom:0">That's about 285 times the acceleration of gravity, but it only lasts about 0.01 s.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">② Finding a force</h4>
+      <p>A 0.43 kg ground pass slows down at 2.0 m/s² on dry grass. How big is the friction force?</p>
+      <p>F<sub>net</sub> = m·a = 0.43 kg × 2.0 m/s² = <strong>0.86 N</strong> (backward)</p>
+      <p class="muted" style="margin-bottom:0">Friction is the only unbalanced force, so it <em>is</em> the net force.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">③ Sprint start</h4>
+      <p>A 65 kg forward explodes off the mark. The ground pushes them forward with 390 N, and air resistance is 0 at the start. Acceleration?</p>
+      <p>a = 390 N / 65 kg = <strong>6.0 m/s²</strong> forward</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">④ Multi-force problem</h4>
+      <p>A player drags a sled with a 50 N pull to the right. Friction on the sled is 10 N. The sled weighs 80 N. Find F<sub>norm</sub>, m, F<sub>net</sub> and a.</p>
+      <p>F<sub>norm</sub> = 80 N (balances weight)<br>m = F<sub>grav</sub>/g = 80/9.8 = <strong>8.16 kg</strong><br>F<sub>net</sub> = 50 − 10 = <strong>40 N right</strong><br>a = 40/8.16 = <strong>4.9 m/s² right</strong></p>
+    </div>
+  </div>
+
+  <details>
+    <summary>🧠 Challenge: two connected objects ("double trouble")</summary>
+    <p>A player sprints while pulling two sleds in a line: a 20 kg sled tied to the harness, and a 10 kg sled tied behind it. The harness pulls with 90 N. Ignore friction. What is the acceleration, and what is the tension in the rope <em>between</em> the sleds?</p>
+    <p><strong>Step 1, system analysis</strong> (treat both sleds as one object): m = 20 + 10 = 30 kg, so a = 90 N / 30 kg = <span class="ans">3.0 m/s²</span>.</p>
+    <p><strong>Step 2, individual analysis</strong> (just the back sled): the only horizontal force on it is the rope tension, so F<sub>tens</sub> = m·a = 10 kg × 3.0 m/s² = <span class="ans">30 N</span>.</p>
+  </details>
+
+  <div class="callout myth">
+    <h4>⚠️ The BIG misconception: "force causes motion"</h4>
+    <p>Many people believe that a moving object must have a force pushing it in the direction it's moving. <strong>False!</strong> Force causes <em>acceleration</em> (a change in motion), not motion itself.</p>
+    <p>After your boot leaves the ball, there is <strong>no "force of the kick"</strong> carrying it toward goal. The ball keeps moving because of <strong>inertia</strong>. The only forces on it in flight are gravity (pulling it down) and air resistance (opposing its motion). Look at "Long ball in flight" in Lab 3.</p>
+  </div>
+
+  <div class="callout key">
+    <h4>🔑 Key takeaways: Second Law</h4>
+    <ul>
+      <li>Acceleration always points in the direction of the <strong>net</strong> force, which isn't necessarily the direction of motion. (A slowing pass moves forward but accelerates backward.)</li>
+      <li>Use the <strong>net</strong> force, not just one force, in F = m·a.</li>
+      <li>a ∝ F<sub>net</sub> and a ∝ 1/m.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= FALLING ======================= -->
+<section id="falling">
+  <div class="law-badge"><span>2</span> Applying the Second Law</div>
+  <h2>Free fall, air resistance &amp; terminal velocity</h2>
+  <p><strong>Free fall</strong> means gravity is the <em>only</em> force acting. In free fall <em>all</em> objects accelerate at the same rate, <strong>g = 9.8 m/s²</strong>, no matter their mass. Why? A heavier object has a bigger gravitational force, but it also has more mass (inertia) to accelerate. The two effects cancel exactly:</p>
+  <div class="eqbox" style="font-size:1.25rem">a = F<sub>grav</sub> / m = (m·g) / m = g
+    <small>A 1,000 kg baby elephant and a 1 kg bird both fall at 9.8 m/s² without air.</small>
+  </div>
+  <p>With <strong>air resistance</strong>, things change. Air resistance increases as speed increases. As a falling object speeds up:</p>
+  <ol>
+    <li>At first F<sub>air</sub> is small, so F<sub>net</sub> is almost all gravity and a ≈ g.</li>
+    <li>As speed rises, F<sub>air</sub> grows, F<sub>net</sub> shrinks, and acceleration decreases. The object is still speeding up, just more slowly.</li>
+    <li>Eventually F<sub>air</sub> = F<sub>grav</sub>, so F<sub>net</sub> = 0 and a = 0. The object falls at a constant <strong>terminal velocity</strong>.</li>
+  </ol>
+  <p>Heavier objects (for the same size and shape) need more air resistance to balance their weight, so they reach a <strong>higher terminal velocity</strong>. That's why a soccer ball drops much faster than a beach ball of a similar size.</p>
+
+  <!-- LAB 5 -->
+  <div class="lab" id="lab5">
+    <div class="lab-head"><span class="tag">Lab 5</span><h4>Drop test: reaching terminal velocity</h4></div>
+    <div class="lab-body">
+      <canvas id="cvFall" aria-label="Simulation of a falling object with force arrows and a velocity-time graph"></canvas>
+      <div class="controls">
+        <label>Object
+          <select id="fObj">
+            <option value="0">Soccer ball (0.43 kg)</option>
+            <option value="1">Beach ball (0.10 kg)</option>
+            <option value="2" selected>Skydiver (75 kg)</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="fAir" checked> Air resistance on</label>
+        <button id="btnDrop">Drop ▼</button>
+      </div>
+      <div class="readout">
+        <div>Time<b id="r5t">0.0 s</b></div>
+        <div>Velocity<b id="r5v">0.0 m/s</b></div>
+        <div>F<sub>grav</sub><b id="r5g">–</b></div>
+        <div>F<sub>air</sub><b id="r5r">–</b></div>
+        <div>Acceleration<b id="r5a">–</b></div>
+      </div>
+      <p class="try">🔎 <strong>Try it:</strong> Drop each object with air resistance on and watch the purple (gravity) and orange (air) arrows. When do they become equal? What does the graph do at that moment? Then turn air resistance off. Why do all three objects now give the <em>same</em> graph?</p>
+    </div>
+  </div>
+
+  <div class="callout coach">
+    <h4>⚽ Coach's corner: the ball in the air</h4>
+    <ul>
+      <li>A goalkeeper's punt goes up, slows, stops for an instant at the top, and comes back down. The whole time, the net force (mostly gravity) points <strong>down</strong>, even while the ball is rising.</li>
+      <li>A driven shot loses speed in the air because air resistance opposes its motion. That's why a long-range shot is slower by the time it reaches the keeper than when it left your boot.</li>
+      <li>A lighter, cheaper training ball "floats" and gets pushed around by wind more than a match ball. Its mass is small compared with the air forces on it.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= LAW 3 ======================= -->
+<section id="law3">
+  <div class="law-badge"><span>3</span> Newton's Third Law</div>
+  <h2>Equal and opposite interactions</h2>
+  <p>A force isn't a thing in itself. It comes from an <strong>interaction</strong> between two objects. Forces always come in pairs, one action and one reaction, and neither force exists without the other.</p>
+
+  <div class="statement">
+    <span class="label">Newton's third law</span>
+    For every action there is an equal and opposite reaction. <br>Put more precisely: <strong>if object A exerts a force on object B, then object B exerts an equal and opposite force on object A.</strong>
+  </div>
+
+  <figure>
+    <svg class="anim-header" id="hdrAnim" viewBox="0 0 640 260" role="img" aria-label="Animation of a header. When the head and ball are in contact, two equal and opposite arrows appear: the head pushes the ball to the right, and the ball pushes the head to the left.">
+      <defs>
+        <marker id="ahA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0b8a5a"/></marker>
+        <marker id="ahB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c8372d"/></marker>
+      </defs>
+      <rect x="0" y="236" width="640" height="24" fill="#0b6e4f"/>
+      <!-- player -->
+      <g class="head">
+        <path d="M95 236 L105 175 Q110 150 125 150 Q140 150 145 175 L155 236 Z" fill="#14213d"/>
+        <rect x="117" y="132" width="16" height="22" fill="#c68f6a"/>
+        <circle cx="128" cy="112" r="28" fill="#c68f6a"/>
+        <path d="M100 108 Q104 80 132 82 Q154 86 154 104 Q140 94 120 98 Q108 100 100 108Z" fill="#2b1d14"/>
+        <circle cx="142" cy="110" r="2.5" fill="#14213d"/>
+        <text x="125" y="205" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700" fill="#e9a200">7</text>
+      </g>
+      <!-- ball -->
+      <g class="ball"><g transform="translate(176 104)"><circle r="20" fill="#fff" stroke="#14213d" stroke-width="2"/><polygon points="0,-8 7.6,-2.5 4.7,6.5 -4.7,6.5 -7.6,-2.5" fill="#14213d"/></g></g>
+      <!-- force pair -->
+      <g class="pair" font-family="Arial" font-size="14" font-weight="700">
+        <line x1="200" y1="60" x2="300" y2="60" stroke="#0b8a5a" stroke-width="7" marker-end="url(#ahA)"/>
+        <text x="206" y="46" fill="#0b8a5a">Head pushes ball →</text>
+        <line x1="150" y1="60" x2="50" y2="60" stroke="#c8372d" stroke-width="7" marker-end="url(#ahB)"/>
+        <text x="20" y="46" fill="#c8372d">← Ball pushes head</text>
+        <text x="330" y="150" fill="#14213d" font-size="15">Same size. Opposite directions.</text>
+        <text x="330" y="172" fill="#14213d" font-size="15">Acting on DIFFERENT objects.</text>
+      </g>
+    </svg>
+    <figcaption>During a header, your head pushes the ball and the ball pushes your head just as hard. That's why heading a heavy, wet ball <em>hurts</em>, and why coaches teach you to brace your neck and core. <button class="ghost" style="padding:2px 10px;font-size:.8rem" data-pause="hdrAnim">Pause</button></figcaption>
+  </figure>
+
+  <div class="callout myth">
+    <h4>⚠️ "If the forces are equal and opposite, why don't they cancel?"</h4>
+    <p>Equal and opposite forces only cancel when they act on the <strong>same</strong> object. An action–reaction pair always acts on two <strong>different</strong> objects: one force on the ball, one on your head. Each object responds to the force on <em>it</em>.</p>
+  </div>
+
+  <h3>Earth, the Moon and a falling apple</h3>
+  <p>Earth (mass 5.98 × 10<sup>24</sup> kg) pulls on the Moon (7.35 × 10<sup>22</sup> kg) to keep it in orbit. Does the Moon pull back on Earth with a <em>smaller</em> force? Most students say yes, but the third law says the forces are <strong>exactly equal</strong> and opposite.</p>
+  <p>The same goes for an apple falling from a tree. Earth pulls the apple down, and the apple pulls Earth up with the <em>same</em> force. So why does the apple fall and not Earth? Combine with the <strong>second law</strong>: a = F/m. Same force, but Earth's mass is enormous, so its acceleration is microscopically small. The apple's mass is tiny, so its acceleration is noticeable (9.8 m/s²).</p>
+
+  <!-- LAB 6 collisions -->
+  <div class="lab" id="lab6">
+    <div class="lab-head"><span class="tag">Lab 6</span><h4>Collision calculator: 3rd law meets 2nd law</h4></div>
+    <div class="lab-body">
+      <p style="margin-top:0;font-size:.95rem">A winger and a centre-back collide while challenging for a 50/50 ball. During impact they push on each other with a force of <span id="cFv">800</span> N.</p>
+      <div class="controls">
+        <label>Winger mass <input type="range" id="cA" min="45" max="100" step="1" value="58"> <span id="cAv">58 kg</span></label>
+        <label>Centre-back mass <input type="range" id="cB" min="45" max="100" step="1" value="88"> <span id="cBv">88 kg</span></label>
+        <label>Impact force <input type="range" id="cF" min="200" max="1500" step="50" value="800"></label>
+      </div>
+      <h4 style="margin:14px 0 4px">Force on each player (3rd law)</h4>
+      <div class="bar-row"><span>On winger</span><div class="bar" id="bFA" style="background:var(--f-fric)"></div><b id="tFA"></b></div>
+      <div class="bar-row"><span>On centre-back</span><div class="bar" id="bFB" style="background:var(--f-fric)"></div><b id="tFB"></b></div>
+      <h4 style="margin:14px 0 4px">Acceleration of each player (2nd law: a = F/m)</h4>
+      <div class="bar-row"><span>Winger</span><div class="bar" id="bAA" style="background:var(--gold)"></div><b id="tAA"></b></div>
+      <div class="bar-row"><span>Centre-back</span><div class="bar" id="bAB" style="background:var(--gold)"></div><b id="tAB"></b></div>
+      <p class="try">🔎 <strong>Try it:</strong> Can you make the forces unequal? (You can't. That's the third law.) What makes the accelerations different? Who "bounces off" in a real collision, and why?</p>
+    </div>
+  </div>
+
+  <h3>Action–reaction pairs on the pitch</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">🏃 Sprinting</h4>
+      <p>Your cleats push the ground <strong>backward</strong>, so the ground pushes your cleats <strong>forward</strong>. That forward push from the ground is what accelerates you. On a wet, slippery pitch you can't push back as hard (less friction), so you can't accelerate as quickly. That's why cleat choice matters.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">🦘 Jumping for a header</h4>
+      <p>You push <strong>down</strong> on the ground, and the ground pushes <strong>up</strong> on you. The harder you drive into the ground, the bigger the upward push and the higher you rise.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">🦶 Striking the ball</h4>
+      <p>Boot pushes ball forward, and ball pushes boot backward. You feel that reaction as the "thud" through your foot. Kick a medicine ball and that reaction force could injure you.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">🧤 The save</h4>
+      <p>The keeper's gloves push the ball backward to stop it, and the ball pushes the gloves forward. Keepers "give" with their hands to make the stop last longer, which lowers the force.</p>
+    </div>
+  </div>
+
+  <h3>How to identify a force pair</h3>
+  <p>Name the two interacting objects and write a sentence for each force. The <strong>nouns switch places</strong> and the direction flips:</p>
+  <div class="card" style="text-align:center;font-size:1.05rem">
+    <strong>Action:</strong> Fist hits wall. &nbsp;→&nbsp; <strong>Reaction:</strong> Wall hits fist.<br>
+    <strong>Action:</strong> Boot pushes ball forward. &nbsp;→&nbsp; <strong>Reaction:</strong> Ball pushes boot backward.
+  </div>
+
+  <h4>Practice: identify the reaction force (click to check)</h4>
+  <div class="pairs">
+    <details><summary>1. Head bumps ball.</summary><span class="ans">Ball bumps head.</span></details>
+    <details><summary>2. Bug hits windshield.</summary><span class="ans">Windshield hits bug.</span></details>
+    <details><summary>3. You push down on chair's seat.</summary><span class="ans">Chair's seat pushes up on you.</span></details>
+    <details><summary>4. Hand touches nose.</summary><span class="ans">Nose touches (pushes on) hand.</span></details>
+    <details><summary>5. Hand pulls flower.</summary><span class="ans">Flower pulls hand.</span></details>
+    <details><summary>6. Athlete pushes weights upward.</summary><span class="ans">Weights push athlete downward.</span></details>
+    <details><summary>7. Air pushes outward on balloon's surface.</summary><span class="ans">Balloon's surface pushes inward on the air.</span></details>
+    <details><summary>8. You pull your pet forward.</summary><span class="ans">Your pet pulls you backward.</span></details>
+    <details><summary>9. Cleats push turf backward.</summary><span class="ans">Turf pushes cleats forward.</span></details>
+    <details><summary>10. Keeper's gloves push ball away from goal.</summary><span class="ans">Ball pushes gloves toward the goal.</span></details>
+    <details><summary>11. Earth pulls the ball down (gravity).</summary><span class="ans">Ball pulls Earth up (gravity).</span></details>
+    <details><summary>12. Ball pushes the net backward.</summary><span class="ans">Net pushes ball forward (stopping it).</span></details>
+  </div>
+
+  <div class="callout myth">
+    <h4>⚠️ Trap: are F<sub>norm</sub> and F<sub>grav</sub> an action–reaction pair?</h4>
+    <p>For a ball resting on the grass, F<sub>norm</sub> (up) and F<sub>grav</sub> (down) are equal and opposite, but they are <strong>not</strong> a third-law pair. Both act on the <em>same</em> object (the ball), so they're a <em>balanced</em> pair (first law). The real third-law partners are:</p>
+    <ul>
+      <li>Earth pulls ball down ↔ <strong>ball pulls Earth up</strong></li>
+      <li>Ground pushes ball up ↔ <strong>ball pushes ground down</strong></li>
+    </ul>
+  </div>
+
+  <div class="callout key">
+    <h4>🔑 Key takeaways: Third Law</h4>
+    <ul>
+      <li>Forces come from interactions and always come in pairs.</li>
+      <li>The pair is always <strong>equal in size</strong>, <strong>opposite in direction</strong>, and acts on <strong>two different objects</strong>.</li>
+      <li>Equal forces don't mean equal effects. The object with less mass accelerates more (2nd law).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= MYTHS ======================= -->
+<section id="myths">
+  <h2>Myth busters: tap each card</h2>
+  <p>Misconceptions can block your understanding of Newton's laws. Read each myth, decide whether you believed it, then tap to see the physics.</p>
+  <div class="grid2" id="flips">
+    <button class="flip" aria-pressed="false"><span class="tag side-a">Myth</span><span class="tag side-b">Physics</span>
+      <span class="side-a"><br>"A ball in flight keeps going because the force of the kick is still pushing it."</span>
+      <span class="side-b"><br>The kick force ends the instant your boot leaves the ball. The ball keeps moving because of <strong>inertia</strong>.</span></button>
+    <button class="flip" aria-pressed="false"><span class="tag side-a">Myth</span><span class="tag side-b">Physics</span>
+      <span class="side-a"><br>"If an object is moving, there must be an unbalanced force on it."</span>
+      <span class="side-b"><br>Constant velocity means <strong>balanced</strong> forces. An unbalanced force is only needed to <em>change</em> velocity.</span></button>
+    <button class="flip" aria-pressed="false"><span class="tag side-a">Myth</span><span class="tag side-b">Physics</span>
+      <span class="side-a"><br>"Heavier objects always fall faster."</span>
+      <span class="side-b"><br>Without air, everything falls at <strong>9.8 m/s²</strong>. With air, heavier objects of the same shape reach a <em>higher terminal velocity</em>.</span></button>
+    <button class="flip" aria-pressed="false"><span class="tag side-a">Myth</span><span class="tag side-b">Physics</span>
+      <span class="side-a"><br>"In a collision, the bigger player hits the smaller player harder."</span>
+      <span class="side-b"><br>Both feel the <strong>same size</strong> force (3rd law). The smaller player <em>accelerates</em> more because they have less mass (2nd law).</span></button>
+    <button class="flip" aria-pressed="false"><span class="tag side-a">Myth</span><span class="tag side-b">Physics</span>
+      <span class="side-a"><br>"Action and reaction forces cancel out, so nothing can ever move."</span>
+      <span class="side-b"><br>They act on <strong>different objects</strong>, so they can't cancel. Only forces on the <em>same</em> object can balance.</span></button>
+    <button class="flip" aria-pressed="false"><span class="tag side-a">Myth</span><span class="tag side-b">Physics</span>
+      <span class="side-a"><br>"Acceleration always points in the direction the object is moving."</span>
+      <span class="side-b"><br>Acceleration points in the direction of the <strong>net force</strong>. A pass slowing down moves forward but accelerates backward.</span></button>
+  </div>
+</section>
+
+<!-- ======================= SUMMARY ======================= -->
+<section id="summary">
+  <h2>One-page summary sheet</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th></th><th>1st Law (Inertia)</th><th>2nd Law (F = m·a)</th><th>3rd Law (Action–Reaction)</th></tr></thead>
+    <tbody>
+      <tr><th>Big idea</th><td>Objects resist changes in motion. No net force → no acceleration.</td><td>Net force causes acceleration; a = F<sub>net</sub>/m.</td><td>Forces come in equal and opposite pairs acting on different objects.</td></tr>
+      <tr><th>Key words</th><td>inertia, mass, balanced, equilibrium, constant velocity</td><td>net force, acceleration, directly / inversely proportional</td><td>interaction, action, reaction, force pair</td></tr>
+      <tr><th>⚽ Example</th><td>Pass rolls farther on wet turf; a strong defender is hard to knock off the ball.</td><td>Harder strike → faster shot; same strike on a heavier ball → slower shot.</td><td>Cleats push turf back → turf pushes you forward.</td></tr>
+      <tr><th>Watch out</th><td>Moving ≠ unbalanced force.</td><td>Always use the <em>net</em> force.</td><td>Pairs never cancel each other.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="grid3">
+    <div class="card"><h4 style="margin-top:0">Equations</h4>
+      <p style="margin:0">F<sub>net</sub> = m·a<br>a = F<sub>net</sub> / m<br>F<sub>grav</sub> = m·g (g = 9.8 m/s²)<br>F<sub>frict</sub> = μ·F<sub>norm</sub></p></div>
+    <div class="card"><h4 style="margin-top:0">Units</h4>
+      <p style="margin:0">Force: newton (N)<br>Mass: kilogram (kg)<br>Acceleration: m/s²<br>1 N = 1 kg·m/s²</p></div>
+    <div class="card"><h4 style="margin-top:0">Problem-solving steps</h4>
+      <p style="margin:0">1. Draw the FBD<br>2. Find F<sub>net</sub> (up/down, left/right)<br>3. Apply F<sub>net</sub> = m·a<br>4. Check units &amp; direction</p></div>
+  </div>
+</section>
+
+<!-- ======================= QUIZ ======================= -->
+<section id="quiz">
+  <h2>Check your understanding</h2>
+  <p>Choose an answer to see instant feedback. These questions don't count toward your grade, so use them to find what to review.</p>
+  <div id="quizBox"></div>
+  <p style="text-align:center"><span class="score" id="score">Score: 0 / 0</span></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin-top:0"><strong style="color:#fff">Sources:</strong> class notes on Newton's laws; <a href="https://www.physicsclassroom.com/tutorial/newtons-laws" target="_blank" rel="noopener">The Physics Classroom, Chapter 3: Newton's Laws</a> (Lessons 1–4). For more practice, work through the "Check Your Understanding" questions on each Physics Classroom page.</p>
+    <p style="margin-bottom:0">Soccer numbers are realistic approximations for learning purposes. Simulations use simplified models.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var COL = {grav:'#7b3fb3', norm:'#1f6fd1', fric:'#c8372d', app:'#0b8a5a', air:'#e07b00', tens:'#5b6475', net:'#14213d', gold:'#e9a200'};
+
+  /* ---------- helpers ---------- */
+  function $(id){ return document.getElementById(id); }
+  function setupCanvas(cv, h){
+    var dpr = window.devicePixelRatio || 1;
+    var w = cv.clientWidth || 600;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+    cv.style.height = h + 'px';
+    var ctx = cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx:ctx, w:w, h:h};
+  }
+  function arrow(ctx, x1, y1, x2, y2, color, width, label, labelPos){
+    var dx = x2-x1, dy = y2-y1, len = Math.sqrt(dx*dx+dy*dy);
+    if (len < 2) return;
+    var ux = dx/len, uy = dy/len, head = Math.min(14, len*0.6) + width;
+    ctx.save();
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*head*0.8, y2-uy*head*0.8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-ux*head - uy*head*0.55, y2-uy*head + ux*head*0.55);
+    ctx.lineTo(x2-ux*head + uy*head*0.55, y2-uy*head - ux*head*0.55);
+    ctx.closePath(); ctx.fill();
+    if (label){
+      ctx.font = 'bold 13px Arial, sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      var lp = labelPos || {x: x2 + ux*16 - uy*0, y: y2 + uy*16};
+      ctx.fillText(label, lp.x, lp.y);
+    }
+    ctx.restore();
+  }
+  function drawBall(ctx, x, y, r, ang, fill, stroke){
+    ctx.save(); ctx.translate(x,y); ctx.rotate(ang||0);
+    ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fillStyle = fill || '#fff'; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = stroke || '#14213d'; ctx.stroke();
+    if (!fill || fill === '#fff'){
+      ctx.fillStyle = '#14213d'; ctx.beginPath();
+      for (var i=0;i<5;i++){ var a = -Math.PI/2 + i*2*Math.PI/5; var px = Math.cos(a)*r*0.4, py = Math.sin(a)*r*0.4; if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = '#14213d'; ctx.lineWidth = 1.2;
+      for (var j=0;j<5;j++){ var b = -Math.PI/2 + j*2*Math.PI/5; ctx.beginPath(); ctx.moveTo(Math.cos(b)*r*0.4, Math.sin(b)*r*0.4); ctx.lineTo(Math.cos(b)*r, Math.sin(b)*r); ctx.stroke(); }
+    }
+    ctx.restore();
+  }
+  function grass(ctx, w, y, h, c1, c2){
+    var sw = 40;
+    for (var x=0; x<w; x+=sw){ ctx.fillStyle = ((x/sw)%2) ? c1 : c2; ctx.fillRect(x, y, sw, h); }
+  }
+
+  /* ---------- pause buttons for CSS animations ---------- */
+  document.querySelectorAll('[data-pause]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var el = $(btn.getAttribute('data-pause'));
+      var paused = el.classList.toggle('paused');
+      btn.textContent = paused ? 'Play' : 'Pause';
+    });
+  });
+
+  /* ================= LAB 1: rolling pass ================= */
+  (function(){
+    var cv = $('cvRoll'), H = 170, S;
+    var surfaces = [
+      {name:'Long dry grass', decel:2.0, c1:'#0d7a58', c2:'#0b6e4f'},
+      {name:'Wet artificial turf', decel:0.9, c1:'#2b8f6e', c2:'#228263'},
+      {name:'No friction', decel:0, c1:'#cfe8f3', c2:'#c2e1ef'}
+    ];
+    var FIELD = 50, m = 0.43, surf = 0, x = 0, v = 0, dist = 0, ang = 0, laps = 0, running = false, last = 0;
+    function resize(){ S = setupCanvas(cv, H); draw(); }
+    function draw(){
+      var ctx = S.ctx, w = S.w, sf = surfaces[surf];
+      ctx.clearRect(0,0,w,H);
+      ctx.fillStyle = surf===2 ? '#0f1b33' : '#e8f1fb'; ctx.fillRect(0,0,w,H);
+      if (surf===2){ ctx.fillStyle = '#fff'; for (var i=0;i<40;i++){ ctx.fillRect((i*97)%w, (i*37)%90, 2, 2); } }
+      grass(ctx, w, 120, 50, sf.c1, sf.c2);
+      var pad = 30, scale = (w-2*pad)/FIELD;
+      ctx.fillStyle = surf===2 ? '#14213d' : '#fff'; ctx.font = '11px Arial'; ctx.textAlign = 'center';
+      for (var mk=0; mk<=FIELD; mk+=10){ var px = pad + mk*scale; ctx.fillRect(px-1,120,2,10); ctx.fillText(mk+' m', px, 145); }
+      var r = 14, bx = pad + x*scale, by = 120 - r;
+      drawBall(ctx, bx, by, r, ang);
+      if (v > 0.01){
+        arrow(ctx, bx, by-r-14, bx + Math.min(v*9, 110), by-r-14, '#14213d', 3, 'velocity', {x: bx + Math.min(v*9,110)/2, y: by-r-28});
+        if (sf.decel > 0) arrow(ctx, bx - r, by, bx - r - sf.decel*22, by, COL.fric, 5, 'friction', {x:bx - r - sf.decel*11, y: by-14});
+      }
+      ctx.fillStyle = surf===2 ? '#fff' : '#14213d'; ctx.textAlign = 'left'; ctx.font = 'bold 13px Arial';
+      ctx.fillText(sf.name + (sf.decel ? '  ·  slows the ball at ' + sf.decel.toFixed(1) + ' m/s²' : '  ·  nothing to slow it down'), 10, 20);
+      if (laps > 0){ ctx.fillText('Lap ' + (laps+1) + ': still ' + v.toFixed(1) + ' m/s… it would roll forever!', 10, 40); }
+    }
+    function update(){
+      $('r1v').textContent = v.toFixed(1) + ' m/s';
+      $('r1d').textContent = dist.toFixed(1) + ' m';
+      var f = v > 0 ? m*surfaces[surf].decel : 0;
+      $('r1f').textContent = f.toFixed(2) + ' N';
+      $('r1s').textContent = !running && v===0 ? (dist>0 ? 'Stopped by friction' : 'At rest, stays at rest')
+                         : (surfaces[surf].decel ? 'Unbalanced: slowing down' : 'Balanced: constant velocity');
+    }
+    function step(t){
+      if (!running) return;
+      var dt = Math.min(0.05, (t - last)/1000); last = t;
+      var a = surfaces[surf].decel;
+      v = Math.max(0, v - a*dt);
+      x += v*dt; dist += v*dt; ang += v*dt/0.11;
+      if (x > FIELD){ x -= FIELD; laps++; }
+      if (laps >= 3 || v === 0){ running = false; }
+      draw(); update();
+      if (running) requestAnimationFrame(step);
+    }
+    document.querySelectorAll('#lab1 [data-surf]').forEach(function(b){
+      b.addEventListener('click', function(){
+        surf = +b.getAttribute('data-surf');
+        document.querySelectorAll('#lab1 [data-surf]').forEach(function(o){ o.setAttribute('aria-pressed', o===b ? 'true':'false'); });
+        running = false; x = 0; v = 0; dist = 0; laps = 0; draw(); update();
+      });
+    });
+    $('btnPass').addEventListener('click', function(){
+      x = 0; v = 8; dist = 0; laps = 0; running = true; last = performance.now(); requestAnimationFrame(step);
+    });
+    window.addEventListener('resize', resize); resize(); update();
+  })();
+
+  /* ================= LAB 2: tug sled ================= */
+  (function(){
+    var cv = $('cvTug'), H = 190, S, m = 200, x = 0, v = 0, last = 0, hitEdge = false;
+    var fL = $('fL'), fR = $('fR');
+    function resize(){ S = setupCanvas(cv, H); draw(); }
+    function forces(){ return {L:+fL.value, R:+fR.value, net:(+fR.value) - (+fL.value)}; }
+    function draw(){
+      var ctx = S.ctx, w = S.w, F = forces();
+      ctx.clearRect(0,0,w,H);
+      ctx.fillStyle = '#e8f1fb'; ctx.fillRect(0,0,w,H);
+      ctx.fillStyle = '#cfe0ec'; ctx.fillRect(0,128,w,62);
+      var range = 10, cx = w/2 + (x/range)*(w/2 - 60), cy = 100;
+      // ropes
+      ctx.strokeStyle = '#8a6d3b'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(cx-40, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w, cy); ctx.lineTo(cx+40, cy); ctx.stroke();
+      // sled
+      ctx.fillStyle = '#14213d'; ctx.fillRect(cx-40, cy-22, 80, 44);
+      ctx.fillStyle = '#e9a200'; ctx.fillRect(cx-46, cy+22, 92, 6);
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.fillText('200 kg', cx, cy+4);
+      // force arrows
+      var sc = 0.14;
+      if (F.L) arrow(ctx, cx-40, cy-38, cx-40 - F.L*sc, cy-38, COL.tens, 5, F.L+' N', {x:cx-40 - F.L*sc/2, y:cy-52});
+      if (F.R) arrow(ctx, cx+40, cy-38, cx+40 + F.R*sc, cy-38, COL.tens, 5, F.R+' N', {x:cx+40 + F.R*sc/2, y:cy-52});
+      // net
+      ctx.font = 'bold 13px Arial'; ctx.fillStyle = '#14213d'; ctx.textAlign = 'left';
+      if (F.net !== 0){
+        arrow(ctx, cx, cy+48, cx + F.net*sc, cy+48, COL.net, 7, null);
+        ctx.textAlign = 'center'; ctx.fillText('Fnet = ' + Math.abs(F.net) + ' N ' + (F.net>0?'→':'←'), cx + F.net*sc/2, cy+72);
+      } else {
+        ctx.textAlign = 'center'; ctx.fillText('Fnet = 0 (balanced)', cx, cy+64);
+      }
+      if (hitEdge){ ctx.fillStyle = '#c8372d'; ctx.textAlign = 'center'; ctx.fillText('Sled reached the edge. Press Reset.', w/2, 20); }
+    }
+    function update(){
+      var F = forces(), a = F.net/m;
+      $('fLv').textContent = F.L + ' N'; $('fRv').textContent = F.R + ' N';
+      $('r2n').textContent = Math.abs(F.net) + ' N' + (F.net>0?' →':F.net<0?' ←':'');
+      $('r2a').textContent = a.toFixed(2) + ' m/s²';
+      $('r2v').textContent = v.toFixed(2) + ' m/s';
+      $('r2s').textContent = F.net===0 ? (Math.abs(v)>0.001 ? 'Balanced: constant velocity' : 'Balanced: at rest') : 'Unbalanced: accelerating';
+    }
+    function loop(t){
+      var dt = Math.min(0.05, (t-last)/1000); last = t;
+      if (!hitEdge){
+        var a = forces().net/m;
+        v += a*dt; x += v*dt;
+        if (Math.abs(x) > 10){ x = Math.sign(x)*10; v = 0; hitEdge = true; }
+      }
+      draw(); update(); requestAnimationFrame(loop);
+    }
+    [fL, fR].forEach(function(s){ s.addEventListener('input', update); });
+    $('btnShove').addEventListener('click', function(){ if(!hitEdge) v += 1; });
+    $('btnTugReset').addEventListener('click', function(){ x = 0; v = 0; hitEdge = false; fL.value = 400; fR.value = 400; update(); });
+    window.addEventListener('resize', resize); resize(); update();
+    last = performance.now(); requestAnimationFrame(loop);
+  })();
+
+  /* ================= LAB 3: FBD gallery ================= */
+  (function(){
+    var NS = 'http://www.w3.org/2000/svg';
+    var colorOf = {grav:COL.grav, norm:COL.norm, fric:COL.fric, app:COL.app, air:COL.air, tens:COL.tens};
+    var labelOf = {grav:'Fgrav', norm:'Fnorm', fric:'Ffrict', app:'Fapp', air:'Fair', tens:'Ftens'};
+    var scenarios = [
+      {btn:'Ball on penalty spot', title:'A ball resting on the penalty spot', shape:'ball',
+       f:[['grav','down',1],['norm','up',1]],
+       desc:'Gravity pulls the ball down and the ground pushes up with an equal normal force. Nothing pushes sideways.',
+       net:'Fnet = 0. Balanced, so the ball stays at rest (1st law).'},
+      {btn:'Ground pass, slowing', title:'A ground pass rolling right and slowing down', shape:'ball',
+       f:[['grav','down',1],['norm','up',1],['fric','left',.35]],
+       desc:'Vertical forces still balance. Friction from the grass (plus a little air resistance) points opposite the motion. There is NO forward force; the ball moves right because of inertia.',
+       net:'Fnet points LEFT, so the ball accelerates left (slows down) while moving right.'},
+      {btn:'Long ball in flight', title:'A long ball rising through the air (moving up and to the right)', shape:'ball',
+       f:[['grav','down',1],['air','left',.3]],
+       desc:'Once the boot leaves the ball, the kick force is gone. Only gravity and air resistance act. (Air resistance actually points opposite the ball\'s diagonal motion; it\'s simplified here.) No normal force, because nothing is touching it.',
+       net:'Fnet is mostly DOWN, so the ball slows on the way up and curves back toward the ground.'},
+      {btn:'Strike: boot contact', title:'The instant the boot strikes a ball on the ground', shape:'ball',
+       f:[['grav','down',.35],['norm','up',.35],['app','right',1.25]],
+       desc:'For about 0.01 s the boot pushes the ball with a huge applied force, much bigger than the ball\'s weight (about 4 N).',
+       net:'Fnet is large and to the RIGHT, so there is an enormous acceleration (2nd law).'},
+      {btn:'Player sprinting', title:'A player accelerating forward from a standing start', shape:'box',
+       f:[['grav','down',1],['norm','up',1],['fric','right',.6],['air','left',.12]],
+       desc:'The ground\'s friction on the cleats points FORWARD. It\'s the reaction to the cleats pushing the turf backward (3rd law). Air resistance is small and points backward.',
+       net:'Fnet points RIGHT, so the player speeds up.'},
+      {btn:'Running at top speed', title:'A player running at a steady top speed', shape:'box',
+       f:[['grav','down',1],['norm','up',1],['fric','right',.35],['air','left',.35]],
+       desc:'At constant velocity the forward push from the ground matches the backward forces (air resistance and other losses).',
+       net:'Fnet = 0. Balanced, even though the player is moving fast!'},
+      {btn:'Keeper hangs on bar', title:'A goalkeeper hanging motionless from the crossbar', shape:'box',
+       f:[['grav','down',1],['tens','up',1]],
+       desc:'The keeper\'s arms are in tension, pulling up with a force equal to their weight.',
+       net:'Fnet = 0. Balanced, so the keeper stays at rest.'}
+    ];
+    var svg = $('fbdSvg'), btnBox = $('fbdBtns');
+    function el(n, attrs){ var e = document.createElementNS(NS, n); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+    function render(i){
+      var s = scenarios[i];
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      var defs = el('defs', {});
+      Object.keys(colorOf).forEach(function(k){
+        var mk = el('marker', {id:'fm-'+k, viewBox:'0 0 10 10', refX:'8', refY:'5', markerWidth:'4', markerHeight:'4', orient:'auto'});
+        mk.appendChild(el('path', {d:'M0,0 L10,5 L0,10 z', fill:colorOf[k]})); defs.appendChild(mk);
+      });
+      svg.appendChild(defs);
+      svg.appendChild(el('rect', {x:0, y:0, width:300, height:300, rx:12, fill:'#f7f9f6'}));
+      var cx = 150, cy = 150;
+      var dirs = {up:[0,-1], down:[0,1], left:[-1,0], right:[1,0]};
+      s.f.forEach(function(f){
+        var d = dirs[f[1]], L = 22 + f[2]*82;
+        var x2 = cx + d[0]*L, y2 = cy + d[1]*L;
+        svg.appendChild(el('line', {x1:cx, y1:cy, x2:x2, y2:y2, stroke:colorOf[f[0]], 'stroke-width':6, 'marker-end':'url(#fm-'+f[0]+')'}));
+        var tx = x2 + d[0]*8 + (d[0]===0 ? 30 : 0), ty = y2 + d[1]*16 + (d[1]===0 ? -12 : 0);
+        var t = el('text', {x:tx, y:ty, 'text-anchor': d[0]<0 ? 'end' : (d[0]>0 ? 'start' : 'start'), 'font-family':'Arial', 'font-size':14, 'font-weight':700, fill:colorOf[f[0]]});
+        if (d[0]===0) { t.setAttribute('x', cx + 14); t.setAttribute('y', y2 + (d[1]<0 ? 4 : 2)); }
+        t.textContent = labelOf[f[0]]; svg.appendChild(t);
+      });
+      if (s.shape === 'ball'){
+        svg.appendChild(el('circle', {cx:cx, cy:cy, r:18, fill:'#fff', stroke:'#14213d', 'stroke-width':2}));
+        svg.appendChild(el('polygon', {points:'150,143 156.7,147.8 154.1,155.7 145.9,155.7 143.3,147.8', fill:'#14213d'}));
+      } else {
+        svg.appendChild(el('rect', {x:cx-20, y:cy-20, width:40, height:40, rx:4, fill:'#14213d'}));
+      }
+      $('fbdTitle').textContent = s.title;
+      $('fbdDesc').textContent = s.desc;
+      $('fbdNet').textContent = s.net;
+      svg.setAttribute('aria-label', 'Free-body diagram: ' + s.title + '. Forces: ' + s.f.map(function(f){ return labelOf[f[0]] + ' ' + f[1]; }).join(', '));
+      Array.prototype.forEach.call(btnBox.children, function(b, j){ b.setAttribute('aria-pressed', j===i ? 'true':'false'); });
+    }
+    scenarios.forEach(function(s, i){
+      var b = document.createElement('button'); b.className = 'seg'; b.textContent = s.btn;
+      b.addEventListener('click', function(){ render(i); }); btnBox.appendChild(b);
+    });
+    render(0);
+  })();
+
+  /* ================= LAB 4: kick lab ================= */
+  (function(){
+    var cv = $('cvKick'), H = 170, S, DIST = 30, CONTACT = 0.01;
+    var x = 0, v = 0, ang = 0, phase = 'ready', last = 0, bootT = 0, trial = 0;
+    var kF = $('kF'), kM = $('kM');
+    function resize(){ S = setupCanvas(cv, H); draw(); }
+    function ballStyle(){ var m = +kM.value; return m >= 3 ? {r:20, fill:'#8a6d3b'} : m <= 0.3 ? {r:11, fill:'#fff'} : {r:14, fill:'#fff'}; }
+    function draw(){
+      var ctx = S.ctx, w = S.w; ctx.clearRect(0,0,w,H);
+      ctx.fillStyle = '#e8f1fb'; ctx.fillRect(0,0,w,H);
+      grass(ctx, w, 130, 40, '#0d7a58', '#0b6e4f');
+      var pad = 70, scale = (w - pad - 30)/DIST, bs = ballStyle();
+      // goal
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(w-24,130); ctx.lineTo(w-24,60); ctx.lineTo(w-6,60); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = '11px Arial'; ctx.textAlign = 'center';
+      for (var mk=0; mk<=DIST; mk+=10) ctx.fillText(mk + ' m', pad + mk*scale, 160);
+      // boot
+      var bootX = pad - bs.r - 34 + (phase==='contact' ? 14 : phase==='flying' ? 18 : 0);
+      ctx.save(); ctx.translate(bootX, 130 - 14);
+      ctx.fillStyle = '#14213d'; ctx.fillRect(-6,-40,18,30);
+      ctx.beginPath(); ctx.moveTo(-6,-12); ctx.lineTo(28,-12); ctx.quadraticCurveTo(38,-10,36,2); ctx.lineTo(-8,2); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#e9a200'; ctx.fillRect(-6,-22,18,4);
+      ctx.restore();
+      drawBall(ctx, pad + x*scale, 130 - bs.r, bs.r, ang, bs.fill);
+      if (phase === 'contact'){
+        arrow(ctx, pad - bs.r - 4, 130 - bs.r - 30, pad + 60, 130 - bs.r - 30, COL.app, 6, 'Fapp = ' + kF.value + ' N', {x: pad + 20, y: 130 - bs.r - 46});
+      }
+      if (phase === 'flying' || phase === 'done'){
+        ctx.fillStyle = '#14213d'; ctx.font = 'bold 13px Arial'; ctx.textAlign = 'left';
+        ctx.fillText('No kick force now: the ball travels on inertia', 10, 20);
+      }
+    }
+    function calc(){ var F = +kF.value, m = +kM.value, a = F/m, vv = a*CONTACT; return {F:F, m:m, a:a, v:vv}; }
+    function show(){
+      var c = calc();
+      $('kFv').textContent = c.F + ' N';
+      $('r4a').textContent = Math.round(c.a).toLocaleString() + ' m/s²';
+      $('r4v').textContent = c.v.toFixed(1) + ' m/s';
+      $('r4k').textContent = Math.round(c.v*3.6) + ' km/h';
+    }
+    function log(c){
+      var tb = $('kickLog'); if (trial === 0) tb.innerHTML = '';
+      trial++;
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+trial+'</td><td>'+c.F+'</td><td>'+c.m.toFixed(2)+'</td><td>'+Math.round(c.a).toLocaleString()+'</td><td>'+c.v.toFixed(1)+'</td>';
+      tb.insertBefore(tr, tb.firstChild);
+      while (tb.children.length > 8) tb.removeChild(tb.lastChild);
+    }
+    function loop(t){
+      var dt = Math.min(0.05, (t-last)/1000); last = t;
+      if (phase === 'contact'){ bootT += dt; if (bootT > 0.35){ phase = 'flying'; } }
+      else if (phase === 'flying'){
+        x += v*dt; ang += v*dt/0.11;
+        if (x >= DIST){ x = DIST; phase = 'done'; }
+      }
+      draw();
+      if (phase === 'contact' || phase === 'flying') requestAnimationFrame(loop);
+    }
+    $('btnKick').addEventListener('click', function(){
+      var c = calc(); show(); log(c);
+      x = 0; v = c.v; ang = 0; bootT = 0; phase = 'contact'; last = performance.now(); requestAnimationFrame(loop);
+    });
+    kF.addEventListener('input', show); kM.addEventListener('change', function(){ show(); if (phase!=='contact' && phase!=='flying'){ phase='ready'; x=0; draw(); } });
+    window.addEventListener('resize', resize); resize(); show();
+  })();
+
+  /* ================= LAB 5: falling ================= */
+  (function(){
+    var cv = $('cvFall'), H = 260, S, g = 9.8, TMAX = 12, VMAX = 120;
+    var objs = [
+      {name:'Soccer ball', m:0.43, k:0.0057, r:14, fill:'#fff'},
+      {name:'Beach ball', m:0.10, k:0.055, r:22, fill:'#ffb3c1'},
+      {name:'Skydiver', m:75, k:0.27, r:16, fill:'#e9a200'}
+    ];
+    var t = 0, v = 0, running = false, last = 0, trace = [], scroll = 0;
+    function resize(){ S = setupCanvas(cv, H); draw(); }
+    function o(){ return objs[+$('fObj').value]; }
+    function airOn(){ return $('fAir').checked; }
+    function fair(){ return airOn() ? o().k*v*v : 0; }
+    function draw(){
+      var ctx = S.ctx, w = S.w; ctx.clearRect(0,0,w,H);
+      var colW = Math.max(140, Math.min(220, w*0.32));
+      // sky column
+      var grd = ctx.createLinearGradient(0,0,0,H); grd.addColorStop(0,'#bfe0f7'); grd.addColorStop(1,'#e8f4fc');
+      ctx.fillStyle = grd; ctx.fillRect(0,0,colW,H);
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 2;
+      for (var i=0;i<8;i++){ var yy = ((i*40 - scroll) % 320 + 320) % 320 - 30; ctx.beginPath(); ctx.moveTo(20 + (i*53)%(colW-60), yy); ctx.lineTo(20 + (i*53)%(colW-60), yy+18); ctx.stroke(); }
+      var ob = o(), cx = colW/2, cy = H/2;
+      if (ob.name === 'Skydiver'){
+        ctx.fillStyle = '#14213d'; ctx.fillRect(cx-22, cy-5, 44, 10); ctx.fillRect(cx-5, cy-14, 10, 28);
+        ctx.beginPath(); ctx.arc(cx, cy-20, 7, 0, Math.PI*2); ctx.fillStyle = '#c68f6a'; ctx.fill();
+      } else drawBall(ctx, cx, cy, ob.r, 0, ob.fill);
+      var Fg = ob.m*g, Fa = fair(), maxL = 80;
+      arrow(ctx, cx, cy + ob.r + 2, cx, cy + ob.r + 2 + maxL, COL.grav, 6, 'Fgrav', {x:cx+30, y:cy + ob.r + maxL - 6});
+      if (Fa > 0.0001) arrow(ctx, cx, cy - ob.r - 2, cx, cy - ob.r - 2 - maxL*Math.min(1, Fa/Fg), COL.air, 6, 'Fair', {x:cx+28, y:cy - ob.r - 10 - maxL*Math.min(1,Fa/Fg)/2});
+      // graph
+      var gx = colW + 46, gw = w - gx - 16, gy = 16, gh = H - 52;
+      ctx.strokeStyle = '#14213d'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(gx, gy+gh); ctx.lineTo(gx+gw, gy+gh); ctx.stroke();
+      ctx.fillStyle = '#566074'; ctx.font = '11px Arial'; ctx.textAlign = 'right';
+      for (var vv=0; vv<=VMAX; vv+=30){ var py = gy+gh - vv/VMAX*gh; ctx.fillText(vv, gx-6, py+4); ctx.strokeStyle = '#e3e8df'; ctx.beginPath(); ctx.moveTo(gx+1,py); ctx.lineTo(gx+gw,py); ctx.stroke(); }
+      ctx.textAlign = 'center';
+      for (var tt=0; tt<=TMAX; tt+=2){ ctx.fillText(tt, gx + tt/TMAX*gw, gy+gh+15); }
+      ctx.fillText('time (s)', gx + gw/2, gy+gh+32);
+      ctx.save(); ctx.translate(gx-34, gy+gh/2); ctx.rotate(-Math.PI/2); ctx.fillText('velocity (m/s)', 0, 0); ctx.restore();
+      // free-fall reference
+      ctx.setLineDash([6,6]); ctx.strokeStyle = '#7b3fb3'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(gx, gy+gh);
+      var tEnd = Math.min(TMAX, VMAX/g); ctx.lineTo(gx + tEnd/TMAX*gw, gy+gh - g*tEnd/VMAX*gh); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#7b3fb3'; ctx.textAlign = 'left'; ctx.fillText('free fall (no air)', gx + gw*0.5 - 40, gy + gh*0.42 - 14);
+      // trace
+      if (trace.length > 1){
+        ctx.strokeStyle = '#14213d'; ctx.lineWidth = 3; ctx.beginPath();
+        trace.forEach(function(p, j){ var px = gx + p[0]/TMAX*gw, py = gy+gh - Math.min(p[1],VMAX)/VMAX*gh; if (j===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); });
+        ctx.stroke();
+      }
+      if (airOn()){
+        var vt = Math.sqrt(ob.m*g/ob.k);
+        if (vt < VMAX){ var py2 = gy+gh - vt/VMAX*gh; ctx.setLineDash([3,4]); ctx.strokeStyle = COL.air; ctx.beginPath(); ctx.moveTo(gx, py2); ctx.lineTo(gx+gw, py2); ctx.stroke(); ctx.setLineDash([]);
+          ctx.fillStyle = COL.air; ctx.textAlign = 'right'; ctx.fillText('terminal velocity ≈ ' + vt.toFixed(0) + ' m/s', gx+gw, py2 - 6); }
+      }
+    }
+    function update(){
+      var ob = o(), Fg = ob.m*g, Fa = fair(), a = (Fg - Fa)/ob.m;
+      $('r5t').textContent = t.toFixed(1) + ' s';
+      $('r5v').textContent = v.toFixed(1) + ' m/s';
+      $('r5g').textContent = Fg < 10 ? Fg.toFixed(2) + ' N' : Math.round(Fg) + ' N';
+      $('r5r').textContent = Fg < 10 ? Fa.toFixed(2) + ' N' : Math.round(Fa) + ' N';
+      $('r5a').textContent = a.toFixed(2) + ' m/s²';
+    }
+    function loop(ts){
+      if (!running) return;
+      var real = Math.min(0.05, (ts-last)/1000); last = ts;
+      var dt = real*2, sub = 10, ob = o();
+      for (var i=0;i<sub;i++){ var h = dt/sub; var a = g - (airOn() ? ob.k*v*v/ob.m : 0); v += a*h; t += h; }
+      scroll += v*real*6;
+      trace.push([t, v]);
+      if (t >= TMAX || v >= VMAX){ running = false; }
+      draw(); update();
+      if (running) requestAnimationFrame(loop);
+    }
+    function reset(){ running = false; t = 0; v = 0; trace = []; draw(); update(); }
+    $('btnDrop').addEventListener('click', function(){ reset(); running = true; trace = [[0,0]]; last = performance.now(); requestAnimationFrame(loop); });
+    $('fObj').addEventListener('change', reset); $('fAir').addEventListener('change', reset);
+    window.addEventListener('resize', resize); resize(); update();
+  })();
+
+  /* ================= LAB 6: collision ================= */
+  (function(){
+    var A = $('cA'), B = $('cB'), F = $('cF');
+    function upd(){
+      var ma = +A.value, mb = +B.value, f = +F.value, aa = f/ma, ab = f/mb;
+      $('cAv').textContent = ma + ' kg'; $('cBv').textContent = mb + ' kg'; $('cFv').textContent = f;
+      $('bFA').style.width = (f/1500*100) + '%'; $('bFB').style.width = (f/1500*100) + '%';
+      $('tFA').textContent = f + ' N'; $('tFB').textContent = f + ' N';
+      var amax = 1500/45;
+      $('bAA').style.width = (aa/amax*100) + '%'; $('bAB').style.width = (ab/amax*100) + '%';
+      $('tAA').textContent = aa.toFixed(1) + ' m/s²'; $('tAB').textContent = ab.toFixed(1) + ' m/s²';
+    }
+    [A,B,F].forEach(function(s){ s.addEventListener('input', upd); }); upd();
+  })();
+
+  /* ================= flip cards ================= */
+  document.querySelectorAll('.flip').forEach(function(c){
+    c.addEventListener('click', function(){ c.setAttribute('aria-pressed', c.getAttribute('aria-pressed')==='true' ? 'false' : 'true'); });
+  });
+
+  /* ================= quiz ================= */
+  (function(){
+    var Q = [
+      {q:'A teammate passes you the ball across a perfectly frictionless surface (no air either). What happens to the ball after it leaves their foot?',
+       o:['It gradually slows down and stops','It keeps moving at a constant speed in a straight line','It speeds up','It stops immediately'], a:1,
+       e:'With no unbalanced force, the ball keeps its velocity (1st law). On real grass, friction is what slows it.'},
+      {q:'Which player has the most inertia?',
+       o:['A 55 kg winger sprinting','An 85 kg centre-back standing still','They have the same inertia','Whoever is moving faster'], a:1,
+       e:'Inertia depends only on mass, not speed. More mass means more inertia.'},
+      {q:'A ball rests on the penalty spot. Which statement is true?',
+       o:['There are no forces on it','Gravity and the normal force are balanced','Only gravity acts on it','The normal force is bigger than gravity'], a:1,
+       e:'Two forces act (gravity down, normal up). They are equal and opposite, so Fnet = 0.'},
+      {q:'In a tug-of-war, your team pulls left with 300 N and the other team pulls right with 500 N. What is the net force on the rope?',
+       o:['800 N right','200 N left','200 N right','0 N'], a:2,
+       e:'Opposite directions subtract: 500 − 300 = 200 N, in the direction of the larger force (right).'},
+      {q:'A long ball is rising through the air after a goal kick. Ignoring air resistance, which forces act on it?',
+       o:['A forward kick force and gravity','Only gravity, pointing down','A forward force, an upward force, and gravity','No forces'], a:1,
+       e:'The kick force ends at contact. In flight, only gravity acts (plus air resistance, if included). This is the BIG misconception!'},
+      {q:'You strike a size 3 ball (0.30 kg) and a size 5 ball (0.43 kg) with the same force. Which has the greater acceleration?',
+       o:['Size 3 ball','Size 5 ball','Same acceleration','Can\'t tell'], a:0,
+       e:'a = F/m. With the same F, the smaller mass gets the bigger acceleration (a ∝ 1/m).'},
+      {q:'The net force on an object is doubled while its mass stays the same. Its acceleration…',
+       o:['halves','stays the same','doubles','quadruples'], a:2,
+       e:'Acceleration is directly proportional to net force (a ∝ F).'},
+      {q:'A 0.45 kg ball is struck with an average net force of 900 N. What is its acceleration during contact?',
+       o:['405 m/s²','2,000 m/s²','900 m/s²','0.0005 m/s²'], a:1,
+       e:'a = Fnet/m = 900 N ÷ 0.45 kg = 2,000 m/s².'},
+      {q:'During a header, how does the force of the ball on your head compare with the force of your head on the ball?',
+       o:['The head pushes harder','The ball pushes harder','They are equal in size and opposite in direction','It depends on who is moving'], a:2,
+       e:'Third law: interaction forces are always equal and opposite.'},
+      {q:'A ball rests on the grass. Why are Fnorm (up) and Fgrav (down) NOT an action–reaction pair?',
+       o:['They are not equal','They act on the same object','Gravity is not a real force','They point in the same direction'], a:1,
+       e:'Action–reaction pairs act on two different objects. These both act on the ball, so they are a balanced pair instead.'},
+      {q:'When you sprint, what actually pushes you forward?',
+       o:['Your legs push you forward directly','The ground pushes your cleats forward because your cleats push the ground backward','Air pushes you from behind','Your inertia'], a:1,
+       e:'You push the ground backward; by the 3rd law the ground pushes you forward. That forward force (friction) accelerates you.'},
+      {q:'A 58 kg winger and an 88 kg centre-back collide with an 800 N force on each. Who accelerates more?',
+       o:['The centre-back','The winger','Both equally','Neither accelerates'], a:1,
+       e:'Equal forces (3rd law), but a = F/m: 800/58 ≈ 13.8 m/s² for the winger vs 800/88 ≈ 9.1 m/s² for the centre-back.'},
+      {q:'A skydiver has reached terminal velocity. Which is true?',
+       o:['Air resistance is greater than gravity','The skydiver is still speeding up','Air resistance equals gravity, so acceleration is 0','Gravity has turned off'], a:2,
+       e:'At terminal velocity the forces are balanced: Fnet = 0, so velocity is constant.'}
+    ];
+    var box = $('quizBox'), answered = 0, correct = 0;
+    Q.forEach(function(item, i){
+      var d = document.createElement('div'); d.className = 'q';
+      var p = document.createElement('p'); p.className = 'stem'; p.textContent = (i+1) + '. ' + item.q; d.appendChild(p);
+      var opts = document.createElement('div'); opts.className = 'opts';
+      var fb = document.createElement('p'); fb.className = 'fb';
+      item.o.forEach(function(txt, j){
+        var b = document.createElement('button'); b.textContent = String.fromCharCode(65+j) + ') ' + txt;
+        b.addEventListener('click', function(){
+          if (d.classList.contains('done')) return;
+          d.classList.add('done'); answered++;
+          var ok = j === item.a; if (ok) correct++;
+          b.classList.add(ok ? 'right' : 'wrong');
+          opts.children[item.a].classList.add('right');
+          fb.innerHTML = (ok ? '✅ <strong>Correct!</strong> ' : '❌ <strong>Not quite.</strong> ') + item.e;
+          $('score').textContent = 'Score: ' + correct + ' / ' + answered + (answered === Q.length ? '  ·  Done!' : '');
+        });
+        opts.appendChild(b);
+      });
+      d.appendChild(opts); d.appendChild(fb); box.appendChild(d);
+    });
+    $('score').textContent = 'Score: 0 / 0  (of ' + Q.length + ')';
+  })();
+})();
+</script>
+</body>
+</html>
