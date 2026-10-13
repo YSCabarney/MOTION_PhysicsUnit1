@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Physics: Motion &amp; Forces</title>
+<style>
+  :root{
+    --pitch:#0b6e4f; --pitch-d:#074a35; --pitch-l:#e6f2ec;
+    --navy:#14213d; --ink:#1d2433; --muted:#566074;
+    --bg:#f4f6f1; --card:#ffffff; --line:#dbe2d6; --gold:#e9a200;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:17px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:0 16px}
+  header{background:linear-gradient(160deg,var(--pitch) 0%,var(--pitch-d) 100%);color:#fff;padding:36px 0 30px}
+  header .eyebrow{margin:0 0 4px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.8rem;opacity:.85}
+  header h1{margin:0 0 .25em;font-size:clamp(2rem,5vw,2.8rem);line-height:1.15}
+  header p{margin:0;max-width:640px;opacity:.92;font-size:1.1rem}
+  h2{color:var(--navy);font-size:1.35rem;margin:34px 0 12px;display:flex;align-items:center;gap:10px}
+  h2 .ico{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--pitch);color:#fff;font-size:1rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:16px 18px;border-top:5px solid var(--pitch);transition:transform .15s, box-shadow .15s}
+  a.card:hover,a.card:focus-visible{transform:translateY(-2px);box-shadow:0 6px 18px rgba(20,33,61,.12);outline:none}
+  a.card:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .card .tag{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--pitch)}
+  .card h3{margin:4px 0 6px;font-size:1.08rem;color:var(--navy);line-height:1.25}
+  .card p{margin:0;font-size:.93rem;color:var(--muted)}
+  .card .go{display:inline-block;margin-top:10px;font-size:.88rem;font-weight:700;color:var(--pitch)}
+  .card.new{border-top-color:var(--gold)}
+  .card.new .tag{color:#a06f00}
+  footer{margin-top:40px;background:var(--navy);color:#cfd6e4;padding:20px 0;font-size:.9rem}
+  @media (prefers-reduced-motion:reduce){a.card{transition:none}a.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <p class="eyebrow">YSC Academy · Physics</p>
+    <h1>Motion &amp; Forces</h1>
+    <p>Study guides, activities and practice for describing motion, free fall and Newton's laws. Everything uses examples from soccer.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h2><span class="ico">📘</span> Study guides</h2>
+  <div class="grid">
+    <a class="card" href="module01studyguide.html">
+      <span class="tag">Module 01</span>
+      <h3>Motion, Measurement &amp; Graphing</h3>
+      <p>The foundations: measurement, describing motion and reading graphs.</p>
+      <span class="go">Open guide →</span>
+    </a>
+    <a class="card" href="speed-velocity-study-guide.html">
+      <span class="tag">Study guide</span>
+      <h3>Speed &amp; Velocity</h3>
+      <p>How fast, and how fast in which direction? Instantaneous vs. average speed, and how speed cameras measure you.</p>
+      <span class="go">Open guide →</span>
+    </a>
+    <a class="card" href="modifyequat_accel_intro.html">
+      <span class="tag">Study guide</span>
+      <h3>Acceleration &amp; Manipulating Equations</h3>
+      <p>Speeding up, slowing down and turning, plus the algebra to solve for any variable.</p>
+      <span class="go">Open guide →</span>
+    </a>
+    <a class="card" href="physics-motion-freefall-study-guide.html">
+      <span class="tag">Study guide</span>
+      <h3>Motion Graphs &amp; Free Fall</h3>
+      <p>From reading position–time graphs to dropping a ball off the top of a stadium.</p>
+      <span class="go">Open guide →</span>
+    </a>
+    <a class="card new" href="newtons-laws-study-guide.html">
+      <span class="tag">New · Study guide</span>
+      <h3>Newton's Laws of Motion</h3>
+      <p>Inertia, net force, F = m·a and action–reaction, with interactive labs and a self-check quiz.</p>
+      <span class="go">Open guide →</span>
+    </a>
+  </div>
+
+  <h2><span class="ico">⚽</span> Activities</h2>
+  <div class="grid">
+    <a class="card" href="speed-trap-or-fair-trap-student.html">
+      <span class="tag">Investigation</span>
+      <h3>Speed Trap or Fair Trap? Case File</h3>
+      <p>Does a new speed camera catch dangerous driving, or let it slip through? You decide.</p>
+      <span class="go">Open activity →</span>
+    </a>
+    <a class="card" href="acceleration-graphs-intro-activity.html">
+      <span class="tag">Intro activity · 10 min</span>
+      <h3>Graphing Acceleration</h3>
+      <p>A sprinter bursts off the line, a pass rolls to a stop: same physics, three different graphs.</p>
+      <span class="go">Open activity →</span>
+    </a>
+    <a class="card" href="physics-freefall-activity.html">
+      <span class="tag">Intro activity · 10–15 min</span>
+      <h3>The Feather &amp; the Bowling Ball</h3>
+      <p>Watch, predict and explore what really happens when objects fall, before the math begins.</p>
+      <span class="go">Open activity →</span>
+    </a>
+  </div>
+
+  <h2><span class="ico">✏️</span> Practice &amp; review</h2>
+  <div class="grid">
+    <a class="card" href="describing-motion-review.html">
+      <span class="tag">Week 1 review</span>
+      <h3>Describing Motion Review</h3>
+      <p>Pull together the vocabulary and skills for describing motion.</p>
+      <span class="go">Open review →</span>
+    </a>
+    <a class="card" href="freefall_worksheet.html">
+      <span class="tag">Worksheet</span>
+      <h3>Free Fall Practice</h3>
+      <p>Use the kinematic equations to solve problems about objects dropped from rest.</p>
+      <span class="go">Open worksheet →</span>
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">YSC Academy Physics · Questions? Message your teacher in Canvas.</div>
+</footer>
+</body>
+</html>
