@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forces &amp; Free Body Diagrams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#F4F5F7; --card:#FFFFFF; --ink:#141821; --soft:#465064; --muted:#7A8296; --line:#DCE0E8; --sunk:#ECEEF3;
+    --accent:#2B59C3; --accent-soft:#E3EAFA; --good:#1E8E5A; --good-soft:#DFF3E8; --bad:#C2412D; --bad-soft:#FBE3DE; --warn-soft:#FBF0D9;
+    --fg:#D63E2A; --fn:#2B59C3; --fa:#1E8E5A; --ff:#C47F0E; --ft:#7A4FCF; --fair:#0E95A1; --net:#141821;
+    --display:'Space Grotesk',system-ui,sans-serif; --body:'Source Sans 3',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F1218; --card:#181C25; --ink:#EEF1F7; --soft:#B8C0D2; --muted:#8890A5; --line:#2B3140; --sunk:#1F2430;
+      --accent:#7FA2F5; --accent-soft:#1D2A47; --good:#4FCB8C; --good-soft:#14301F; --bad:#F2846F; --bad-soft:#3A1E19; --warn-soft:#3A2F14;
+      --fg:#FF7A63; --fn:#7FA2F5; --fa:#4FCB8C; --ff:#F2B54A; --ft:#B293F5; --fair:#4FD2DC; --net:#EEF1F7;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F1218; --card:#181C25; --ink:#EEF1F7; --soft:#B8C0D2; --muted:#8890A5; --line:#2B3140; --sunk:#1F2430;
+    --accent:#7FA2F5; --accent-soft:#1D2A47; --good:#4FCB8C; --good-soft:#14301F; --bad:#F2846F; --bad-soft:#3A1E19; --warn-soft:#3A2F14;
+    --fg:#FF7A63; --fn:#7FA2F5; --fa:#4FCB8C; --ff:#F2B54A; --ft:#B293F5; --fair:#4FD2DC; --net:#EEF1F7;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;}
+  .wrap{max-width:900px;margin:0 auto;padding-block:28px 90px;}
+  h1,h2,h3,h4{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em;}
+  p{margin:0;color:var(--soft);}
+  p b,li b,td b{color:var(--ink);}
+  ul,ol{margin:0;padding-left:22px;color:var(--soft);}
+  li{margin-bottom:5px;}
+  a{color:var(--accent);}
+  sub{font-size:.72em;}
+  .mono{font-family:var(--mono);}
+
+  .hero{position:relative;border-radius:20px;padding:30px 28px;background:var(--card);border:1px solid var(--line);overflow:hidden;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:24px 24px;background-position:-1px -1px;}
+  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,var(--card) 45%,transparent 100%);pointer-events:none;}
+  .hero > *{position:relative;z-index:1;}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;}
+  .hero h1{font-size:clamp(30px,6vw,46px);line-height:1.05;margin:10px 0 10px;}
+  .hero p{max-width:60ch;font-size:18px;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .chip{font-family:var(--mono);font-size:12px;background:var(--sunk);border:1px solid var(--line);border-radius:999px;padding:6px 11px;color:var(--soft);}
+
+  nav.steps-nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);margin:18px -16px 0;padding:10px 16px;border-bottom:1px solid var(--line);}
+  nav.steps-nav ol{list-style:none;display:flex;gap:6px;padding:0;margin:0;overflow-x:auto;scrollbar-width:none;}
+  nav.steps-nav li{margin:0;flex:none;}
+  nav.steps-nav a{display:flex;align-items:center;gap:7px;text-decoration:none;font-size:14px;font-weight:600;color:var(--soft);padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card);white-space:nowrap;}
+  nav.steps-nav a span{font-family:var(--mono);font-size:11px;width:20px;height:20px;border-radius:50%;background:var(--sunk);display:flex;align-items:center;justify-content:center;}
+  nav.steps-nav a.on{border-color:var(--accent);color:var(--accent);}
+  nav.steps-nav a.on span{background:var(--accent);color:#fff;}
+
+  section.step{margin-top:56px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:70px;}
+  .step-head{display:flex;gap:14px;align-items:flex-start;}
+  .step-num{flex:none;width:44px;height:44px;border-radius:12px;background:var(--accent);color:#fff;font-family:var(--display);font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center;}
+  .step-head h2{font-size:clamp(24px,4.4vw,32px);line-height:1.15;}
+  .step-head p{margin-top:4px;}
+  h3{font-size:20px;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+  .note{border-radius:12px;padding:14px 18px;background:var(--accent-soft);color:var(--ink);font-size:16px;}
+  .note b{color:var(--ink);}
+  .note.warn{background:var(--warn-soft);} .note.good{background:var(--good-soft);} .note.bad{background:var(--bad-soft);}
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--accent);margin-bottom:2px;}
+  .eq{font-family:var(--mono);font-size:17px;background:var(--sunk);border-radius:10px;padding:10px 14px;color:var(--ink);text-align:center;}
+  .eq.big{font-size:22px;padding:14px;}
+  .def{border-left:4px solid var(--accent);padding:4px 0 4px 14px;}
+  .def b{color:var(--ink);}
+
+  figure.viz{margin:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  figure.viz canvas{display:block;width:100%;height:auto;}
+  figure.viz figcaption{padding:10px 16px;font-size:15px;color:var(--soft);border-top:1px solid var(--line);}
+  .ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);background:var(--sunk);}
+  .ctrl label{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--ink);font-weight:600;}
+  .ctrl input[type=range]{width:150px;accent-color:var(--accent);}
+  .ctrl output{font-family:var(--mono);font-size:14px;min-width:56px;color:var(--ink);}
+  .btn{font:600 15px var(--body);border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 14px;cursor:pointer;}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card);}
+  .seg button{font:600 14px var(--body);border:0;background:transparent;color:var(--soft);padding:7px 12px;cursor:pointer;}
+  .seg button.on{background:var(--ink);color:var(--bg);}
+  .readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;padding:12px 16px;border-top:1px solid var(--line);}
+  .readout div{background:var(--sunk);border-radius:10px;padding:8px 12px;}
+  .readout span{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .readout b{font-family:var(--mono);font-size:17px;color:var(--ink);}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px;}
+  .legend span{display:inline-flex;align-items:center;gap:7px;font-size:14.5px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--ink);}
+  .legend i{width:22px;height:4px;border-radius:2px;display:inline-block;}
+
+  table{width:100%;border-collapse:collapse;font-size:15px;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--soft);vertical-align:top;}
+  th{background:var(--sunk);color:var(--ink);font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+  .tscroll{overflow-x:auto;border-radius:12px;border:1px solid var(--line);background:var(--card);}
+  .tscroll table th:first-child,.tscroll table td:first-child{border-left:0;} .tscroll table th:last-child,.tscroll table td:last-child{border-right:0;}
+  .tscroll table tr:first-child th{border-top:0;} .tscroll table tr:last-child td{border-bottom:0;}
+
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;}
+  details summary{cursor:pointer;font-weight:700;color:var(--ink);}
+  details[open] summary{margin-bottom:10px;}
+  details > *+*{margin-top:8px;}
+
+  .sol{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:16px;align-items:baseline;}
+  .sol .k{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+  .sol .v{color:var(--ink);}
+
+  .quiz{display:flex;flex-direction:column;gap:8px;}
+  .opt{display:flex;gap:10px;align-items:center;text-align:left;font:500 16px var(--body);color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer;}
+  .opt b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--sunk);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;}
+  .opt.right{border-color:var(--good);background:var(--good-soft);} .opt.wrong{border-color:var(--bad);background:var(--bad-soft);}
+  .feedback{font-size:15.5px;border-radius:10px;padding:10px 14px;display:none;}
+  .feedback.show{display:block;} .feedback.ok{background:var(--good-soft);color:var(--ink);} .feedback.no{background:var(--bad-soft);color:var(--ink);}
+
+  .prob{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;}
+  .prob-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .prob-n{font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;background:var(--ink);border-radius:6px;padding:2px 8px;}
+  .lvl{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+  .prob-q{color:var(--ink);font-size:17px;}
+  .ans-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .ans-row input{font:600 17px var(--mono);width:130px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);}
+  .ans-row .unit{font-family:var(--mono);color:var(--soft);}
+  .fbd-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
+  .fbd-opt{border:1.5px solid var(--line);border-radius:12px;background:var(--card);padding:6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font:600 14px var(--body);color:var(--ink);}
+  .fbd-opt canvas{width:100%;height:auto;display:block;}
+  .fbd-opt.right{border-color:var(--good);background:var(--good-soft);} .fbd-opt.wrong{border-color:var(--bad);background:var(--bad-soft);}
+
+  .steplist{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
+  .steplist li{counter-increment:s;position:relative;padding:10px 14px 10px 48px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0;color:var(--soft);}
+  .steplist li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;font:700 13px var(--mono);display:flex;align-items:center;justify-content:center;}
+  .checkpoint{border:2px dashed var(--accent);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;background:var(--card);}
+  .checkpoint > .tag{color:var(--accent);}
+  .footer{text-align:center;color:var(--muted);font-size:14px;margin-top:60px;}
+  .pace{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:18px;}
+  .pace div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14.5px;color:var(--soft);}
+  .pace b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
+
+  .next-step{align-self:flex-end;font-weight:700;text-decoration:none;background:var(--accent-soft);color:var(--accent);border-radius:10px;padding:10px 16px;}
+  .sorter{display:flex;flex-wrap:wrap;gap:8px;}
+  .sv{font:600 15px var(--body);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;display:flex;gap:8px;align-items:center;}
+  .sv i{font-style:normal;font-family:var(--mono);font-size:12px;background:var(--sunk);border-radius:6px;padding:2px 7px;color:var(--soft);min-width:58px;text-align:center;}
+  .sv.right{border-color:var(--good);background:var(--good-soft);} .sv.wrong{border-color:var(--bad);background:var(--bad-soft);}
+  .law{display:flex;flex-direction:column;gap:12px;}
+  .law-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;}
+  .law-head .tag{font-size:12px;}
+  .example{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;}
+  .example > header{padding:16px 20px 4px;display:flex;flex-direction:column;gap:6px;}
+  .example canvas{display:block;width:100%;height:auto;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:10px;}
+  .example .body{padding:14px 20px 18px;display:flex;flex-direction:column;gap:12px;}
+  .example .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 20px;background:var(--sunk);}
+  .ftable td:first-child{white-space:nowrap;}
+  .swatch{display:inline-block;width:26px;height:5px;border-radius:3px;vertical-align:middle;margin-right:8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <span class="kicker">Physics · Unit: Forces · Week 1</span>
+  <h1>Forces &amp; Free Body Diagrams</h1>
+  <p>Learn to draw every force on an object, add them up, and predict how it will move. Work through the 7 steps in order. Each one builds on the last.</p>
+  <div class="chips"><span class="chip">horizontal &amp; vertical forces only</span><span class="chip">angles + trig: next week</span><span class="chip">g = 9.8 m/s²</span></div>
+  <p style="margin-top:14px;font-size:16px"><b>How this page works:</b> read each step from top to bottom. Press <b>▶</b> buttons to play animations, drag the <b>sliders</b> to experiment, and answer each <b>Checkpoint</b> before moving on. If a checkpoint is wrong, reread that step.</p>
+  <div class="pace">
+    <div><b>Day 1</b>Steps 1–3: vectors, the newton, Newton's laws</div>
+    <div><b>Day 2</b>Steps 4–5: drawing FBDs, net force</div>
+    <div><b>Day 3</b>Step 6: worked examples</div>
+    <div><b>Day 4</b>Step 7: practice problems</div>
+    <div><b>Day 5+</b>Virtual Lab + Lab Doc</div>
+  </div>
+</header>
+
+<nav class="steps-nav" aria-label="Steps">
+  <ol>
+    <li><a href="#s1"><span>1</span>Vectors</a></li>
+    <li><a href="#s2"><span>2</span>The Newton</a></li>
+    <li><a href="#s3"><span>3</span>Newton's Laws</a></li>
+    <li><a href="#s4"><span>4</span>Drawing FBDs</a></li>
+    <li><a href="#s5"><span>5</span>Net Force</a></li>
+    <li><a href="#s6"><span>6</span>Examples</a></li>
+    <li><a href="#s7"><span>7</span>Practice</a></li>
+  </ol>
+</nav>
+
+<!-- ===================== STEP 1 ===================== -->
+<section class="step" id="s1">
+  <div class="step-head"><div class="step-num">1</div><div><h2>Review: Vectors</h2><p>Forces are vectors, so this is where everything starts.</p></div></div>
+
+  <div class="grid2">
+    <div class="card"><span class="tag">Scalar</span><h3>Size only</h3><p>A scalar has a <b>magnitude</b> (a size, with units) and nothing else.</p><p class="mono" style="color:var(--ink)">5 kg · 20 s · 30 °C · 12 m/s (speed)</p></div>
+    <div class="card"><span class="tag">Vector</span><h3>Size + direction</h3><p>A vector has a <b>magnitude</b> <i>and</i> a <b>direction</b>. Change either one and it's a different vector.</p><p class="mono" style="color:var(--ink)">12 m/s east · 50 N down · 3 m/s² up</p></div>
+  </div>
+
+  <figure class="viz"><canvas id="c-anatomy" role="img" aria-label="An arrow showing tail, head, magnitude and direction"></canvas>
+    <figcaption>We draw a vector as an <b>arrow</b>. The <b>length</b> shows the magnitude, and the <b>arrowhead</b> shows the direction. A 100 N force gets an arrow twice as long as a 50 N force.</figcaption></figure>
+
+  <div class="card">
+    <h3>Try it: scalar or vector?</h3>
+    <p>Click each quantity to cycle through <b>Scalar</b> and <b>Vector</b>, then press Check.</p>
+    <div class="sorter" id="sorter">
+      <button class="sv" data-ans="s">mass <i></i></button><button class="sv" data-ans="v">velocity <i></i></button><button class="sv" data-ans="s">temperature <i></i></button>
+      <button class="sv" data-ans="v">force <i></i></button><button class="sv" data-ans="s">time <i></i></button><button class="sv" data-ans="v">displacement <i></i></button>
+      <button class="sv" data-ans="s">speed <i></i></button><button class="sv" data-ans="v">weight <i></i></button><button class="sv" data-ans="v">acceleration <i></i></button><button class="sv" data-ans="s">distance <i></i></button>
+    </div>
+    <div><button class="btn primary" id="sorter-check">Check</button></div>
+    <div class="feedback" id="sorter-fb"></div>
+  </div>
+
+  <div class="card">
+    <h3>Directions become + and − signs</h3>
+    <p>This week every vector points <b>horizontally</b> or <b>vertically</b>. That means we can describe direction with a simple sign:</p>
+    <div class="tscroll"><table><tr><th>Axis</th><th>Positive (+)</th><th>Negative (−)</th></tr><tr><td><b>x</b> (horizontal)</td><td>right →</td><td>left ←</td></tr><tr><td><b>y</b> (vertical)</td><td>up ↑</td><td>down ↓</td></tr></table></div>
+    <p>So "50 N to the left" is written <span class="mono" style="color:var(--ink)">F<sub>x</sub> = −50 N</span>, and "20 N up" is <span class="mono" style="color:var(--ink)">F<sub>y</sub> = +20 N</span>.</p>
+  </div>
+
+  <div class="card">
+    <h3>Adding vectors on the same line</h3>
+    <p>To add vectors, place them <b>tip-to-tail</b>: start the second arrow where the first one ends. The <b>resultant</b> (R) goes from the very first tail to the very last tip. When the vectors lie on the same line, that's just adding signed numbers:</p>
+    <div class="eq">same direction → add sizes &nbsp;·&nbsp; opposite directions → subtract, and keep the sign of the bigger one</div>
+  </div>
+  <figure class="viz"><canvas id="c-add" role="img" aria-label="Interactive vector addition on a number line"></canvas>
+    <div class="ctrl">
+      <label>A <input type="range" id="add-a" min="-8" max="8" step="1" value="5"><output id="add-a-o"></output></label>
+      <label>B <input type="range" id="add-b" min="-8" max="8" step="1" value="-3"><output id="add-b-o"></output></label>
+      <span class="seg" id="add-axis"><button data-v="h" class="on">Horizontal</button><button data-v="v">Vertical</button></span>
+      <button class="btn primary" id="add-play">▶ Show tip-to-tail</button>
+    </div>
+    <figcaption>Move the sliders, then press <b>Show tip-to-tail</b>. Vector B slides so its tail sits on A's tip. The dashed arrow R is the sum.</figcaption></figure>
+
+  <div class="checkpoint quiz" data-answer="1" data-ok="Opposite directions: 40 − 25 = 15, and it points the way of the bigger vector (west)." data-no="When vectors point in opposite directions, subtract. The answer takes the direction of the bigger one.">
+    <span class="tag">Checkpoint 1</span>
+    <p class="prob-q">A 40 N force points east and a 25 N force points west. What is the resultant?</p>
+    <button class="opt"><b>A</b>65 N east</button><button class="opt"><b>B</b>15 N west</button><button class="opt"><b>C</b>15 N east</button><button class="opt"><b>D</b>65 N west</button>
+    <div class="feedback"></div>
+  </div>
+  <a class="next-step" href="#s2">Next: Step 2 · The Newton →</a>
+</section>
+
+<!-- ===================== STEP 2 ===================== -->
+<section class="step" id="s2">
+  <div class="step-head"><div class="step-num">2</div><div><h2>The Newton: the Unit of Force</h2><p>How we measure pushes and pulls.</p></div></div>
+
+  <div class="card def">
+    <p><b>1 newton (N)</b> is the force that makes a <b>1 kg</b> mass accelerate at <b>1 m/s²</b>.</p>
+    <div class="eq big">1 N = 1 kg · m/s²</div>
+    <p>It comes straight from Newton's second law, F = ma. Plug in m = 1 kg and a = 1 m/s² and you get 1 N.</p>
+  </div>
+  <figure class="viz"><canvas id="c-newton" role="img" aria-label="A 1 kg cart pushed by 1 N speeds up by 1 m/s each second"></canvas>
+    <div class="ctrl"><button class="btn primary" id="newton-play">▶ Push with 1 N</button></div>
+    <figcaption>A 1 kg cart on frictionless ice, pushed with a steady 1 N. Its velocity climbs <b>1 m/s every second</b>. The dots mark where it is each second.</figcaption></figure>
+
+  <div class="card">
+    <h3>Weight is a force, measured in newtons</h3>
+    <p><b>Mass</b> (kg) is how much matter something has. It's the same everywhere. <b>Weight</b> (N) is the force of gravity pulling on that mass. On Earth:</p>
+    <div class="eq big">F<sub>g</sub> = m · g &nbsp;&nbsp; with &nbsp; g = 9.8 m/s²</div>
+    <p>Say "a 2 kg book <i>has a mass of</i> 2 kg and <i>a weight of</i> 19.6 N." Don't mix them up.</p>
+  </div>
+  <figure class="viz"><canvas id="c-weight" role="img" aria-label="A spring scale showing the weight of different masses in newtons"></canvas>
+    <div class="ctrl">
+      <label>Mass <input type="range" id="w-mass" min="0.1" max="80" step="0.1" value="1.5"><output id="w-mass-o"></output></label>
+      <span class="seg" id="w-presets"><button data-m="0.1">🍎 apple</button><button data-m="0.2">📱 phone</button><button data-m="1.5">📕 textbook</button><button data-m="7">🎒 backpack</button><button data-m="60">🧍 student</button></span>
+    </div>
+    <figcaption>A small apple weighs about <b>1 N</b>. A typical student weighs about <b>600 N</b>.</figcaption></figure>
+
+  <div class="checkpoint quiz" data-answer="1" data-ok="F_g = mg = 5.0 × 9.8 = 49 N. Mass stays 5.0 kg; weight is the force." data-no="Weight is a force: multiply mass by g = 9.8 m/s². The answer is in newtons, not kilograms.">
+    <span class="tag">Checkpoint 2</span>
+    <p class="prob-q">A 5.0 kg bowling ball sits on a shelf. What is its weight?</p>
+    <button class="opt"><b>A</b>5.0 kg</button><button class="opt"><b>B</b>49 N</button><button class="opt"><b>C</b>5.0 N</button><button class="opt"><b>D</b>0.51 N</button>
+    <div class="feedback"></div>
+  </div>
+  <a class="next-step" href="#s3">Next: Step 3 · Newton's Laws →</a>
+</section>
+
+<!-- ===================== STEP 3 ===================== -->
+<section class="step" id="s3">
+  <div class="step-head"><div class="step-num">3</div><div><h2>Review: Newton's Three Laws</h2><p>The rules that connect forces to motion.</p></div></div>
+
+  <div class="card law">
+    <div class="law-head"><span class="tag">1st Law · Inertia</span><h3>No net force → no change in motion</h3></div>
+    <p>An object at rest stays at rest, and an object in motion keeps moving at a <b>constant velocity</b>, <i>unless a net force acts on it</i>. Objects don't need a force to <i>keep</i> moving. They need a force to <i>change</i> their motion.</p>
+  </div>
+  <figure class="viz"><canvas id="c-law1" role="img" aria-label="A puck sliding on ice versus a rough floor"></canvas>
+    <div class="ctrl"><span class="seg" id="law1-surf"><button data-v="ice" class="on">Ice</button><button data-v="rough">Rough floor</button></span><button class="btn primary" id="law1-play">▶ Slide the puck</button></div>
+    <figcaption>Switch between Ice and Rough floor and press play. The puck gets the <b>same push</b> each time; the hand lets go at the start. On ice, no horizontal force acts after the push, so the velocity stays constant. On the rough floor, friction is an unbalanced force, so the puck slows down and stops.</figcaption></figure>
+
+  <div class="card law">
+    <div class="law-head"><span class="tag">2nd Law</span><h3>Net force causes acceleration</h3></div>
+    <div class="eq big">ΣF = m · a &nbsp;&nbsp;→&nbsp;&nbsp; a = ΣF ÷ m</div>
+    <p>ΣF ("sigma F") means the <b>net force</b>: all the forces added together as vectors. A bigger net force means more acceleration. A bigger mass means less. The acceleration always points the <b>same direction as the net force</b>.</p>
+  </div>
+  <figure class="viz"><canvas id="c-law2" role="img" aria-label="Same 6 newton force on a 1 kg and a 3 kg cart"></canvas>
+    <div class="ctrl"><button class="btn primary" id="law2-play">▶ Push both with 6 N</button></div>
+    <figcaption>Same force, different masses. The 1 kg cart accelerates 3 times as much as the 3 kg cart.</figcaption></figure>
+
+  <div class="card law">
+    <div class="law-head"><span class="tag">3rd Law</span><h3>Forces come in pairs</h3></div>
+    <p>If object A pushes on object B, then B pushes back on A with a force that is <b>equal in size and opposite in direction</b>. The two forces act on <b>different objects</b>, so they never cancel each other out on one FBD.</p>
+  </div>
+  <figure class="viz"><canvas id="c-law3" role="img" aria-label="Two skaters push off each other with equal forces"></canvas>
+    <div class="ctrl"><button class="btn primary" id="law3-play">▶ Push off</button></div>
+    <figcaption>Each skater feels <b>150 N</b> for the same amount of time. The lighter skater (50 kg) gets the bigger acceleration and moves away faster. Same force, smaller mass (2nd law!).</figcaption></figure>
+
+  <div class="checkpoint quiz" data-answer="3" data-ok="Third law pairs are always equal and opposite: the wall pushes on you with 50 N, away from the wall." data-no="Newton's 3rd law: the forces in a pair are always equal in size and opposite in direction, even if nothing moves.">
+    <span class="tag">Checkpoint 3</span>
+    <p class="prob-q">You push on a wall with a force of 50 N. What force does the wall exert on you?</p>
+    <button class="opt"><b>A</b>0 N, because the wall doesn't move</button><button class="opt"><b>B</b>Less than 50 N</button><button class="opt"><b>C</b>More than 50 N</button><button class="opt"><b>D</b>50 N, pointing back toward you</button>
+    <div class="feedback"></div>
+  </div>
+  <a class="next-step" href="#s4">Next: Step 4 · Drawing FBDs →</a>
+</section>
+
+<!-- ===================== STEP 4 ===================== -->
+<section class="step" id="s4">
+  <div class="step-head"><div class="step-num">4</div><div><h2>Drawing Free Body Diagrams</h2><p>A picture of every force acting on <i>one</i> object.</p></div></div>
+
+  <div class="card">
+    <h3>The rules</h3>
+    <ol class="steplist">
+      <li><b>One object only.</b> Draw only forces acting <i>on</i> that object, never forces it exerts on something else.</li>
+      <li><b>Shrink it to a dot.</b> Every arrow starts at the dot and points away from it.</li>
+      <li><b>Arrow length shows size.</b> Bigger force → longer arrow. Equal forces → equal arrows.</li>
+      <li><b>Label every arrow</b> with its symbol (F<sub>g</sub>, F<sub>N</sub>…) and its value if you know it.</li>
+      <li><b>No motion arrows.</b> Velocity and acceleration are not forces, so they don't go on an FBD.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>The force catalog</h3>
+    <p>These six forces cover almost every problem this unit. Their colors stay the same everywhere on this site.</p>
+    <div class="tscroll"><table class="ftable">
+      <tr><th>Force</th><th>Symbol</th><th>Direction</th><th>When it shows up</th></tr>
+      <tr><td><i class="swatch" style="background:var(--fg)"></i><b>Weight</b></td><td>F<sub>g</sub> = mg</td><td>always straight down</td><td>Always. Every object near Earth.</td></tr>
+      <tr><td><i class="swatch" style="background:var(--fn)"></i><b>Normal</b></td><td>F<sub>N</sub></td><td>perpendicular to the surface (up from a floor)</td><td>When the object touches a surface.</td></tr>
+      <tr><td><i class="swatch" style="background:var(--fa)"></i><b>Applied</b></td><td>F<sub>a</sub></td><td>the way it's pushed or pulled</td><td>When a person or thing pushes or pulls it.</td></tr>
+      <tr><td><i class="swatch" style="background:var(--ff)"></i><b>Friction</b></td><td>F<sub>f</sub></td><td>opposite the (attempted) sliding</td><td>When it slides, or tries to slide, along a surface.</td></tr>
+      <tr><td><i class="swatch" style="background:var(--ft)"></i><b>Tension</b></td><td>F<sub>T</sub></td><td>along the rope, away from the object</td><td>When a rope, string, or cable pulls it.</td></tr>
+      <tr><td><i class="swatch" style="background:var(--fair)"></i><b>Air resistance</b></td><td>F<sub>air</sub></td><td>opposite the motion through air</td><td>When it moves fast through air.</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card"><h3>Watch it step by step</h3><p>Pick a situation, then press <b>Next</b> to build its FBD one step at a time.</p>
+    <div><span class="seg" id="steps-sc"><button data-v="book" class="on">Book on a table</button><button data-v="pull">Box pulled by a rope</button></span></div></div>
+  <figure class="viz"><canvas id="c-steps" role="img" aria-label="Step-by-step construction of a free body diagram"></canvas>
+    <div class="ctrl"><button class="btn" id="steps-back">← Back</button><button class="btn primary" id="steps-next">Next →</button><span class="mono" id="steps-count" style="color:var(--muted);font-size:13px"></span></div>
+    <figcaption id="steps-text"></figcaption></figure>
+
+  <div class="note warn"><b>Top 3 FBD mistakes:</b> (1) drawing the force the object exerts on something else, (2) forgetting the normal force whenever there's a surface, and (3) adding a "force of motion" pointing the way it moves. If nothing is pushing that way, there's no arrow!</div>
+  <a class="next-step" href="#s5">Next: Step 5 · Net Force →</a>
+</section>
+
+<!-- ===================== STEP 5 ===================== -->
+<section class="step" id="s5">
+  <div class="step-head"><div class="step-num">5</div><div><h2>Adding Forces: Net Force</h2><p>Turn an FBD into an equation.</p></div></div>
+
+  <div class="card">
+    <h3>Handle each direction separately</h3>
+    <p>Horizontal forces only affect horizontal motion, and vertical forces only affect vertical motion. So add each axis on its own:</p>
+    <div class="grid2">
+      <div class="eq">ΣF<sub>x</sub> = (forces right) − (forces left)</div>
+      <div class="eq">ΣF<sub>y</sub> = (forces up) − (forces down)</div>
+    </div>
+    <p>Then apply Newton's second law along each axis: <span class="mono" style="color:var(--ink)">ΣF<sub>x</sub> = m·a<sub>x</sub></span> and <span class="mono" style="color:var(--ink)">ΣF<sub>y</sub> = m·a<sub>y</sub></span>.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="note good"><b>Balanced (ΣF = 0)</b><br>a = 0. The object is <b>at rest</b> or moving at <b>constant velocity</b>. Both count!</div>
+    <div class="note bad"><b>Unbalanced (ΣF ≠ 0)</b><br>The object <b>accelerates</b> in the direction of the net force.</div>
+  </div>
+
+  <div class="card">
+    <h3>The 4-step method (use it on every problem)</h3>
+    <ol class="steplist">
+      <li><b>Draw the FBD.</b> Every force, labeled.</li>
+      <li><b>Choose + directions</b> (usually right and up).</li>
+      <li><b>Write ΣF = ma</b> for each axis that matters.</li>
+      <li><b>Substitute and solve.</b> Check that units and signs make sense.</li>
+    </ol>
+  </div>
+
+  <div class="card"><h3>Force sandbox</h3><p>Change the forces and watch the FBD update. Try these: (1) make it balanced while being pushed, (2) make it accelerate left, (3) lift it off the floor.</p></div>
+  <figure class="viz"><canvas id="c-sandbox" role="img" aria-label="Interactive crate with adjustable forces and a live free body diagram"></canvas>
+    <div class="ctrl">
+      <label>Mass <input type="range" id="sb-m" min="1" max="50" step="1"><output id="sb-m-o"></output></label>
+      <label style="color:var(--fa)">Push right <input type="range" id="sb-r" min="0" max="200" step="5"><output id="sb-r-o"></output></label>
+      <label style="color:var(--fa)">Push left <input type="range" id="sb-l" min="0" max="200" step="5"><output id="sb-l-o"></output></label>
+      <label style="color:var(--ff)">Friction <input type="range" id="sb-f" min="0" max="100" step="5"><output id="sb-f-o"></output></label>
+      <label style="color:var(--ft)">Rope up <input type="range" id="sb-t" min="0" max="600" step="10"><output id="sb-t-o"></output></label>
+      <button class="btn primary" id="sb-play">▶ Play 2.5 s</button><button class="btn" id="sb-reset">↺ Reset</button>
+    </div>
+    <div class="readout"><div><span>Weight F<sub>g</sub></span><b id="sb-fg"></b></div><div><span>Normal F<sub>N</sub></span><b id="sb-fn"></b></div><div><span>a<sub>x</sub></span><b id="sb-ax"></b></div><div><span>a<sub>y</sub></span><b id="sb-ay"></b></div></div>
+    <figcaption>"Friction" here is the sliding friction. If the push is smaller than that, <b>static friction</b> matches the push exactly and the crate stays put.</figcaption></figure>
+
+  <div class="checkpoint quiz" data-answer="0" data-ok="Constant velocity means a = 0, so the forces must be balanced: friction = 80 N." data-no="Constant velocity → a = 0 → ΣF = 0. The push and friction must cancel exactly.">
+    <span class="tag">Checkpoint 4</span>
+    <p class="prob-q">You push a couch across the floor at a <b>constant velocity</b> with an 80 N force. How big is the friction force?</p>
+    <button class="opt"><b>A</b>Exactly 80 N</button><button class="opt"><b>B</b>Less than 80 N, or it wouldn't move</button><button class="opt"><b>C</b>More than 80 N</button><button class="opt"><b>D</b>0 N</button>
+    <div class="feedback"></div>
+  </div>
+  <a class="next-step" href="#s6">Next: Step 6 · Worked Examples →</a>
+</section>
+
+<!-- ===================== STEP 6 ===================== -->
+<section class="step" id="s6">
+  <div class="step-head"><div class="step-num">6</div><div><h2>Worked Examples</h2><p>Six situations, each solved with the 4-step method. Press ▶ to watch the motion.</p></div></div>
+  <div class="legend"><span><i style="background:var(--fg)"></i>F<sub>g</sub> weight</span><span><i style="background:var(--fn)"></i>F<sub>N</sub> normal</span><span><i style="background:var(--fa)"></i>F<sub>a</sub> applied</span><span><i style="background:var(--ff)"></i>F<sub>f</sub> friction</span><span><i style="background:var(--ft)"></i>F<sub>T</sub> tension</span><span><i style="background:var(--fair)"></i>F<sub>air</sub> air</span><span><i style="background:var(--net)"></i>ΣF net (dashed)</span></div>
+
+  <article class="example" data-ex="book">
+    <header><span class="tag">Example 1 · At rest</span><h3>A 2.0 kg book resting on a table</h3><p>Find the normal force.</p></header>
+    <canvas role="img" aria-label="Book on a table and its free body diagram"></canvas>
+    <div class="body"><div class="sol">
+      <span class="k">Forces</span><span class="v">Weight down, normal force up. Nothing horizontal.</span>
+      <span class="k">Weight</span><span class="v">F<sub>g</sub> = mg = (2.0)(9.8) = 19.6 N</span>
+      <span class="k">ΣF<sub>y</sub> = ma<sub>y</sub></span><span class="v">F<sub>N</sub> − F<sub>g</sub> = (2.0)(0) &nbsp;→&nbsp; <b>F<sub>N</sub> = 19.6 N up</b></span>
+      <span class="k">Takeaway</span><span class="v">At rest on a flat surface, with nothing else pushing up or down, the normal force equals the weight.</span></div></div>
+  </article>
+
+  <article class="example" data-ex="lamp">
+    <header><span class="tag">Example 2 · Hanging</span><h3>A 3.0 kg lamp hanging from a cord</h3><p>Find the tension in the cord.</p></header>
+    <canvas role="img" aria-label="Lamp hanging from a cord and its free body diagram"></canvas>
+    <div class="body"><div class="sol">
+      <span class="k">Forces</span><span class="v">Weight down, tension up (the cord pulls along itself, away from the lamp).</span>
+      <span class="k">Weight</span><span class="v">F<sub>g</sub> = (3.0)(9.8) = 29.4 N</span>
+      <span class="k">ΣF<sub>y</sub> = ma<sub>y</sub></span><span class="v">F<sub>T</sub> − F<sub>g</sub> = 0 &nbsp;→&nbsp; <b>F<sub>T</sub> = 29.4 N up</b></span>
+      <span class="k">Takeaway</span><span class="v">No surface touches the lamp, so there's no normal force. The cord does the holding.</span></div></div>
+  </article>
+
+  <article class="example" data-ex="steady">
+    <header><span class="tag">Example 3 · Constant velocity</span><h3>Pushing a 20 kg crate at a steady speed</h3><p>Friction on the crate is 60 N. How hard must you push to keep it moving at a constant velocity?</p></header>
+    <canvas role="img" aria-label="Crate pushed at constant velocity with evenly spaced position dots"></canvas>
+    <div class="bar"><button class="btn primary ex-play">▶ Play</button><span style="font-size:14.5px;color:var(--soft)">The dots (every 0.5 s) are <b>evenly spaced</b>, so the velocity is constant.</span></div>
+    <div class="body"><div class="sol">
+      <span class="k">Forces</span><span class="v">F<sub>g</sub> and F<sub>N</sub> (vertical); push F<sub>a</sub> right, friction F<sub>f</sub> left.</span>
+      <span class="k">Vertical</span><span class="v">F<sub>N</sub> = F<sub>g</sub> = (20)(9.8) = 196 N</span>
+      <span class="k">ΣF<sub>x</sub> = ma<sub>x</sub></span><span class="v">F<sub>a</sub> − 60 = (20)(0) &nbsp;→&nbsp; <b>F<sub>a</sub> = 60 N</b></span>
+      <span class="k">Takeaway</span><span class="v">Constant velocity means a = 0. The push only has to <i>match</i> friction, not beat it.</span></div></div>
+  </article>
+
+  <article class="example" data-ex="speedup">
+    <header><span class="tag">Example 4 · Accelerating</span><h3>Pushing the same crate harder</h3><p>Now you push the 20 kg crate with 100 N. Friction is still 60 N. Find the acceleration.</p></header>
+    <canvas role="img" aria-label="Crate speeding up with position dots spreading apart"></canvas>
+    <div class="bar"><button class="btn primary ex-play">▶ Play</button><span style="font-size:14.5px;color:var(--soft)">The dots <b>spread apart</b>, so the crate is speeding up.</span></div>
+    <div class="body"><div class="sol">
+      <span class="k">ΣF<sub>x</sub></span><span class="v">100 − 60 = <b>40 N right</b> (the dashed net force arrow)</span>
+      <span class="k">a = ΣF ÷ m</span><span class="v">a = 40 ÷ 20 = <b>2.0 m/s² right</b></span>
+      <span class="k">Vertical</span><span class="v">Still balanced: F<sub>N</sub> = F<sub>g</sub> = 196 N</span>
+      <span class="k">Takeaway</span><span class="v">Only the <i>leftover</i> (net) force accelerates the crate, not the whole 100 N.</span></div></div>
+  </article>
+
+  <article class="example" data-ex="elevator">
+    <header><span class="tag">Example 5 · Vertical acceleration</span><h3>A 60 kg student on a scale in an elevator</h3><p>The elevator accelerates <b>upward</b> at 1.5 m/s². What does the scale read?</p></header>
+    <canvas role="img" aria-label="Elevator accelerating upward with a student on a scale"></canvas>
+    <div class="bar"><button class="btn primary ex-play">▶ Play</button><span style="font-size:14.5px;color:var(--soft)">A scale reads the <b>normal force</b> it pushes up with.</span></div>
+    <div class="body"><div class="sol">
+      <span class="k">Forces</span><span class="v">Weight down, scale's normal force up.</span>
+      <span class="k">Weight</span><span class="v">F<sub>g</sub> = (60)(9.8) = 588 N</span>
+      <span class="k">ΣF<sub>y</sub> = ma<sub>y</sub></span><span class="v">F<sub>N</sub> − 588 = (60)(+1.5) = 90</span>
+      <span class="k">Solve</span><span class="v"><b>F<sub>N</sub> = 678 N</b>. The scale reads more than the student's weight!</span>
+      <span class="k">Takeaway</span><span class="v">To accelerate upward, the upward force must beat the weight. That's why you feel "heavier" when an elevator starts going up.</span></div></div>
+  </article>
+
+  <article class="example" data-ex="skydiver">
+    <header><span class="tag">Example 6 · Air resistance</span><h3>A 70 kg skydiver</h3><p>Compare two moments: a few seconds after jumping, when air resistance has grown to 300 N, and later at terminal velocity. (Right when she jumps, air resistance is almost zero, because she isn't moving fast yet.)</p></header>
+    <canvas role="img" aria-label="Skydiver falling with weight and air resistance forces"></canvas>
+    <div class="bar"><span class="seg ex-phase"><button data-v="fall" class="on">Still speeding up</button><button data-v="terminal">Terminal velocity</button></span><button class="btn primary ex-play">▶ Play</button></div>
+    <div class="body">
+      <div class="sol" data-phase="fall">
+        <span class="k">Weight</span><span class="v">F<sub>g</sub> = (70)(9.8) = 686 N down</span>
+        <span class="k">ΣF<sub>y</sub></span><span class="v">300 − 686 = <b>−386 N</b> (the minus sign means down)</span>
+        <span class="k">a = ΣF ÷ m</span><span class="v">−386 ÷ 70 = <b>−5.5 m/s²</b>, so she speeds up while falling</span></div>
+      <div class="sol" data-phase="terminal" hidden>
+        <span class="k">Why it changes</span><span class="v">Air resistance grows as she falls faster, until it equals her weight.</span>
+        <span class="k">ΣF<sub>y</sub></span><span class="v">686 − 686 = <b>0</b> &nbsp;→&nbsp; a = 0</span>
+        <span class="k">Takeaway</span><span class="v">She's falling <b>fast</b> but at a <b>constant</b> velocity. That's terminal velocity, Newton's 1st law in action.</span></div>
+    </div>
+  </article>
+  <a class="next-step" href="#s7">Next: Step 7 · Practice →</a>
+</section>
+
+<!-- ===================== STEP 7 ===================== -->
+<section class="step" id="s7">
+  <div class="step-head"><div class="step-num">7</div><div><h2>Practice Problems</h2><p>Type your answer and press Check. Use the hint if you're stuck, and the full solution to check your work. Use g = 9.8 m/s².</p></div></div>
+  <div class="note">Draw the FBD on paper <b>first</b> for every problem, even the numeric ones. For direction answers, use <b>right/up = +</b> and <b>left/down = −</b>.</div>
+
+  <div class="prob">
+    <div class="prob-head"><span class="prob-n">P1</span><span class="lvl">FBD · warm-up</span></div>
+    <p class="prob-q">A lamp hangs from a cord and doesn't move. Which FBD is correct?</p>
+    <div class="fbd-opts" data-answer="0" data-ok="Tension up and weight down, equal length, because it's at rest (balanced)." data-no="It's at rest, so the forces must balance. And a hanging lamp has no normal force: nothing touches it but the cord.">
+      <div class="fbd-opt" data-forces='[["FT","up",30],["Fg","down",30]]'><canvas></canvas>A</div>
+      <div class="fbd-opt" data-forces='[["Fg","down",30]]'><canvas></canvas>B</div>
+      <div class="fbd-opt" data-forces='[["FN","up",30],["FT","up",30],["Fg","down",30]]'><canvas></canvas>C</div>
+    </div>
+    <div class="feedback"></div>
+  </div>
+
+  <div class="prob" data-ans="49" data-hint="Weight = mass × g.">
+    <div class="prob-head"><span class="prob-n">P2</span><span class="lvl">weight</span></div>
+    <p class="prob-q">What is the weight of a 5.0 kg bowling ball?</p>
+    <div class="ans-row"><input inputmode="decimal" aria-label="answer"><span class="unit">N</span><button class="btn primary check">Check</button></div><div class="feedback"></div>
+    <details><summary>Full solution</summary><div class="sol"><span class="k">Formula</span><span class="v">F<sub>g</sub> = mg</span><span class="k">Solve</span><span class="v">(5.0)(9.8) = <b>49 N</b> (down)</span></div></details>
+  </div>
+
+  <div class="prob" data-ans="18" data-sign="1" data-signhint="the bigger force points right, so the answer is positive." data-hint="Opposite directions: subtract, and keep the sign of the bigger force.">
+    <div class="prob-head"><span class="prob-n">P3</span><span class="lvl">net force</span></div>
+    <p class="prob-q">A 30 N force pulls a box to the right and a 12 N force pulls it to the left. What is the net force? (+ = right)</p>
+    <div class="ans-row"><input inputmode="decimal" aria-label="answer"><span class="unit">N</span><button class="btn primary check">Check</button></div><div class="feedback"></div>
+    <details><summary>Full solution</summary><div class="sol"><span class="k">ΣF<sub>x</sub></span><span class="v">(+30) + (−12) = <b>+18 N</b> (18 N to the right)</span></div></details>
+  </div>
+
+  <div class="prob quiz" data-answer="2" data-ok="Constant velocity → a = 0 → ΣF = 0. The engine's push exactly matches friction and air resistance." data-no="Look for the words 'constant velocity.' Zero acceleration means the net force is zero, even if the object is moving fast.">
+    <div class="prob-head"><span class="prob-n">P4</span><span class="lvl">concept</span></div>
+    <p class="prob-q">A car drives along a straight highway at a constant 25 m/s. What is the net force on the car?</p>
+    <button class="opt"><b>A</b>It points forward, or the car would stop</button><button class="opt"><b>B</b>It points backward</button><button class="opt"><b>C</b>It is zero</button><button class="opt"><b>D</b>It equals the car's weight</button>
+    <div class="feedback"></div>
+  </div>
+
+  <div class="prob" data-ans="11.76" data-hint="At rest on a flat desk, the normal force balances the weight.">
+    <div class="prob-head"><span class="prob-n">P5</span><span class="lvl">balanced · vertical</span></div>
+    <p class="prob-q">A 1.2 kg textbook rests on a desk. What normal force does the desk exert on it?</p>
+    <div class="ans-row"><input inputmode="decimal" aria-label="answer"><span class="unit">N</span><button class="btn primary check">Check</button></div><div class="feedback"></div>
+    <details><summary>Full solution</summary><div class="sol"><span class="k">ΣF<sub>y</sub> = 0</span><span class="v">F<sub>N</sub> − mg = 0</span><span class="k">Solve</span><span class="v">F<sub>N</sub> = (1.2)(9.8) = <b>11.8 N</b> (up)</span></div></details>
+  </div>
+
+  <div class="prob" data-ans="3" data-hint="Find the net force first (push − friction), then divide by the mass.">
+    <div class="prob-head"><span class="prob-n">P6</span><span class="lvl">2nd law · horizontal</span></div>
+    <p class="prob-q">A 4.0 kg box is pushed to the right with 20 N. Friction is 8.0 N. What is its acceleration?</p>
+    <div class="ans-row"><input inputmode="decimal" aria-label="answer"><span class="unit">m/s²</span><button class="btn primary check">Check</button></div><div class="feedback"></div>
+    <details><summary>Full solution</summary><div class="sol"><span class="k">ΣF<sub>x</sub></span><span class="v">20 − 8.0 = 12 N right</span><span class="k">a = ΣF ÷ m</span><span class="v">12 ÷ 4.0 = <b>3.0 m/s²</b> (right)</span></div></details>
+  </div>
+
+  <div class="prob">
+    <div class="prob-head"><span class="prob-n">P7</span><span class="lvl">FBD</span></div>
+    <p class="prob-q">A box is pushed to the right across a rough floor at a <b>constant velocity</b>. Which FBD is correct?</p>
+    <div class="fbd-opts" data-answer="1" data-ok="Constant velocity → balanced. Push = friction, and normal = weight." data-no="Constant velocity means a = 0, so the forces must balance in BOTH directions. A rough floor also means friction.">
+      <div class="fbd-opt" data-forces='[["FN","up",40],["Fg","down",40],["Fa","right",30]]'><canvas></canvas>A</div>
+      <div class="fbd-opt" data-forces='[["FN","up",40],["Fg","down",40],["Fa","right",30],["Ff","left",30]]'><canvas></canvas>B</div>
+      <div class="fbd-opt" data-forces='[["FN","up",40],["Fg","down",40],["Fa","right",30],["Ff","left",14]]'><canvas></canvas>C</div>
+    </div>
+    <div class="feedback"></div>
+  </div>
+
+  <div class="prob" data-ans="35" data-hint="Constant velocity means a = 0. What must the push equal?">
+    <div class="prob-head"><span class="prob-n">P8</span><span class="lvl">balanced · horizontal</span></div>
+    <p class="prob-q">A 10 kg crate slides across the floor at a constant velocity. The friction force is 35 N. How hard is the crate being pushed?</p>
+    <div class="ans-row"><input inputmode="decimal" aria-label="answer"><span class="unit">N</span><button class="btn primary check">Check</button></div><div class="feedback"></div>
+    <details><summary>Full solution</summary><div class="sol"><span class="k">ΣF<sub>x</sub> = 0</span><span class="v">F<sub>a</sub> − 35 = 0 → <b>F<sub>a</sub> = 35 N</b></span><span class="k">Note</span><span class="v">The 10 kg is extra information. You don't need it here!</span></div></details>
+  </div>
+
+  <div class="prob" data-ans="21.6" data-hint="Up is +. Tension − weight = m·a. Solve for tension.">
+    <div class="prob-head"><span class="prob-n">P9</span><span class="lvl">2nd law · vertical</span></div>
+    <p class="prob-q">A rope lifts a 2.0 kg bucket so that it accelerates <b>upward</b> at 1.0 m/s². What is the tension in the rope?</p>
+    <div class="ans-row"><input inputmode="decimal" aria-label="answer"><span class="unit">N</span><button class="btn primary check">Check</button></div><div class="feedback"></div>
+    <details><summary>Full solution</summary><div class="sol"><span class="k">FBD</span><span class="v">F<sub>T</sub> up, F<sub>g</sub> = (2.0)(9.8) = 19.6 N down</span><span class="k">ΣF<sub>y</sub> = ma</span><span class="v">F<sub>T</sub> − 19.6 = (2.0)(1.0)</span><span class="k">Solve</span><span class="v"><b>F<sub>T</sub> = 21.6 N</b></span></div></details>
+  </div>
+
+  <div class="prob" data-ans="-1.8" data-sign="1" data-signhint="the scale reads LESS than her weight, so the net force (and a) point down: negative." data-hint="Weight = (50)(9.8). The scale reading is the normal force. Use (normal force − weight) = m·a, with up = +.">
+    <div class="prob-head"><span class="prob-n">P10</span><span class="lvl">elevator · challenge</span></div>
+    <p class="prob-q">A 50 kg student stands on a scale in an elevator. The scale reads 400 N. What is the elevator's acceleration? (up = +)</p>
+    <div class="ans-row"><input inputmode="decimal" aria-label="answer"><span class="unit">m/s²</span><button class="btn primary check">Check</button></div><div class="feedback"></div>
+    <details><summary>Full solution</summary><div class="sol"><span class="k">Weight</span><span class="v">(50)(9.8) = 490 N</span><span class="k">ΣF<sub>y</sub> = ma</span><span class="v">400 − 490 = 50·a → −90 = 50a</span><span class="k">Solve</span><span class="v"><b>a = −1.8 m/s²</b> (1.8 m/s² downward)</span></div></details>
+  </div>
+
+  <div class="prob" data-ans="22.5" data-hint="Find the net force first using ΣF = ma. Then: net = pull − friction.">
+    <div class="prob-head"><span class="prob-n">P11</span><span class="lvl">two-step · challenge</span></div>
+    <p class="prob-q">A 15 kg sled is pulled across snow by a horizontal rope with 60 N of tension. It accelerates at 2.5 m/s². How big is the friction force?</p>
+    <div class="ans-row"><input inputmode="decimal" aria-label="answer"><span class="unit">N</span><button class="btn primary check">Check</button></div><div class="feedback"></div>
+    <details><summary>Full solution</summary><div class="sol"><span class="k">Net force</span><span class="v">ΣF = ma = (15)(2.5) = 37.5 N</span><span class="k">ΣF<sub>x</sub></span><span class="v">60 − F<sub>f</sub> = 37.5</span><span class="k">Solve</span><span class="v"><b>F<sub>f</sub> = 22.5 N</b></span></div></details>
+  </div>
+
+  <div class="prob">
+    <div class="prob-head"><span class="prob-n">P12</span><span class="lvl">FBD</span></div>
+    <p class="prob-q">A skydiver is falling at <b>terminal velocity</b>. Which FBD is correct?</p>
+    <div class="fbd-opts" data-answer="2" data-ok="Terminal velocity = constant velocity → balanced: air resistance equals weight." data-no="Terminal velocity means the velocity has stopped changing. What does a = 0 tell you about the forces?">
+      <div class="fbd-opt" data-forces='[["Fg","down",40]]'><canvas></canvas>A</div>
+      <div class="fbd-opt" data-forces='[["Fair","up",20],["Fg","down",40]]'><canvas></canvas>B</div>
+      <div class="fbd-opt" data-forces='[["Fair","up",40],["Fg","down",40]]'><canvas></canvas>C</div>
+    </div>
+    <div class="feedback"></div>
+  </div>
+
+  <div class="note good"><b>Done?</b> Head to the <a href="fbd-virtual-lab.html">Virtual Lab</a> next. Bring the 4-step method with you!</div>
+</section>
+
+<p class="footer">Next week: forces at angles, components, and trig. ⟶</p>
+</div>
+<script>
+/* FBD kit: shared canvas helpers for the intro site and the virtual lab */
+(function(){
+  var TAU=Math.PI*2, C={};
+  function readColors(){var s=getComputedStyle(document.documentElement);function g(n){return s.getPropertyValue(n).trim();}
+    Object.assign(C,{bg:g('--bg'),card:g('--card'),ink:g('--ink'),soft:g('--soft'),muted:g('--muted'),line:g('--line'),sunk:g('--sunk'),
+       accent:g('--accent'),accentSoft:g('--accent-soft'),good:g('--good'),bad:g('--bad'),
+       Fg:g('--fg'),FN:g('--fn'),Fa:g('--fa'),Ff:g('--ff'),FT:g('--ft'),Fair:g('--fair'),net:g('--net')});return C;}
+  var FORCES={Fg:{sym:'F_g',name:'Weight (gravity)'},FN:{sym:'F_N',name:'Normal force'},Fa:{sym:'F_a',name:'Applied force'},
+    Ff:{sym:'F_f',name:'Friction'},FT:{sym:'F_T',name:'Tension'},Fair:{sym:'F_air',name:'Air resistance'},net:{sym:'ΣF',name:'Net force'}};
+  var DIR={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+
+  /* canvas setup: logical W×H, crisp on any screen, redraws on resize + theme change */
+  var all=[];
+  function setup(canvas,W,H,draw){
+    var v={canvas:canvas,W:W,H:H,k:1,draw:draw};
+    canvas.style.aspectRatio=W+'/'+H;
+    v.redraw=function(){var w=canvas.clientWidth;if(!w)return;readColors();var d=canvas.width/W;var ctx=canvas.getContext('2d');ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,W,H);v.k=Math.max(1,Math.min(2.4,W/w));v.draw(ctx,v);};
+    v.resize=function(){var w=canvas.clientWidth;if(!w)return;var dpr=window.devicePixelRatio||1;canvas.width=Math.round(w*dpr);canvas.height=Math.round(w*H/W*dpr);v.redraw();};
+    new ResizeObserver(v.resize).observe(canvas);
+    all.push(v);return v;
+  }
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',function(){all.forEach(function(v){v.redraw();});});
+
+  /* animation loop helper */
+  function animate(step,done){var last=0,on=true;function f(ts){if(!on)return;var dt=last?Math.min(.05,(ts-last)/1000):1/60;last=ts;if(step(dt)===false){on=false;if(done)done();return;}requestAnimationFrame(f);}requestAnimationFrame(f);return {stop:function(){on=false;}};}
+
+  /* text with subscripts: "F_g = 19.6 N" -> F with subscript g */
+  function rich(ctx,str,x,y,o){o=o||{};var size=(o.size||14)*(o.k||1),w=o.weight||700,fam=o.mono?'"JetBrains Mono",monospace':'"Source Sans 3",system-ui,sans-serif';
+    var parts=[],re=/([A-Za-zΣ])_([A-Za-z0-9]+)/g,last=0,m;
+    while((m=re.exec(str))){if(m.index>last)parts.push({t:str.slice(last,m.index)});parts.push({t:m[1]});parts.push({t:m[2],sub:true});last=re.lastIndex;}
+    if(last<str.length)parts.push({t:str.slice(last)});
+    var tw=0;parts.forEach(function(p){ctx.font=w+' '+(p.sub?size*.7:size)+'px '+fam;p.w=ctx.measureText(p.t).width;tw+=p.w;});
+    var sx=o.align==='center'?x-tw/2:o.align==='right'?x-tw:x;
+    if(o.bg){ctx.fillStyle=o.bg;var pad=4*(o.k||1);roundRect(ctx,sx-pad,y-size*.62-pad,tw+pad*2,size*1.35+pad*1.5,5*(o.k||1));ctx.fill();}
+    ctx.fillStyle=o.color||C.ink;ctx.textBaseline='middle';ctx.textAlign='left';
+    parts.forEach(function(p){ctx.font=w+' '+(p.sub?size*.7:size)+'px '+fam;ctx.fillText(p.t,sx,y+(p.sub?size*.28:0));sx+=p.w;});
+    return tw;
+  }
+  function text(ctx,str,x,y,o){o=o||{};var size=(o.size||13)*(o.k||1);ctx.font=(o.weight||600)+' '+size+'px '+(o.mono===false?'"Source Sans 3",sans-serif':'"JetBrains Mono",monospace');
+    ctx.fillStyle=o.color||C.muted;ctx.textAlign=o.align||'left';ctx.textBaseline=o.base||'middle';ctx.fillText(str,x,y);}
+  function roundRect(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  function arrow(ctx,x1,y1,x2,y2,col,width,o){o=o||{};var dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);if(L<1)return;var ux=dx/L,uy=dy/L,hl=Math.min(o.head||(10+width*1.6),L*.55),hw=hl*.55;
+    ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=width;ctx.lineCap='round';if(o.dash)ctx.setLineDash(o.dash);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-ux*hl*.85,y2-uy*hl*.85);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-ux*hl-uy*hw,y2-uy*hl+ux*hw);ctx.lineTo(x2-ux*hl+uy*hw,y2-uy*hl-ux*hw);ctx.closePath();ctx.fill();}
+
+  /* free body diagram: forces = [{key:'Fg',dir:'down',mag:19.6,label:'F_g = 19.6 N'}] */
+  function fbd(ctx,cx,cy,forces,o){o=o||{};var k=o.k||1,maxLen=o.maxLen||90;
+    var maxMag=0;forces.forEach(function(f){if(f.mag>maxMag)maxMag=f.mag;});
+    var scale=o.scale||(maxMag?maxLen/maxMag:1);
+    var groups={};forces.forEach(function(f){if(f.mag&&f.offset==null){(groups[f.dir]=groups[f.dir]||[]).push(f);}});
+    Object.keys(groups).forEach(function(d){var gp=groups[d];if(gp.length>1)gp.forEach(function(f,i){f._off=(i-(gp.length-1)/2)*20;});});
+    if(o.axes!==false){ctx.strokeStyle=C.line;ctx.lineWidth=1.2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(cx-maxLen-30,cy);ctx.lineTo(cx+maxLen+30,cy);ctx.moveTo(cx,cy-maxLen-30);ctx.lineTo(cx,cy+maxLen+30);ctx.stroke();ctx.setLineDash([]);
+      text(ctx,'+x',cx+maxLen+34,cy+12,{k:k,size:11,align:'left'});text(ctx,'+y',cx+12,cy-maxLen-26,{k:k,size:11,align:'left'});}
+    forces.forEach(function(f){if(!f.mag)return;var d=DIR[f.dir],off=f.offset!=null?f.offset:(f._off||0),len=Math.max(18,f.mag*scale),sx=cx+(d[1]?off:0),sy=cy+(d[0]?off:0),ex=sx+d[0]*len,ey=sy+d[1]*len,col=C[f.key]||C.ink;
+      arrow(ctx,sx,sy,ex,ey,col,f.key==='net'?4:3.5,{dash:f.key==='net'?[7,5]:null});
+      if(o.labels!==false&&f.label){var lx,ly,al;
+        if(d[0]){lx=ex+d[0]*8;ly=ey;al=d[0]<0?'right':'left';if(o.labelAbove||f.offset==null&&!f._off){ly=ey-14;lx=ex-d[0]*4;}}
+        else{al=off<0?'right':'left';lx=ex+(off<0?-12:12);ly=ey+d[1]*10;}
+        rich(ctx,f.label,lx,ly,{k:k,size:o.labelSize||14,color:col,align:al,bg:o.labelBg?C.card:null});}
+    });
+    if(o.box){ctx.fillStyle=C.sunk;ctx.strokeStyle=C.ink;ctx.lineWidth=2;roundRect(ctx,cx-14,cy-14,28,28,5);ctx.fill();ctx.stroke();}
+    ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(cx,cy,o.dot||6,0,TAU);ctx.fill();
+    forces.forEach(function(f){delete f._off;});
+  }
+  function F(key,dir,mag,showVal){var s=FORCES[key].sym;return {key:key,dir:dir,mag:mag,label:showVal===false?s:s+' = '+fmt(mag)+' N'};}
+  function fmt(n,d){if(d==null)d=(Math.abs(n)>=100||Math.abs(n-Math.round(n))<1e-9)?0:1;var s=(Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);if(/\.0$/.test(s)&&Math.abs(n)>=100)s=s.slice(0,-2);return s;}
+
+  /* ---------- scene pieces ---------- */
+  function ground(ctx,y,x0,x1,type){x0=x0==null?0:x0;var W=ctx.canvas.width;x1=x1==null?2000:x1;
+    ctx.fillStyle=type==='ice'?'rgba(120,180,230,.22)':type==='wood'?'rgba(190,140,80,.20)':C.sunk;ctx.fillRect(x0,y,x1-x0,400);
+    ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();
+    ctx.strokeStyle=C.line;ctx.lineWidth=1.5;for(var x=x0+6;x<x1;x+=16){ctx.beginPath();ctx.moveTo(x,y+4);ctx.lineTo(x-8,y+14);ctx.stroke();}}
+  function crate(ctx,x,y,w,h,lab,k){ctx.fillStyle='#C99A5B';ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;roundRect(ctx,x-w/2,y-h,w,h,4);ctx.fill();ctx.stroke();
+    ctx.strokeStyle='rgba(0,0,0,.28)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-w/2+6,y-h+6);ctx.lineTo(x+w/2-6,y-6);ctx.moveTo(x+w/2-6,y-h+6);ctx.lineTo(x-w/2+6,y-6);ctx.stroke();
+    ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=2;ctx.strokeRect(x-w/2+6,y-h+6,w-12,h-12);
+    if(lab){ctx.fillStyle='#FFFFFF';roundRect(ctx,x-w*.32,y-h/2-11*(k||1),w*.64,22*(k||1),4);ctx.fill();text(ctx,lab,x,y-h/2,{k:k,size:12,color:'#141821',align:'center',weight:700});}}
+  function table(ctx,x,y,w){ctx.fillStyle='#A8794A';ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;roundRect(ctx,x-w/2,y,w,12,3);ctx.fill();ctx.stroke();
+    [x-w/2+14,x+w/2-26].forEach(function(lx){roundRect(ctx,lx,y+12,12,70,2);ctx.fill();ctx.stroke();});}
+  function book(ctx,x,y){ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.fillStyle='#2B59C3';roundRect(ctx,x-46,y-20,92,20,3);ctx.fill();ctx.stroke();ctx.fillStyle='#F4EBD9';ctx.fillRect(x-40,y-16,82,12);ctx.fillStyle='#D63E2A';ctx.fillRect(x-46,y-20,10,20);}
+  function ceiling(ctx,y,x0,x1){ctx.fillStyle=C.sunk;ctx.fillRect(x0,y-30,x1-x0,30);ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();
+    ctx.strokeStyle=C.line;ctx.lineWidth=1.5;for(var x=x0+6;x<x1;x+=16){ctx.beginPath();ctx.moveTo(x,y-4);ctx.lineTo(x-8,y-14);ctx.stroke();}}
+  function lamp(ctx,x,y){ctx.fillStyle='#F2B54A';ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x-12,y);ctx.lineTo(x+12,y);ctx.lineTo(x+40,y+42);ctx.lineTo(x-40,y+42);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.fillStyle='rgba(255,220,120,.35)';ctx.beginPath();ctx.moveTo(x-40,y+42);ctx.lineTo(x+40,y+42);ctx.lineTo(x+70,y+110);ctx.lineTo(x-70,y+110);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#FFF4CC';ctx.beginPath();ctx.arc(x,y+44,9,0,Math.PI);ctx.fill();ctx.stroke();}
+  /* person: feet at (x,y). pose: 'stand' | 'push' (facing right, arms forward) | 'pushL' (facing left). reach = hand distance in front (px, unscaled) */
+  function person(ctx,x,y,s,col,pose,reach){s=s||1;col=col||'#2B59C3';pose=pose||'stand';
+    var dir=pose==='pushL'?-1:1,push=pose!=='stand',skin='#E8B98F',hair='#3A2A1E',pants='#2F3542',shoe='#15181F';
+    ctx.save();ctx.translate(x,y);ctx.scale(dir*s,s);ctx.lineCap='round';ctx.lineJoin='round';
+    /* legs */
+    ctx.strokeStyle=pants;ctx.lineWidth=11;ctx.beginPath();
+    if(push){ctx.moveTo(-3,-50);ctx.lineTo(-18,-6);ctx.moveTo(5,-50);ctx.lineTo(12,-28);ctx.lineTo(10,-6);}else{ctx.moveTo(-6,-50);ctx.lineTo(-7,-6);ctx.moveTo(6,-50);ctx.lineTo(7,-6);}
+    ctx.stroke();
+    ctx.fillStyle=shoe;[[push?-18:-7],[push?10:7]].forEach(function(p){ctx.beginPath();ctx.ellipse(p[0]+4,-4,10,5,0,0,TAU);ctx.fill();});
+    /* upper body (leans forward when pushing) */
+    ctx.save();ctx.translate(0,-50);if(push)ctx.rotate(.28);
+    var r=reach==null?44:reach;
+    /* back arm */
+    ctx.strokeStyle=shade(col,-.25);ctx.lineWidth=9;ctx.beginPath();
+    if(push){ctx.moveTo(-2,-42);ctx.lineTo(r*.55,-34);ctx.lineTo(r,-30);}else{ctx.moveTo(-14,-42);ctx.lineTo(-18,-6);}ctx.stroke();
+    /* torso */
+    ctx.fillStyle=col;ctx.strokeStyle=C.ink;ctx.lineWidth=2;roundRect(ctx,-15,-54,30,56,10);ctx.fill();ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-6,-52);ctx.lineTo(0,-46);ctx.lineTo(6,-52);ctx.stroke();
+    /* front arm */
+    ctx.strokeStyle=col;ctx.lineWidth=9;ctx.beginPath();
+    if(push){ctx.moveTo(4,-44);ctx.lineTo(r*.6,-36);ctx.lineTo(r,-34);}else{ctx.moveTo(14,-42);ctx.lineTo(18,-6);}ctx.stroke();
+    ctx.fillStyle=skin;ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;
+    if(push){[[r,-30],[r,-34]].forEach(function(h){ctx.beginPath();ctx.arc(h[0]+2,h[1],5,0,TAU);ctx.fill();ctx.stroke();});}else{[[-18,-4],[18,-4]].forEach(function(h){ctx.beginPath();ctx.arc(h[0],h[1],5,0,TAU);ctx.fill();ctx.stroke();});}
+    /* head */
+    ctx.fillStyle=skin;ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.arc(push?4:0,-70,14,0,TAU);ctx.fill();ctx.stroke();
+    ctx.fillStyle=hair;ctx.beginPath();ctx.arc(push?2:0,-73,14.5,Math.PI*1.02,Math.PI*1.98);ctx.fill();
+    if(push){ctx.beginPath();ctx.arc(-8,-70,6,Math.PI*.5,Math.PI*1.5);ctx.fill();}
+    ctx.fillStyle=C.ink;if(push){ctx.beginPath();ctx.arc(11,-70,1.8,0,TAU);ctx.fill();}else{ctx.beginPath();ctx.arc(-5,-69,1.8,0,TAU);ctx.arc(5,-69,1.8,0,TAU);ctx.fill();}
+    ctx.restore();ctx.restore();}
+  function shade(hex,amt){if(!/^#/.test(hex))return hex;var n=parseInt(hex.slice(1),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;function f(v){return Math.max(0,Math.min(255,Math.round(v+(amt<0?v*amt:(255-v)*amt))));}return 'rgb('+f(r)+','+f(g)+','+f(b)+')';}
+  function bathScale(ctx,x,y,w,reading,k){ctx.fillStyle='#DDE1E8';ctx.strokeStyle=C.ink;ctx.lineWidth=2;roundRect(ctx,x-w/2,y-12,w,12,4);ctx.fill();ctx.stroke();
+    if(reading!=null){ctx.fillStyle='#141821';roundRect(ctx,x-30*(k||1),y-11,60*(k||1),9,2);ctx.fill();}}
+  function strobe(ctx,xs,y,k){xs.forEach(function(x){ctx.fillStyle=C.card;ctx.strokeStyle=C.ink;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(x,y,4.5,0,TAU);ctx.fill();ctx.stroke();});}
+  function pill(ctx,str,x,y,bg,fg,k){k=k||1;ctx.font='700 '+(12*k)+'px "JetBrains Mono",monospace';var w=ctx.measureText(str).width+18*k,h=22*k;ctx.fillStyle=bg;roundRect(ctx,x-w/2,y-h/2,w,h,h/2);ctx.fill();ctx.fillStyle=fg;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(str,x,y+1);}
+
+  readColors();
+  window.Kit={C:C,readColors:readColors,FORCES:FORCES,setup:setup,animate:animate,rich:rich,text:text,roundRect:roundRect,arrow:arrow,fbd:fbd,F:F,fmt:fmt,
+    ground:ground,crate:crate,table:table,book:book,ceiling:ceiling,lamp:lamp,person:person,bathScale:bathScale,strobe:strobe,pill:pill};
+})();
+</script>
+<script>
+/* Intro site interactives */
+(function(){
+  var K=window.Kit, C=K.C, g=9.8, $=function(s,r){return (r||document).querySelector(s);}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+  function ease(t){t=Math.max(0,Math.min(1,t));return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+
+  /* ---------- sticky nav highlight ---------- */
+  var links=$$('nav.steps-nav a');
+  if(links.length){var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var i=secs.indexOf(e.target);links.forEach(function(a,j){a.classList.toggle('on',j===i);});}});},{rootMargin:'-30% 0px -60% 0px'});
+    secs.forEach(function(s){if(s)io.observe(s);});}
+
+  /* ---------- generic multiple choice ---------- */
+  $$('.quiz[data-answer]').forEach(function(q){var ans=+q.dataset.answer,fb=$('.feedback',q);
+    $$('.opt',q).forEach(function(b,i){b.onclick=function(){$$('.opt',q).forEach(function(o,j){o.classList.remove('right','wrong');if(j===ans)o.classList.add(i===ans?'right':'');});
+      if(i!==ans)b.classList.add('wrong');fb.className='feedback show '+(i===ans?'ok':'no');fb.innerHTML=(i===ans?'✓ ':'✗ ')+(i===ans?q.dataset.ok:q.dataset.no);};});});
+
+  /* ---------- scalar or vector sorter ---------- */
+  var sorter=$('#sorter');
+  if(sorter){var states=['?','Scalar','Vector'];
+    $$('.sv',sorter).forEach(function(b){b.dataset.s=0;b.querySelector('i').textContent='?';b.onclick=function(){b.dataset.s=(+b.dataset.s+1)%3;b.querySelector('i').textContent=states[b.dataset.s];b.classList.remove('right','wrong');};});
+    $('#sorter-check').onclick=function(){var n=0,tot=0;$$('.sv',sorter).forEach(function(b){tot++;var ok=(b.dataset.ans==='v'&&b.dataset.s==2)||(b.dataset.ans==='s'&&b.dataset.s==1);if(ok)n++;b.classList.toggle('right',ok);b.classList.toggle('wrong',!ok);});
+      var fb=$('#sorter-fb');fb.className='feedback show '+(n===tot?'ok':'no');fb.innerHTML=n===tot?'✓ All '+tot+' correct! Quantities with a direction are vectors.':n+' of '+tot+' correct. For each red one, ask: "Does it make sense to say which way?"';};}
+
+  /* ---------- vector anatomy ---------- */
+  var an=$('#c-anatomy');
+  if(an)K.setup(an,720,200,function(ctx,v){var k=v.k;
+    K.arrow(ctx,110,110,470,110,C.Fa,6,{head:26});
+    ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(110,110,6,0,7);ctx.fill();
+    K.text(ctx,'TAIL (start)',110,150,{k:k,align:'center',color:C.soft});K.text(ctx,'HEAD',470,150,{k:k,align:'center',color:C.soft});
+    ctx.strokeStyle=C.muted;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(110,70);ctx.lineTo(470,70);ctx.moveTo(110,62);ctx.lineTo(110,78);ctx.moveTo(470,62);ctx.lineTo(470,78);ctx.stroke();
+    K.rich(ctx,'Length = magnitude: 50 N',290,52,{k:k,size:15,align:'center',color:C.ink});
+    K.rich(ctx,'Direction:',500,98,{k:k,size:14,color:C.Fa});K.rich(ctx,'to the right (+x)',500,122,{k:k,size:14,color:C.Fa});
+  });
+
+  /* ---------- vector adder ---------- */
+  var addC=$('#c-add');
+  if(addC){var st={a:5,b:-3,axis:'h',p:1};
+    var view=K.setup(addC,720,320,function(ctx,v){var k=v.k,hz=st.axis==='h',u=hz?18:10,ox=hz?360:300,oy=hz?170:160,R=st.a+st.b;
+      function P(n,lane){if(!hz)lane={'-60':-150,'-25':-60,'28':40,'20':40,'140':150,'70':150}[lane];return hz?[ox+n*u,oy+lane]:[ox+lane,oy-n*u];}
+      ctx.strokeStyle=C.line;ctx.lineWidth=1.5;ctx.beginPath();
+      if(hz){ctx.moveTo(20,oy+70);ctx.lineTo(700,oy+70);}else{ctx.moveTo(ox+150,oy-16*u-6);ctx.lineTo(ox+150,oy+16*u+6);}ctx.stroke();
+      for(var i=-16;i<=16;i++){var q=hz?P(i,70):P(i,140);ctx.strokeStyle=i===0?C.ink:C.line;ctx.lineWidth=i===0?2:1.2;ctx.beginPath();
+        if(hz){ctx.moveTo(q[0],q[1]-(i%5?5:9));ctx.lineTo(q[0],q[1]+(i%5?5:9));}else{ctx.moveTo(q[0]-(i%5?5:9),q[1]);ctx.lineTo(q[0]+(i%5?5:9),q[1]);}ctx.stroke();
+        if(i%4===0)K.text(ctx,String(i),hz?q[0]:q[0]+24,hz?q[1]+22:q[1],{k:k,size:11,align:'center'});}
+      var p=ease(st.p);
+      var a0=P(0,-60),a1=P(st.a,-60);K.arrow(ctx,a0[0],a0[1],a1[0],a1[1],C.Fa,5);
+      if(hz)K.rich(ctx,'A = '+(st.a>0?'+':'')+st.a,a1[0],a1[1]-20,{k:k,size:15,color:C.Fa,align:'center'});else K.rich(ctx,'A = '+(st.a>0?'+':'')+st.a,a1[0]-14,a1[1],{k:k,size:15,color:C.Fa,align:'right'});
+      var b0=P(st.a*p,-25),b1=P(st.a*p+st.b,-25);
+      if(p>.98){ctx.strokeStyle=C.muted;ctx.lineWidth=1.5;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(a1[0],a1[1]);ctx.lineTo(b0[0],b0[1]);ctx.stroke();ctx.setLineDash([]);}
+      K.arrow(ctx,b0[0],b0[1],b1[0],b1[1],C.FT,5);
+      if(hz)K.rich(ctx,'B = '+(st.b>0?'+':'')+st.b,b1[0],b1[1]+20,{k:k,size:15,color:C.FT,align:'center'});else K.rich(ctx,'B = '+(st.b>0?'+':'')+st.b,b1[0]+12,b1[1],{k:k,size:15,color:C.FT});
+      if(st.p>=1){var r0=P(0,hz?28:20),r1=P(R,hz?28:20);K.arrow(ctx,r0[0],r0[1],r1[0],r1[1],C.net,4,{dash:[8,5]});
+        if(hz)K.rich(ctx,'R = A + B = '+(R>0?'+':'')+R,Math.max(r1[0],r0[0])+14,r1[1],{k:k,size:16,color:C.ink});else K.rich(ctx,'R = '+(R>0?'+':'')+R,r1[0]+14,r1[1],{k:k,size:16,color:C.ink});}
+      K.text(ctx,hz?'right = +   left = −':'up = +   down = −',20,24,{k:k,size:12,color:C.soft});
+    });
+    var oa=$('#add-a'),ob=$('#add-b');
+    function sync(){$('#add-a-o').textContent=(st.a>0?'+':'')+st.a;$('#add-b-o').textContent=(st.b>0?'+':'')+st.b;view.redraw();}
+    oa.oninput=function(){st.a=+oa.value;st.p=1;sync();};ob.oninput=function(){st.b=+ob.value;st.p=1;sync();};
+    $$('#add-axis button').forEach(function(b){b.onclick=function(){st.axis=b.dataset.v;$$('#add-axis button').forEach(function(x){x.classList.toggle('on',x===b);});st.p=1;view.redraw();};});
+    $('#add-play').onclick=function(){st.p=0;K.animate(function(dt){st.p+=dt/1.2;view.redraw();if(st.p>=1){st.p=1;view.redraw();return false;}});};
+    sync();}
+
+  /* ---------- weight / spring scale ---------- */
+  var wc=$('#c-weight');
+  if(wc){var ws={m:1.5,name:'textbook'},shown=1.5;
+    var wv=K.setup(wc,720,300,function(ctx,v){var k=v.k,W=ws.m*g,ext=26+Math.sqrt(W)*4;
+      K.ceiling(ctx,40,180,420);
+      ctx.fillStyle=C.card;ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;K.roundRect(ctx,270,48,60,40,8);ctx.fill();ctx.stroke();
+      ctx.strokeStyle=C.soft;ctx.lineWidth=2;ctx.beginPath();var y0=88,y1=88+ext,n=12;ctx.moveTo(300,y0);
+      for(var i=1;i<=n;i++){ctx.lineTo(300+(i%2?14:-14),y0+(y1-y0)*i/(n+.5));}ctx.lineTo(300,y1);ctx.stroke();
+      var bw=70+Math.min(50,Math.sqrt(ws.m)*7),bh=40+Math.min(26,Math.sqrt(ws.m)*4);
+      ctx.fillStyle=C.accentSoft;ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;K.roundRect(ctx,300-bw/2,y1,bw,bh,8);ctx.fill();ctx.stroke();
+      K.text(ctx,ws.m+' kg',300,y1+bh/2,{k:k,size:13,align:'center',color:C.ink,weight:700});
+      K.arrow(ctx,300+bw/2+22,y1+bh/2,300+bw/2+22,Math.min(292,y1+bh/2+24+Math.sqrt(W)*3),C.Fg,4);
+      K.rich(ctx,'F_g',300+bw/2+34,y1+bh/2+30,{k:k,size:15,color:C.Fg});
+      ctx.fillStyle=C.sunk;K.roundRect(ctx,470,70,220,150,14);ctx.fill();
+      K.text(ctx,'SCALE READS',580,96,{k:k,size:11,align:'center'});
+      K.text(ctx,K.fmt(W,1)+' N',580,140,{k:k,size:30,align:'center',color:C.Fg,weight:700});
+      K.text(ctx,'F_g = m × g',580,180,{k:k,size:13,align:'center',color:C.soft});
+      K.text(ctx,ws.m+' × 9.8 = '+K.fmt(W,1),580,202,{k:k,size:13,align:'center',color:C.soft});
+    });
+    var ms=$('#w-mass');function upd(){$('#w-mass-o').textContent=ws.m+' kg';wv.redraw();}
+    ms.oninput=function(){ws.m=+ms.value;upd();};
+    $$('#w-presets button').forEach(function(b){b.onclick=function(){ws.m=+b.dataset.m;ms.value=ws.m;upd();};});upd();}
+
+  /* ---------- 1 newton definition ---------- */
+  var nc=$('#c-newton');
+  if(nc){var ns={t:0,run:false};
+    var nv=K.setup(nc,720,210,function(ctx,v){var k=v.k,x=0.5*1*ns.t*ns.t,px=70+x*60,vel=ns.t;
+      K.ground(ctx,150,0,720,'ice');
+      for(var s=0;s<=Math.floor(ns.t+1e-6);s++){var xs=70+0.5*s*s*60;K.strobe(ctx,[xs],168,k);K.text(ctx,s+' s',xs,186,{k:k,size:10,align:'center'});}
+      K.crate(ctx,px,150,60,50,'1 kg',k);
+      if(ns.t<4) {K.arrow(ctx,px-80,125,px-32,125,C.Fa,4);K.rich(ctx,'1 N',px-82,106,{k:k,size:14,color:C.Fa});}
+      K.text(ctx,'time '+ns.t.toFixed(1)+' s   ·   velocity '+vel.toFixed(1)+' m/s',20,24,{k:k,size:13,color:C.ink});
+      K.text(ctx,'the velocity goes up 1 m/s every second → a = 1 m/s²',20,48,{k:k,size:12,color:C.soft});
+    });
+    $('#newton-play').onclick=function(){ns.t=0;K.animate(function(dt){ns.t=Math.min(4,ns.t+dt);nv.redraw();return ns.t<4;});};}
+
+  /* ---------- Law 1 ---------- */
+  var l1=$('#c-law1');
+  if(l1){var s1={t:0,surf:'ice'};
+    function x1(t){var v0=3;if(s1.surf==='ice')return v0*t;var a=1.8,ts=v0/a;return t<ts?v0*t-.5*a*t*t:v0*ts-.5*a*ts*ts;}
+    function v1(t){if(s1.surf==='ice')return 3;return Math.max(0,3-1.8*t);}
+    var lv1=K.setup(l1,720,240,function(ctx,v){var k=v.k,px=60+x1(s1.t)*62;
+      K.ground(ctx,170,0,720,s1.surf==='ice'?'ice':'wood');
+      if(s1.t<.3){K.arrow(ctx,px-110,150,px-32,150,C.Fa,4);K.text(ctx,'push, then let go',Math.max(8,px-112),130,{k:k,size:11,color:C.Fa});}
+      ctx.fillStyle='#141821';ctx.beginPath();ctx.ellipse(px,162,26,8,0,0,7);ctx.fill();ctx.fillRect(px-26,154,52,8);ctx.fillStyle='#3B4150';ctx.beginPath();ctx.ellipse(px,154,26,8,0,0,7);ctx.fill();
+      K.text(ctx,(s1.surf==='ice'?'ICE (no friction)':'ROUGH FLOOR (friction)')+'   ·   v = '+v1(s1.t).toFixed(1)+' m/s',20,24,{k:k,size:13,color:C.ink});
+      var forces=[K.F('Fg','down',20,false),K.F('FN','up',20,false)];if(s1.surf!=='ice'&&v1(s1.t)>0)forces.push(K.F('Ff','left',14,false));
+      ctx.fillStyle=C.sunk;K.roundRect(ctx,560,30,150,142,10);ctx.fill();K.text(ctx,'FBD after the push',635,44,{k:k,size:10,align:'center'});
+      K.fbd(ctx,635,114,forces,{k:k,maxLen:34,axes:false,labelSize:12});
+    });
+    $$('#law1-surf button').forEach(function(b){b.onclick=function(){s1.surf=b.dataset.v;$$('#law1-surf button').forEach(function(x){x.classList.toggle('on',x===b);});s1.t=0;lv1.redraw();};});
+    $('#law1-play').onclick=function(){s1.t=0;K.animate(function(dt){s1.t+=dt;lv1.redraw();return s1.t<2.4;});};}
+
+  /* ---------- Law 2 ---------- */
+  var l2=$('#c-law2');
+  if(l2){var s2={t:0};
+    var lv2=K.setup(l2,720,250,function(ctx,v){var k=v.k;
+      [{m:1,y:105},{m:3,y:215}].forEach(function(c){var a=6/c.m,x=.5*a*s2.t*s2.t,px=110+x*55;
+        K.ground(ctx,c.y,0,720,'ice');K.crate(ctx,px,c.y,c.m===1?50:70,c.m===1?40:56,c.m+' kg',k);
+        K.arrow(ctx,px-(c.m===1?25:35)-60,c.y-24,px-(c.m===1?25:35)-4,c.y-24,C.Fa,4);K.rich(ctx,'6 N',px-(c.m===1?25:35)-70,c.y-42,{k:k,size:13,color:C.Fa});
+        K.text(ctx,'a = 6 N ÷ '+c.m+' kg = '+a+' m/s²',700,c.y-60,{k:k,size:13,align:'right',color:C.ink});});
+    });
+    $('#law2-play').onclick=function(){s2.t=0;K.animate(function(dt){s2.t+=dt;lv2.redraw();return s2.t<1.45;});};}
+
+  /* ---------- Law 3 ---------- */
+  var l3=$('#c-law3');
+  if(l3){var s3={t:0};
+    var lv3=K.setup(l3,720,260,function(ctx,v){var k=v.k,t=s3.t,push=.5,F=150;
+      function pos(m,dir){var a=F/m;if(t<push)return dir*.5*a*t*t;var vf=a*push;return dir*(.5*a*push*push+vf*(t-push));}
+      var xl=330+pos(50,-1)*60,xr=390+pos(75,1)*60;
+      K.ground(ctx,210,0,720,'ice');K.person(ctx,xl,210,1,'#D63E2A',t<push?'push':'stand',22);K.person(ctx,xr,210,1.12,'#2B59C3',t<push?'pushL':'stand',19);
+      K.text(ctx,'50 kg',xl,228,{k:k,size:12,align:'center',color:C.ink});K.text(ctx,'75 kg',xr,228,{k:k,size:12,align:'center',color:C.ink});
+      if(t<push){K.arrow(ctx,xl+14,120,xl-60,120,C.Fa,4);K.rich(ctx,'150 N',xl-62,100,{k:k,size:13,color:C.Fa,align:'right'});
+        K.arrow(ctx,xr-14,120,xr+60,120,C.Fa,4);K.rich(ctx,'150 N',xr+62,100,{k:k,size:13,color:C.Fa});
+        K.pill(ctx,'PUSH!',360,36,C.Fa,'#fff',k);}
+      else{K.text(ctx,'← v = 1.5 m/s',xl,30,{k:k,size:13,align:'center',color:C.ink});K.text(ctx,'v = 1.0 m/s →',xr,30,{k:k,size:13,align:'center',color:C.ink});}
+    });
+    $('#law3-play').onclick=function(){s3.t=0;K.animate(function(dt){s3.t+=dt;lv3.redraw();return s3.t<2.6;});};}
+
+  /* ---------- FBD step-by-step ---------- */
+  var fs=$('#c-steps');
+  if(fs){var SC={
+      book:{steps:[
+        '<b>Step 1 · Pick ONE object.</b> We only care about the forces <i>on the book</i>, not on the table.',
+        '<b>Step 2 · Shrink it to a dot.</b> On a free body diagram, the whole object becomes one dot. Every force arrow starts at the dot.',
+        '<b>Step 3 · Gravity always acts.</b> Every object near Earth has weight, F<sub>g</sub> = mg = (2.0 kg)(9.8 m/s²) = <b>19.6 N</b>, pointing straight down.',
+        '<b>Step 4 · What is touching it?</b> Only the table. A surface pushes <i>perpendicular</i> to itself, so the table pushes up: the <b>normal force</b> F<sub>N</sub>.',
+        '<b>Step 5 · Anything else?</b> Nothing pushes or pulls it sideways, so there is no applied force and no friction.',
+        '<b>Step 6 · Check.</b> The book isn\'t moving, so a = 0 and ΣF must be 0. Up = down → <b>F<sub>N</sub> = F<sub>g</sub> = 19.6 N</b>. The arrows are the same length.'],
+        forces:[['Fg','down',19.6],['FN','up',19.6]],at:[0,0,1,2,2,2]},
+      pull:{steps:[
+        '<b>Step 1 · Pick ONE object:</b> the 10 kg box. A rope pulls it to the right across the floor.',
+        '<b>Step 2 · Shrink it to a dot.</b> All arrows start at the dot.',
+        '<b>Step 3 · Gravity:</b> F<sub>g</sub> = (10 kg)(9.8 m/s²) = <b>98 N</b> down.',
+        '<b>Step 4 · What is touching it?</b> The floor pushes up (normal force, <b>98 N</b>) and the rope pulls right (tension, <b>40 N</b>).',
+        '<b>Step 5 · Friction:</b> the box slides along the floor, so friction acts <i>opposite</i> the motion: <b>25 N</b> to the left.',
+        '<b>Step 6 · Check.</b> Vertical: 98 − 98 = 0 (no vertical motion ✓). Horizontal: ΣF<sub>x</sub> = 40 − 25 = <b>15 N right</b>, so a = 15 ÷ 10 = <b>1.5 m/s²</b> to the right. The dashed arrow is the net force.'],
+        forces:[['Fg','down',98],['FN','up',98],['FT','right',40],['Ff','left',25]],at:[0,0,1,3,4,4],net:15}
+    };
+    var cur={sc:'book',i:0};
+    var fv=K.setup(fs,760,320,function(ctx,v){var k=v.k,s=SC[cur.sc],i=cur.i;
+      ctx.fillStyle=C.sunk;ctx.fillRect(380,0,380,320);
+      K.text(ctx,'THE SITUATION',20,22,{k:k,size:11});K.text(ctx,'FREE BODY DIAGRAM',400,22,{k:k,size:11});
+      var fade=i>=1?.35:1;ctx.globalAlpha=1;
+      if(cur.sc==='book'){K.table(ctx,190,200,260);ctx.globalAlpha=fade;K.book(ctx,190,200);ctx.globalAlpha=1;
+        if(i===0){ctx.strokeStyle=C.accent;ctx.lineWidth=2.5;ctx.setLineDash([6,4]);K.roundRect(ctx,136,172,108,36,8);ctx.stroke();ctx.setLineDash([]);}}
+      else{K.ground(ctx,230,0,380);ctx.globalAlpha=fade;K.crate(ctx,170,230,90,70,'10 kg',k);ctx.globalAlpha=1;
+        ctx.strokeStyle='#8A6A3A';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(215,195);ctx.lineTo(360,195);ctx.stroke();K.arrow(ctx,300,175,350,175,C.FT,3);
+        if(i===0){ctx.strokeStyle=C.accent;ctx.lineWidth=2.5;ctx.setLineDash([6,4]);K.roundRect(ctx,118,152,104,86,8);ctx.stroke();ctx.setLineDash([]);}}
+      if(i>=1){var fl=[],need;
+        if(cur.sc==='book')need={1:0,2:1,3:2,4:2,5:2}[i];else need={1:0,2:1,3:3,4:4,5:4}[i];
+        s.forces.slice(0,need).forEach(function(f){fl.push(K.F(f[0],f[1],f[2]));});
+        if(i===5&&s.net)fl.push({key:'net',dir:'right',mag:s.net,label:'ΣF = 15 N',offset:46});
+        K.fbd(ctx,570,170,fl,{k:k,maxLen:96,labelSize:13});}
+      if(i===0)K.pill(ctx,'tap Next →',570,170,C.accent,'#fff',k);
+    });
+    function show(){$('#steps-text').innerHTML=SC[cur.sc].steps[cur.i];$('#steps-count').textContent='Step '+(cur.i+1)+' of 6';$('#steps-back').disabled=cur.i===0;$('#steps-next').disabled=cur.i===5;fv.redraw();}
+    $('#steps-next').onclick=function(){cur.i=Math.min(5,cur.i+1);show();};$('#steps-back').onclick=function(){cur.i=Math.max(0,cur.i-1);show();};
+    $$('#steps-sc button').forEach(function(b){b.onclick=function(){cur.sc=b.dataset.v;cur.i=0;$$('#steps-sc button').forEach(function(x){x.classList.toggle('on',x===b);});show();};});
+    show();}
+
+  /* ---------- net force sandbox ---------- */
+  var sb=$('#c-sandbox');
+  if(sb){var S={m:10,R:60,L:20,f:15,T:0,t:0,x:0,y:0,vx:0,vy:0,run:false};
+    function solve(){var Fg=S.m*g,app=S.R-S.L,FN=Math.max(0,Fg-S.T),onGround=S.T<=Fg+1e-9,fr=0,stat=false;
+      if(onGround&&S.y<=0){if(Math.abs(app)<=S.f&&S.vx===0){fr=-app;stat=true;}else{var dir=S.vx!==0?Math.sign(S.vx):Math.sign(app);fr=-dir*S.f;}}else{FN=0;}
+      var Fx=app+fr,Fy=S.T+FN-Fg;if(Math.abs(Fy)<1e-9)Fy=0;return {Fg:Fg,FN:FN,fr:fr,stat:stat,Fx:Fx,Fy:Fy,ax:Fx/S.m,ay:Fy/S.m};}
+    var sv=K.setup(sb,760,330,function(ctx,v){var k=v.k,r=solve(),px=190+S.x*28,py=250-S.y*28;
+      ctx.fillStyle=C.sunk;ctx.fillRect(400,0,360,330);
+      K.ground(ctx,250,0,400);
+      if(S.T>0){ctx.strokeStyle='#8A6A3A';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(px,py-60);ctx.lineTo(px,0);ctx.stroke();}
+      K.crate(ctx,px,py,80,60,S.m+' kg',k);
+      K.text(ctx,'ΣFx = '+K.fmt(r.Fx,1)+' N   ΣFy = '+K.fmt(r.Fy,1)+' N',20,22,{k:k,size:13,color:C.ink});
+      K.text(ctx,(Math.abs(r.Fx)<1e-6&&Math.abs(r.Fy)<1e-6)?'BALANCED → a = 0':'UNBALANCED → accelerates',20,44,{k:k,size:12,color:(Math.abs(r.Fx)<1e-6&&Math.abs(r.Fy)<1e-6)?C.good:C.bad});
+      var fl=[K.F('Fg','down',r.Fg)];if(r.FN>0)fl.push(K.F('FN','up',r.FN));if(S.T>0)fl.push(K.F('FT','up',S.T));
+      if(S.R>0)fl.push(K.F('Fa','right',S.R));if(S.L>0)fl.push(K.F('Fa','left',S.L));if(Math.abs(r.fr)>1e-9)fl.push(K.F('Ff',r.fr>0?'right':'left',Math.abs(r.fr)));
+      if(S.T>0&&r.FN>0){fl.forEach(function(f){if(f.key==='FT')f.offset=14;if(f.key==='FN')f.offset=-14;});}
+      K.text(ctx,'FREE BODY DIAGRAM',420,22,{k:k,size:11});
+      K.fbd(ctx,580,175,fl,{k:k,maxLen:100,labelSize:12});
+      if(r.stat&&S.R+S.L>0)K.text(ctx,'static friction matches the push',580,312,{k:k,size:11,align:'center',color:C.Ff});
+    });
+    function out(){$('#sb-m-o').textContent=S.m+' kg';$('#sb-r-o').textContent=S.R+' N';$('#sb-l-o').textContent=S.L+' N';$('#sb-f-o').textContent=S.f+' N';$('#sb-t-o').textContent=S.T+' N';
+      var r=solve();$('#sb-ax').textContent=K.fmt(r.ax,2)+' m/s²';$('#sb-ay').textContent=K.fmt(r.ay,2)+' m/s²';$('#sb-fg').textContent=K.fmt(r.Fg,1)+' N';$('#sb-fn').textContent=K.fmt(r.FN,1)+' N';sv.redraw();}
+    [['#sb-m','m'],['#sb-r','R'],['#sb-l','L'],['#sb-f','f'],['#sb-t','T']].forEach(function(p){var el=$(p[0]);el.value=S[p[1]];el.oninput=function(){S[p[1]]=+el.value;S.x=S.y=S.vx=S.vy=0;out();};});
+    $('#sb-play').onclick=function(){S.x=S.y=S.vx=S.vy=0;var t=0;K.animate(function(dt){t+=dt;var r=solve();S.vx+=r.ax*dt;S.vy+=r.ay*dt;S.x+=S.vx*dt;S.y=Math.max(0,Math.min(5,S.y+S.vy*dt));if(S.y===0&&S.vy<0)S.vy=0;S.x=Math.max(-6,Math.min(6.5,S.x));sv.redraw();return t<2.5;},function(){});};
+    $('#sb-reset').onclick=function(){S.x=S.y=S.vx=S.vy=0;out();};
+    out();}
+
+  /* ---------- worked examples ---------- */
+  var EX={
+    book:{forces:[['Fg','down',19.6],['FN','up',19.6]],draw:function(ctx,k,t){K.table(ctx,180,190,260);K.book(ctx,180,190);}},
+    lamp:{forces:[['Fg','down',29.4],['FT','up',29.4]],draw:function(ctx,k,t){K.ceiling(ctx,40,60,320);ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(190,40);ctx.lineTo(190,120);ctx.stroke();K.lamp(ctx,190,120);}},
+    steady:{dur:3,forces:[['Fg','down',196],['FN','up',196],['Fa','right',60],['Ff','left',60]],
+      draw:function(ctx,k,t){var x=30+1.0*t*35;K.ground(ctx,240,0,380,'wood');var dots=[];for(var s=0;s<=Math.floor(t*2+1e-6);s++)dots.push(30+1.0*(s/2)*35+60);K.strobe(ctx,dots,258,k);
+        K.person(ctx,x-23,240,.85,'#1E8E5A','push');K.crate(ctx,x+60,240,80,64,'20 kg',k);K.text(ctx,'v = 1.0 m/s (constant)',20,22,{k:k,size:12,color:C.ink});}},
+    speedup:{dur:2.6,net:40,forces:[['Fg','down',196],['FN','up',196],['Fa','right',100],['Ff','left',60]],
+      draw:function(ctx,k,t){var x=30+.5*2*t*t*35;K.ground(ctx,240,0,380,'wood');var dots=[];for(var s=0;s<=Math.floor(t*2+1e-6);s++){var ts=s/2;dots.push(30+.5*2*ts*ts*35+60);}K.strobe(ctx,dots,258,k);
+        K.person(ctx,x-23,240,.85,'#1E8E5A','push');K.crate(ctx,x+60,240,80,64,'20 kg',k);K.text(ctx,'v = '+(2*t).toFixed(1)+' m/s (speeding up)',20,22,{k:k,size:12,color:C.ink});}},
+    elevator:{dur:2.4,net:90,netDir:'up',forces:[['Fg','down',588],['FN','up',678]],
+      draw:function(ctx,k,t){var y=.5*1.5*t*t*28;ctx.fillStyle=C.sunk;ctx.fillRect(110,0,160,300);ctx.strokeStyle=C.line;ctx.lineWidth=2;for(var s=-1;s<6;s++){var yy=((s*70+y)%420)-60;ctx.beginPath();ctx.moveTo(110,yy);ctx.lineTo(270,yy);ctx.stroke();}
+        ctx.strokeStyle=C.ink;ctx.lineWidth=3;ctx.strokeRect(120,60,140,200);ctx.beginPath();ctx.moveTo(190,60);ctx.lineTo(190,0);ctx.stroke();
+        K.bathScale(ctx,190,258,80);K.person(ctx,190,246,.95,'#7A4FCF');
+        K.pill(ctx,'scale reads 678 N',190,284,C.FN,'#fff',k);K.text(ctx,'a = 1.5 m/s² ↑',20,22,{k:k,size:12,color:C.ink});K.text(ctx,'v = '+(1.5*t).toFixed(1)+' m/s ↑',20,44,{k:k,size:12,color:C.ink});}},
+    skydiver:{dur:2.5,phases:{fall:{forces:[['Fg','down',686],['Fair','up',300]],net:386,netDir:'down',a:5.5},terminal:{forces:[['Fg','down',686],['Fair','up',686]],net:0,a:0}},
+      draw:function(ctx,k,t,ph){var v=ph==='fall'?10+5.5*t:55,off=ph==='fall'?(10*t+.5*5.5*t*t)*14:55*t*3;
+        ctx.fillStyle='rgba(120,180,230,.18)';ctx.fillRect(0,0,380,300);
+        for(var i=0;i<6;i++){var cy=((i*90-off)%540+540)%540-60,cx=(i*137)%330+20;ctx.fillStyle=C.card;ctx.globalAlpha=.85;ctx.beginPath();ctx.arc(cx,cy,22,0,7);ctx.arc(cx+26,cy+6,18,0,7);ctx.arc(cx-22,cy+8,16,0,7);ctx.fill();ctx.globalAlpha=1;}
+        var streak=Math.min(80,v*1.3);ctx.strokeStyle=C.muted;ctx.lineWidth=2;ctx.lineCap='round';ctx.globalAlpha=.55;[-40,-14,14,40].forEach(function(dx,i){var sy=150-62-((off*.6+i*17)%20);ctx.beginPath();ctx.moveTo(190+dx,sy);ctx.lineTo(190+dx,sy-streak);ctx.stroke();});ctx.globalAlpha=1;
+        ctx.save();ctx.translate(190,150);ctx.lineCap='round';ctx.lineJoin='round';
+        ctx.strokeStyle='#B83222';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(-26,-6);ctx.lineTo(-46,-20);ctx.lineTo(-58,-38);ctx.moveTo(26,-6);ctx.lineTo(46,-20);ctx.lineTo(58,-38);ctx.stroke();
+        ctx.strokeStyle='#2F3542';ctx.lineWidth=11;ctx.beginPath();ctx.moveTo(-10,10);ctx.lineTo(-22,34);ctx.lineTo(-30,18);ctx.moveTo(10,10);ctx.lineTo(22,34);ctx.lineTo(30,18);ctx.stroke();
+        ctx.fillStyle='#D63E2A';ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;K.roundRect(ctx,-24,-26,48,44,14);ctx.fill();ctx.stroke();
+        ctx.fillStyle='#F2B54A';K.roundRect(ctx,-14,-20,28,26,6);ctx.fill();ctx.stroke();
+        ctx.fillStyle='#E8B98F';[[-58,-40],[58,-40]].forEach(function(h){ctx.beginPath();ctx.arc(h[0],h[1],5.5,0,7);ctx.fill();ctx.stroke();});
+        ctx.fillStyle='#2B59C3';ctx.beginPath();ctx.arc(0,-40,14,0,7);ctx.fill();ctx.stroke();ctx.fillStyle='#BFE3F2';K.roundRect(ctx,-9,-44,18,8,3);ctx.fill();ctx.stroke();
+        ctx.restore();
+        K.text(ctx,'streak lines show how fast she falls',190,286,{k:k,size:10,align:'center'});
+        K.text(ctx,'v = '+v.toFixed(0)+' m/s ↓'+(ph==='fall'?' (speeding up)':' (constant)'),20,22,{k:k,size:12,color:C.ink});}}
+  };
+  $$('.example[data-ex]').forEach(function(el){var ex=EX[el.dataset.ex],cv=$('canvas',el),st={t:0,ph:'fall'},play=$('.ex-play',el);
+    var v=K.setup(cv,760,300,function(ctx,vw){var k=vw.k;ctx.fillStyle=C.sunk;ctx.fillRect(380,0,380,300);
+      ctx.save();ctx.beginPath();ctx.rect(0,0,380,300);ctx.clip();ex.draw(ctx,k,st.t,st.ph);ctx.restore();
+      K.text(ctx,'FREE BODY DIAGRAM',400,22,{k:k,size:11});
+      var src=ex.phases?ex.phases[st.ph]:ex,fl=src.forces.map(function(f){return K.F(f[0],f[1],f[2]);});
+      if(src.net)fl.push({key:'net',dir:src.netDir||'right',mag:src.net,label:'ΣF = '+src.net+' N',offset:(src.netDir==='up'||src.netDir==='down')?48:46});
+      K.fbd(ctx,580,155,fl,{k:k,maxLen:92,labelSize:12.5});});
+    if(play)play.onclick=function(){st.t=0;K.animate(function(dt){st.t+=dt;v.redraw();return st.t<ex.dur;});};
+    $$('.ex-phase button',el).forEach(function(b){b.onclick=function(){st.ph=b.dataset.v;st.t=0;$$('.ex-phase button',el).forEach(function(x){x.classList.toggle('on',x===b);});
+      $$('[data-phase]',el).forEach(function(p){p.hidden=p.dataset.phase!==st.ph;});v.redraw();};});
+  });
+
+  /* ---------- practice: numeric ---------- */
+  $$('.prob[data-ans]').forEach(function(p){var inp=$('input',p),fb=$('.feedback',p),ans=+p.dataset.ans,tol=+(p.dataset.tol||.03);
+    function check(){var raw=inp.value.trim().replace(/[−–—]/g,'-').replace(/,/g,'').replace(/[^\d.\-+]/g,'');var val=parseFloat(raw);
+      if(isNaN(val)){fb.className='feedback show no';fb.innerHTML='Type a number first.';return;}
+      var ok=Math.abs(val-ans)<=Math.max(Math.abs(ans)*tol,.051);
+      if(!ok&&p.dataset.sign==='1'&&Math.abs(Math.abs(val)-Math.abs(ans))<=Math.max(Math.abs(ans)*tol,.051)){fb.className='feedback show no';fb.innerHTML='✗ Right size, wrong sign. Check the direction: '+(p.dataset.signhint||'which way is positive?');return;}
+      fb.className='feedback show '+(ok?'ok':'no');fb.innerHTML=ok?'✓ Correct! '+(p.dataset.ok||''):'✗ Not yet. Hint: '+p.dataset.hint;}
+    $('.check',p).onclick=check;inp.onkeydown=function(e){if(e.key==='Enter')check();};});
+
+  /* ---------- practice: pick the FBD ---------- */
+  $$('.fbd-opts[data-answer]').forEach(function(box){var ans=+box.dataset.answer,fb=box.parentNode.querySelector('.feedback');
+    $$('.fbd-opt',box).forEach(function(o,i){var cv=$('canvas',o),forces=JSON.parse(o.dataset.forces);
+      K.setup(cv,200,180,function(ctx,v){K.fbd(ctx,100,92,forces.map(function(f){return K.F(f[0],f[1],f[2],false);}),{k:v.k,maxLen:58,axes:false,labelSize:13});});
+      o.onclick=function(){$$('.fbd-opt',box).forEach(function(x){x.classList.remove('right','wrong');});o.classList.add(i===ans?'right':'wrong');
+        fb.className='feedback show '+(i===ans?'ok':'no');fb.innerHTML=(i===ans?'✓ ':'✗ ')+(i===ans?box.dataset.ok:box.dataset.no);};});});
+})();
+</script>
+</body>
+</html>
