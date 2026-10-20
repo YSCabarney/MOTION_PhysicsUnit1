@@ -289,7 +289,7 @@
   </div>
   <figure class="viz"><canvas id="c-law1" role="img" aria-label="A puck sliding on ice versus a rough floor"></canvas>
     <div class="ctrl"><span class="seg" id="law1-surf"><button data-v="ice" class="on">Ice</button><button data-v="rough">Rough floor</button></span><button class="btn primary" id="law1-play">▶ Slide the puck</button></div>
-    <figcaption>Switch between Ice and Rough floor and press play. The puck gets the <b>same push</b> each time; the hand lets go at the start. On ice, no horizontal force acts after the push, so the velocity stays constant. On the rough floor, friction is an unbalanced force, so the puck slows down and stops.</figcaption></figure>
+    <figcaption>Switch between Ice and Rough floor and press play. The puck gets the <b>same quick push</b> each time (the green arrow), and then nothing pushes it anymore. On ice, no horizontal force acts after the push, so the velocity stays constant. On the rough floor, friction is an unbalanced force, so the puck slows down and stops.</figcaption></figure>
 
   <div class="card law">
     <div class="law-head"><span class="tag">2nd Law</span><h3>Net force causes acceleration</h3></div>
@@ -389,14 +389,14 @@
   <figure class="viz"><canvas id="c-sandbox" role="img" aria-label="Interactive crate with adjustable forces and a live free body diagram"></canvas>
     <div class="ctrl">
       <label>Mass <input type="range" id="sb-m" min="1" max="50" step="1"><output id="sb-m-o"></output></label>
-      <label style="color:var(--fa)">Push right <input type="range" id="sb-r" min="0" max="200" step="5"><output id="sb-r-o"></output></label>
-      <label style="color:var(--fa)">Push left <input type="range" id="sb-l" min="0" max="200" step="5"><output id="sb-l-o"></output></label>
-      <label style="color:var(--ff)">Friction <input type="range" id="sb-f" min="0" max="100" step="5"><output id="sb-f-o"></output></label>
-      <label style="color:var(--ft)">Rope up <input type="range" id="sb-t" min="0" max="600" step="10"><output id="sb-t-o"></output></label>
+      <label style="color:var(--fa)"><span>Push right (F<sub>a1</sub>)</span> <input type="range" id="sb-r" min="0" max="200" step="5"><output id="sb-r-o"></output></label>
+      <label style="color:var(--fa)"><span>Push left (F<sub>a2</sub>)</span> <input type="range" id="sb-l" min="0" max="200" step="5"><output id="sb-l-o"></output></label>
+      <label style="color:var(--ff)">Friction limit <input type="range" id="sb-f" min="0" max="100" step="5"><output id="sb-f-o"></output></label>
+      <label style="color:var(--ft)"><span>Rope pulls up (F<sub>T</sub>)</span> <input type="range" id="sb-t" min="0" max="600" step="10"><output id="sb-t-o"></output></label>
       <button class="btn primary" id="sb-play">▶ Play 2.5 s</button><button class="btn" id="sb-reset">↺ Reset</button>
     </div>
-    <div class="readout"><div><span>Weight F<sub>g</sub></span><b id="sb-fg"></b></div><div><span>Normal F<sub>N</sub></span><b id="sb-fn"></b></div><div><span>a<sub>x</sub></span><b id="sb-ax"></b></div><div><span>a<sub>y</sub></span><b id="sb-ay"></b></div></div>
-    <figcaption>"Friction" here is the sliding friction. If the push is smaller than that, <b>static friction</b> matches the push exactly and the crate stays put.</figcaption></figure>
+    <div class="readout"><div><span>Weight F<sub>g</sub></span><b id="sb-fg"></b></div><div><span>Normal F<sub>N</sub></span><b id="sb-fn"></b></div><div><span>Friction limit now</span><b id="sb-lim"></b></div><div><span>Actual friction F<sub>f</sub></span><b id="sb-ff"></b></div><div><span>a<sub>x</sub></span><b id="sb-ax"></b></div><div><span>a<sub>y</sub></span><b id="sb-ay"></b></div></div>
+    <figcaption><b>How friction works here:</b> the slider sets the <b>friction limit</b>, the most friction the floor can supply. If the leftover push (F<sub>a1</sub> − F<sub>a2</sub>) is <i>less</i> than the limit, <b>static friction</b> matches it exactly and the crate stays still, so friction can be smaller than the limit. Once the crate slides, friction equals the limit. Pulling up on the rope lowers the normal force, and that lowers the friction limit too (shown under "Friction limit now").</figcaption></figure>
 
   <div class="checkpoint quiz" data-answer="0" data-ok="Constant velocity means a = 0, so the forces must be balanced: friction = 80 N." data-no="Constant velocity → a = 0 → ΣF = 0. The push and friction must cancel exactly.">
     <span class="tag">Checkpoint 4</span>
@@ -474,7 +474,8 @@
       <div class="sol" data-phase="fall">
         <span class="k">Weight</span><span class="v">F<sub>g</sub> = (70)(9.8) = 686 N down</span>
         <span class="k">ΣF<sub>y</sub></span><span class="v">300 − 686 = <b>−386 N</b> (the minus sign means down)</span>
-        <span class="k">a = ΣF ÷ m</span><span class="v">−386 ÷ 70 = <b>−5.5 m/s²</b>, so she speeds up while falling</span></div>
+        <span class="k">a = ΣF ÷ m</span><span class="v">−386 ÷ 70 = <b>−5.5 m/s²</b></span>
+        <span class="k">What the sign means</span><span class="v">Here the minus sign means the acceleration points <b>down</b>. She is also moving down, so acceleration and velocity point the same way, and she <b>speeds up</b>. (Acceleration opposite to the velocity would slow her down.)</span></div>
       <div class="sol" data-phase="terminal" hidden>
         <span class="k">Why it changes</span><span class="v">Air resistance grows as she falls faster, until it equals her weight.</span>
         <span class="k">ΣF<sub>y</sub></span><span class="v">686 − 686 = <b>0</b> &nbsp;→&nbsp; a = 0</span>
@@ -564,7 +565,7 @@
     <div class="prob-head"><span class="prob-n">P10</span><span class="lvl">elevator · challenge</span></div>
     <p class="prob-q">A 50 kg student stands on a scale in an elevator. The scale reads 400 N. What is the elevator's acceleration? (up = +)</p>
     <div class="ans-row"><input inputmode="decimal" aria-label="answer"><span class="unit">m/s²</span><button class="btn primary check">Check</button></div><div class="feedback"></div>
-    <details><summary>Full solution</summary><div class="sol"><span class="k">Weight</span><span class="v">(50)(9.8) = 490 N</span><span class="k">ΣF<sub>y</sub> = ma</span><span class="v">400 − 490 = 50·a → −90 = 50a</span><span class="k">Solve</span><span class="v"><b>a = −1.8 m/s²</b> (1.8 m/s² downward)</span></div></details>
+    <details><summary>Full solution</summary><div class="sol"><span class="k">Weight</span><span class="v">(50)(9.8) = 490 N</span><span class="k">ΣF<sub>y</sub> = ma</span><span class="v">400 − 490 = 50·a → −90 = 50a</span><span class="k">Solve</span><span class="v"><b>a = −1.8 m/s²</b> (1.8 m/s² downward)</span><span class="k">What it means</span><span class="v">A downward acceleration fits two motions: the elevator is <b>going up and slowing down</b>, or <b>going down and speeding up</b>. The scale can't tell which, only that the acceleration points down.</span></div></details>
   </div>
 
   <div class="prob" data-ans="22.5" data-hint="Find the net force first using ΣF = ma. Then: net = pull − friction.">
@@ -795,7 +796,7 @@
       ctx.fillStyle=C.sunk;K.roundRect(ctx,470,70,220,150,14);ctx.fill();
       K.text(ctx,'SCALE READS',580,96,{k:k,size:11,align:'center'});
       K.text(ctx,K.fmt(W,1)+' N',580,140,{k:k,size:30,align:'center',color:C.Fg,weight:700});
-      K.text(ctx,'F_g = m × g',580,180,{k:k,size:13,align:'center',color:C.soft});
+      K.rich(ctx,'F_g = m × g',580,180,{k:k,size:14,align:'center',color:C.soft,weight:600});
       K.text(ctx,ws.m+' × 9.8 = '+K.fmt(W,1),580,202,{k:k,size:13,align:'center',color:C.soft});
     });
     var ms=$('#w-mass');function upd(){$('#w-mass-o').textContent=ws.m+' kg';wv.redraw();}
@@ -903,9 +904,10 @@
   /* ---------- net force sandbox ---------- */
   var sb=$('#c-sandbox');
   if(sb){var S={m:10,R:60,L:20,f:15,T:0,t:0,x:0,y:0,vx:0,vy:0,run:false};
-    function solve(){var Fg=S.m*g,app=S.R-S.L,FN=Math.max(0,Fg-S.T),onGround=S.T<=Fg+1e-9,fr=0,stat=false;
-      if(onGround&&S.y<=0){if(Math.abs(app)<=S.f&&S.vx===0){fr=-app;stat=true;}else{var dir=S.vx!==0?Math.sign(S.vx):Math.sign(app);fr=-dir*S.f;}}else{FN=0;}
-      var Fx=app+fr,Fy=S.T+FN-Fg;if(Math.abs(Fy)<1e-9)Fy=0;return {Fg:Fg,FN:FN,fr:fr,stat:stat,Fx:Fx,Fy:Fy,ax:Fx/S.m,ay:Fy/S.m};}
+    /* friction limit shrinks with the normal force (a lighter press on the floor = less friction) */
+    function solve(){var Fg=S.m*g,app=S.R-S.L,onGround=S.T<Fg-1e-9&&S.y<=0,FN=onGround?Fg-S.T:0,lim=onGround?S.f*FN/Fg:0,fr=0,kind='none';
+      if(onGround&&(app!==0||S.vx!==0)){if(S.vx===0&&Math.abs(app)<=lim+1e-9){fr=-app;kind='static';}else{var dir=S.vx!==0?Math.sign(S.vx):Math.sign(app);fr=-dir*lim;kind='sliding';}}
+      var Fx=app+fr,Fy=S.T+FN-Fg;if(Math.abs(Fx)<1e-9)Fx=0;if(Math.abs(Fy)<1e-9)Fy=0;return {Fg:Fg,FN:FN,fr:fr,lim:lim,kind:kind,Fx:Fx,Fy:Fy,ax:Fx/S.m,ay:Fy/S.m};}
     var sv=K.setup(sb,760,330,function(ctx,v){var k=v.k,r=solve(),px=190+S.x*28,py=250-S.y*28;
       ctx.fillStyle=C.sunk;ctx.fillRect(400,0,360,330);
       K.ground(ctx,250,0,400);
@@ -914,16 +916,17 @@
       K.text(ctx,'ΣFx = '+K.fmt(r.Fx,1)+' N   ΣFy = '+K.fmt(r.Fy,1)+' N',20,22,{k:k,size:13,color:C.ink});
       K.text(ctx,(Math.abs(r.Fx)<1e-6&&Math.abs(r.Fy)<1e-6)?'BALANCED → a = 0':'UNBALANCED → accelerates',20,44,{k:k,size:12,color:(Math.abs(r.Fx)<1e-6&&Math.abs(r.Fy)<1e-6)?C.good:C.bad});
       var fl=[K.F('Fg','down',r.Fg)];if(r.FN>0)fl.push(K.F('FN','up',r.FN));if(S.T>0)fl.push(K.F('FT','up',S.T));
-      if(S.R>0)fl.push(K.F('Fa','right',S.R));if(S.L>0)fl.push(K.F('Fa','left',S.L));if(Math.abs(r.fr)>1e-9)fl.push(K.F('Ff',r.fr>0?'right':'left',Math.abs(r.fr)));
+      if(S.R>0)fl.push({key:'Fa',dir:'right',mag:S.R,label:'F_a1 = '+S.R+' N'});if(S.L>0)fl.push({key:'Fa',dir:'left',mag:S.L,label:'F_a2 = '+S.L+' N'});if(Math.abs(r.fr)>1e-9)fl.push(K.F('Ff',r.fr>0?'right':'left',Math.abs(r.fr)));
       if(S.T>0&&r.FN>0){fl.forEach(function(f){if(f.key==='FT')f.offset=14;if(f.key==='FN')f.offset=-14;});}
       K.text(ctx,'FREE BODY DIAGRAM',420,22,{k:k,size:11});
       K.fbd(ctx,580,175,fl,{k:k,maxLen:100,labelSize:12});
-      if(r.stat&&S.R+S.L>0)K.text(ctx,'static friction matches the push',580,312,{k:k,size:11,align:'center',color:C.Ff});
+      var note=r.kind==='static'?'static friction = '+K.fmt(Math.abs(r.fr))+' N  (limit '+K.fmt(r.lim)+' N)':r.kind==='sliding'?'sliding friction = '+K.fmt(Math.abs(r.fr))+' N  (at its limit)':'';
+      if(note)K.text(ctx,note,580,312,{k:k,size:10.5,align:'center',color:C.Ff});
     });
     function out(){$('#sb-m-o').textContent=S.m+' kg';$('#sb-r-o').textContent=S.R+' N';$('#sb-l-o').textContent=S.L+' N';$('#sb-f-o').textContent=S.f+' N';$('#sb-t-o').textContent=S.T+' N';
-      var r=solve();$('#sb-ax').textContent=K.fmt(r.ax,2)+' m/s²';$('#sb-ay').textContent=K.fmt(r.ay,2)+' m/s²';$('#sb-fg').textContent=K.fmt(r.Fg,1)+' N';$('#sb-fn').textContent=K.fmt(r.FN,1)+' N';sv.redraw();}
+      var r=solve();$('#sb-ax').textContent=K.fmt(r.ax,2)+' m/s²';$('#sb-ay').textContent=K.fmt(r.ay,2)+' m/s²';$('#sb-fg').textContent=K.fmt(r.Fg,1)+' N';$('#sb-fn').textContent=K.fmt(r.FN,1)+' N';$('#sb-ff').textContent=K.fmt(Math.abs(r.fr),1)+' N'+(r.kind==='static'?' (static)':r.kind==='sliding'?' (sliding)':'');$('#sb-lim').textContent=K.fmt(r.lim,1)+' N';sv.redraw();}
     [['#sb-m','m'],['#sb-r','R'],['#sb-l','L'],['#sb-f','f'],['#sb-t','T']].forEach(function(p){var el=$(p[0]);el.value=S[p[1]];el.oninput=function(){S[p[1]]=+el.value;S.x=S.y=S.vx=S.vy=0;out();};});
-    $('#sb-play').onclick=function(){S.x=S.y=S.vx=S.vy=0;var t=0;K.animate(function(dt){t+=dt;var r=solve();S.vx+=r.ax*dt;S.vy+=r.ay*dt;S.x+=S.vx*dt;S.y=Math.max(0,Math.min(5,S.y+S.vy*dt));if(S.y===0&&S.vy<0)S.vy=0;S.x=Math.max(-6,Math.min(6.5,S.x));sv.redraw();return t<2.5;},function(){});};
+    $('#sb-play').onclick=function(){S.x=S.y=S.vx=S.vy=0;var t=0;K.animate(function(dt){t+=dt;var r=solve();S.vx+=r.ax*dt;S.vy+=r.ay*dt;S.x+=S.vx*dt;S.y=Math.max(0,Math.min(5,S.y+S.vy*dt));if(S.y===0&&S.vy<0)S.vy=0;if(S.x<-6||S.x>6.5){S.x=Math.max(-6,Math.min(6.5,S.x));S.vx=0;}sv.redraw();out();return t<2.5;},function(){});};
     $('#sb-reset').onclick=function(){S.x=S.y=S.vx=S.vy=0;out();};
     out();}
 
