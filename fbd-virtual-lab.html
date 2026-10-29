@@ -148,6 +148,7 @@
   .part{display:inline-flex;align-items:center;gap:10px;}
   .stepper{display:inline-flex;align-items:center;gap:6px;}
   .stepper button{width:40px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:700 14px var(--mono);cursor:pointer;}
+  .stepper button:disabled,.seg button:disabled{opacity:.45;cursor:not-allowed;}
   .stepper b{font-family:var(--mono);font-size:16px;min-width:64px;text-align:center;color:var(--fa);}
   .loglist td{font-family:var(--mono);font-size:14px;}
 </style>
@@ -297,6 +298,7 @@
       <button class="btn" id="el-back">−0.5 s</button><button class="btn" id="el-fwd">+0.5 s</button><button class="btn" id="el-reset">↺ Reset</button>
       <label><input type="checkbox" id="el-slow"> slow motion</label>
     </div>
+    <div class="readout"><div><span>Time</span><b id="el-t">0.0 s</b></div><div><span>Velocity (+ = up)</span><b id="el-v">+0.0 m/s</b></div><div><span>Scale reading</span><b id="el-fn">539 N</b></div><div><span>Student mass</span><b>55 kg</b></div></div>
     <figcaption>The FBD and the scale update as the elevator moves. The small graph traces the velocity over the whole ride.</figcaption></figure>
 
   <div class="card">
@@ -762,12 +764,14 @@
     function reset(){S.x=0;S.v=0;S.t=0;S.run=false;S.done=false;S.stuck=false;S.time=null;readout();}
     $$('#cr-crate button').forEach(function(b){b.onclick=function(){S.crate=b.dataset.v;$$('#cr-crate button').forEach(function(x){x.classList.toggle('on',x===b);});$('#cr-name').textContent=b.dataset.v;reset();};});
     $$('[data-df]').forEach(function(b){b.onclick=function(){S.F=Math.max(0,Math.min(150,S.F+(+b.dataset.df)));reset();};});
+    /* lock every control while the crate slides, so a mid-run click can't log the old time under new settings */
+    function lock(on){$$('#cr-run,#cr-crate button,[data-df]').forEach(function(b){b.disabled=on;});}
     $('#cr-run').onclick=function(){reset();var c=CRATES[S.crate];
       if(S.F<=c.fs){S.stuck=true;readout();logRun(null);return;}
-      S.run=true;var a=(S.F-c.fk)/c.m,tGate=Math.sqrt(2*GATE/a),noise=(Math.round((Math.random()*2-1)*1)/100);$('#cr-run').disabled=true;
+      S.run=true;var a=(S.F-c.fk)/c.m,tGate=Math.sqrt(2*GATE/a),noise=(Math.round((Math.random()*2-1)*1)/100);lock(true);
       K.animate(function(dt){S.t+=dt;S.x=.5*a*S.t*S.t;
         if(S.time==null&&S.x>=GATE){S.time=Math.max(.01,tGate+noise);S.done=true;}
-        if(S.x>=4.9){S.x=4.9;S.run=false;S.done=true;readout();$('#cr-run').disabled=false;logRun(S.time);return false;}
+        if(S.x>=4.9){S.x=4.9;S.run=false;S.done=true;readout();lock(false);logRun(S.time);return false;}
         readout();});
     };
     var log=[];
@@ -791,18 +795,21 @@
       ctx.fillStyle='#141821';K.roundRect(ctx,bx+bw/2-46,by+bh+10,92,30,6);ctx.fill();
       K.text(ctx,Math.round(s.FN)+' N',bx+bw/2,by+bh+25,{k:k,size:15,align:'center',color:'#7CF5B0',weight:700});
       ctx.fillStyle=C.card;ctx.strokeStyle=C.line;ctx.lineWidth=1.5;K.roundRect(ctx,430,20,410,340,14);ctx.fill();ctx.stroke();
-      K.text(ctx,'TIME',454,52,{k:k,size:11});K.text(ctx,E.t.toFixed(1)+' s',454,80,{k:k,size:24,color:C.ink,weight:700});
-      K.text(ctx,'VELOCITY (+ = up)',644,52,{k:k,size:11});K.text(ctx,(s.v>=0?'+':'')+s.v.toFixed(1)+' m/s',644,80,{k:k,size:24,color:C.ink,weight:700});
-      K.text(ctx,'SCALE READING',454,122,{k:k,size:11});K.text(ctx,Math.round(s.FN)+' N',454,150,{k:k,size:24,color:C.FN,weight:700});
-      K.text(ctx,'STUDENT MASS',644,122,{k:k,size:11});K.text(ctx,M+' kg',644,150,{k:k,size:24,color:C.ink,weight:700});
-      K.text(ctx,'FBD · student',454,192,{k:k,size:11});
+      /* on narrow screens these overlap, and the readout boxes under the canvas show the same numbers */
+      if(k<1.5){
+        K.text(ctx,'TIME',454,52,{k:k,size:11});K.text(ctx,E.t.toFixed(1)+' s',454,80,{k:k,size:24,color:C.ink,weight:700});
+        K.text(ctx,'VELOCITY (+ = up)',644,52,{k:k,size:11});K.text(ctx,(s.v>=0?'+':'')+s.v.toFixed(1)+' m/s',644,80,{k:k,size:24,color:C.ink,weight:700});
+        K.text(ctx,'SCALE READING',454,122,{k:k,size:11});K.text(ctx,Math.round(s.FN)+' N',454,150,{k:k,size:24,color:C.FN,weight:700});
+        K.text(ctx,'STUDENT MASS',644,122,{k:k,size:11});K.text(ctx,M+' kg',644,150,{k:k,size:24,color:C.ink,weight:700});
+        K.text(ctx,'FBD · student',454,192,{k:k,size:11});}
       K.fbd(ctx,560,272,[K.F('FN','up',s.FN,true),K.F('Fg','down',M*g,true)],{k:k,maxLen:62,axes:false,labelSize:12});
-      var gx=670,gw=150,gy=200,gh=130;ctx.strokeStyle=C.line;ctx.lineWidth=1.5;ctx.strokeRect(gx,gy,gw,gh);K.text(ctx,'velocity vs. time',gx,gy-10,{k:k,size:10});
+      var gx=670,gw=150,gy=200,gh=130;ctx.strokeStyle=C.line;ctx.lineWidth=1.5;ctx.strokeRect(gx,gy,gw,gh);K.text(ctx,k<1.5?'velocity vs. time':'v vs. t',gx,gy-10,{k:k,size:10});
       ctx.strokeStyle=C.accent;ctx.lineWidth=2.5;ctx.beginPath();for(var tt=0;tt<=E.t+1e-9;tt+=.05){var vv=state(tt).v,xx=gx+tt/END*gw,yv=gy+gh-(vv/5)*gh*.85-6;tt===0?ctx.moveTo(xx,yv):ctx.lineTo(xx,yv);}ctx.stroke();
       K.text(ctx,'0',gx-8,gy+gh-6,{k:k,size:9,align:'right'});K.text(ctx,'12 s',gx+gw,gy+gh+12,{k:k,size:9,align:'right'});
     });
     var anim=null;
-    function draw(){ev.redraw();$('#el-play').textContent=E.run?'❚❚ Pause':(E.t>=END?'↺ Replay':'▶ Play');}
+    function draw(){ev.redraw();var s=state(E.t);$('#el-t').textContent=E.t.toFixed(1)+' s';$('#el-v').textContent=(s.v>=0?'+':'')+s.v.toFixed(1)+' m/s';$('#el-fn').textContent=Math.round(s.FN)+' N';
+      $('#el-play').textContent=E.run?'❚❚ Pause':(E.t>=END?'↺ Replay':'▶ Play');}
     $('#el-play').onclick=function(){if(E.run){E.run=false;if(anim)anim.stop();draw();return;}if(E.t>=END)E.t=0;E.run=true;draw();
       anim=K.animate(function(dt){E.t=Math.min(END,E.t+dt*($('#el-slow').checked?.5:1));if(E.t>=END){E.run=false;draw();return false;}draw();});};
     $('#el-back').onclick=function(){E.t=Math.max(0,Math.round((E.t-.5)*2)/2);draw();};
