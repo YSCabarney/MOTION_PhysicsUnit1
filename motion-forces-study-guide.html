@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion & Forces — Exam Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1a14;
+    --surface: #172017;
+    --card: #1e2d1e;
+    --card2: #1a2820;
+    --border: #2d4030;
+    --accent: #3a7d44;
+    --accent2: #5cb870;
+    --gold: #e8b84b;
+    --teal: #3bb8c3;
+    --red: #e05a4e;
+    --text: #e8ede9;
+    --muted: #8ca68f;
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Fraunces', serif;
+    --sans: 'Work Sans', sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f0f4f1;
+      --surface: #e4ece5;
+      --card: #ffffff;
+      --card2: #f7faf7;
+      --border: #c2d4c5;
+      --accent: #2d6b38;
+      --accent2: #3a8a46;
+      --gold: #b8830a;
+      --teal: #1a8a93;
+      --red: #c03025;
+      --text: #1a2a1c;
+      --muted: #5a7a5d;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(135deg, #0d1f10 0%, #1a3520 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 0 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    overflow-x: auto; white-space: nowrap;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-brand {
+    font-family: var(--serif);
+    font-size: 1rem; font-weight: 700;
+    color: var(--gold); flex-shrink: 0;
+    padding: 0.75rem 0;
+  }
+  .nav-links { display: flex; gap: 0.25rem; }
+  .nav-links button {
+    background: none; border: none;
+    color: var(--muted); font-family: var(--sans);
+    font-size: 0.8rem; font-weight: 600;
+    padding: 0.6rem 0.75rem;
+    border-radius: 4px; cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+  }
+  .nav-links button:hover, .nav-links button.active {
+    color: var(--text); background: rgba(90,180,100,0.15);
+  }
+  .nav-links button.active { color: var(--accent2); }
+
+  /* PROGRESS */
+  #progress-bar-wrap {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.78rem; font-family: var(--mono);
+    color: var(--muted);
+  }
+  #progress-track {
+    flex: 1; height: 6px; background: var(--border);
+    border-radius: 3px; overflow: hidden;
+  }
+  #progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 3px; transition: width 0.4s;
+  }
+
+  /* SECTIONS */
+  .section { display: none; padding: 2rem 1.5rem 4rem; max-width: 860px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* HERO */
+  .hero {
+    text-align: center; padding: 3rem 1rem 2rem;
+  }
+  .hero-label {
+    font-family: var(--mono); font-size: 0.75rem;
+    color: var(--accent2); letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-family: var(--serif); font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 900; line-height: 1.1;
+    color: var(--text); margin-bottom: 0.75rem;
+  }
+  .hero h1 span { color: var(--accent2); }
+  .hero p {
+    color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto 2rem;
+  }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
+  .pill {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 0.35rem 0.9rem;
+    font-size: 0.8rem; color: var(--muted); font-family: var(--mono);
+  }
+  .pill.active-pill { border-color: var(--accent2); color: var(--accent2); }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+  .card-header {
+    background: linear-gradient(135deg, #1a3520, #0f2016);
+    padding: 0.75rem 1.1rem;
+    display: flex; align-items: center; gap: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header h3 {
+    font-family: var(--serif); font-size: 1rem;
+    font-weight: 700; color: var(--text);
+  }
+  .card-tag {
+    margin-left: auto; font-family: var(--mono);
+    font-size: 0.7rem; background: var(--gold);
+    color: #1a1200; padding: 0.2rem 0.5rem;
+    border-radius: 3px; font-weight: 600;
+  }
+  .card-body { padding: 1.1rem; }
+
+  /* FORMULA BOXES */
+  .formula-box {
+    background: var(--card2);
+    border: 1px solid var(--accent);
+    border-radius: 8px; padding: 0.9rem 1.1rem;
+    margin: 0.75rem 0;
+    font-family: var(--mono); font-size: 1rem;
+    color: var(--accent2);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .formula-label {
+    font-size: 0.72rem; color: var(--muted); display: block;
+    margin-bottom: 0.2rem; font-family: var(--mono);
+  }
+  .formula-vars { font-size: 0.82rem; color: var(--muted); margin-top: 0.5rem; }
+
+  /* STEPS */
+  .step-row {
+    display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.6rem;
+  }
+  .step-num {
+    flex-shrink: 0; width: 26px; height: 26px;
+    background: var(--accent); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; font-family: var(--mono);
+    color: #fff;
+  }
+
+  /* QUIZ */
+  .quiz-q {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 1rem; overflow: hidden;
+  }
+  .quiz-q-header {
+    background: linear-gradient(135deg, #1a3520, #0f2016);
+    padding: 0.65rem 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .quiz-num {
+    font-family: var(--mono); font-size: 0.72rem;
+    background: var(--accent); color: white;
+    padding: 0.1rem 0.4rem; border-radius: 3px; font-weight: 600;
+  }
+  .quiz-stem {
+    padding: 0.9rem 1rem 0.5rem;
+    font-weight: 500; font-size: 0.95rem;
+  }
+  .quiz-choices { padding: 0 1rem 0.9rem; display: flex; flex-direction: column; gap: 0.4rem; }
+  .choice-btn {
+    background: var(--card2); border: 1.5px solid var(--border);
+    border-radius: 7px; padding: 0.55rem 0.85rem;
+    text-align: left; cursor: pointer;
+    font-family: var(--sans); font-size: 0.9rem; color: var(--text);
+    transition: border-color 0.15s, background 0.15s;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--teal); background: rgba(59,184,195,0.07); }
+  .choice-btn.correct { border-color: var(--accent2); background: rgba(92,184,112,0.15); color: var(--accent2); }
+  .choice-btn.wrong { border-color: var(--red); background: rgba(224,90,78,0.1); color: var(--red); }
+  .choice-btn:disabled { cursor: default; }
+  .choice-letter {
+    font-family: var(--mono); font-weight: 600; font-size: 0.8rem;
+    width: 20px; flex-shrink: 0;
+  }
+  .quiz-feedback {
+    display: none; margin: 0 1rem 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 7px; font-size: 0.85rem;
+    border-left: 3px solid;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { border-color: var(--accent2); background: rgba(92,184,112,0.08); color: var(--accent2); }
+  .quiz-feedback.wrong { border-color: var(--red); background: rgba(224,90,78,0.08); color: var(--red); }
+
+  /* FBD Canvas area */
+  .fbd-container {
+    display: flex; flex-wrap: wrap; gap: 1rem; margin: 0.75rem 0;
+  }
+  .fbd-card {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.75rem; flex: 1 1 160px; text-align: center;
+  }
+  .fbd-canvas {
+    display: block; margin: 0 auto 0.5rem;
+    background: #0a1510; border-radius: 6px; border: 1px solid var(--border);
+  }
+  .fbd-label { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.88rem; }
+  th { background: var(--card2); padding: 0.55rem 0.75rem; text-align: left;
+    font-family: var(--mono); font-size: 0.75rem; color: var(--muted);
+    border-bottom: 2px solid var(--border); }
+  td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+
+  /* HINT */
+  .hint-toggle {
+    background: none; border: 1.5px solid var(--teal);
+    color: var(--teal); border-radius: 6px; padding: 0.35rem 0.75rem;
+    font-family: var(--mono); font-size: 0.75rem; cursor: pointer;
+    margin-top: 0.5rem; transition: background 0.15s;
+  }
+  .hint-toggle:hover { background: rgba(59,184,195,0.1); }
+  .hint-box {
+    display: none; margin-top: 0.6rem;
+    background: rgba(59,184,195,0.07); border: 1px solid rgba(59,184,195,0.3);
+    border-radius: 7px; padding: 0.75rem; font-size: 0.875rem;
+    color: var(--teal);
+  }
+  .hint-box.open { display: block; }
+
+  /* SCORE BADGE */
+  #score-display {
+    text-align: center; padding: 1.5rem;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 1.5rem;
+  }
+  #score-num {
+    font-family: var(--serif); font-size: 3.5rem;
+    font-weight: 900; color: var(--gold); line-height: 1;
+  }
+  #score-label { color: var(--muted); font-family: var(--mono); font-size: 0.8rem; margin-top: 0.3rem; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: var(--serif); font-size: 1.9rem;
+    font-weight: 700; margin-bottom: 0.4rem;
+  }
+  .section-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.75rem; }
+
+  /* ICON BADGES */
+  .icon-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .badge-gold { background: rgba(232,184,75,0.15); }
+  .badge-teal { background: rgba(59,184,195,0.15); }
+  .badge-green { background: rgba(92,184,112,0.15); }
+  .badge-red { background: rgba(224,90,78,0.15); }
+
+  /* MOTION ARROWS */
+  .arrow-demo {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem; font-family: var(--mono); font-size: 0.85rem;
+  }
+
+  /* RESET BTN */
+  .reset-btn {
+    background: var(--card2); border: 1.5px solid var(--border);
+    color: var(--muted); border-radius: 6px; padding: 0.4rem 0.9rem;
+    font-family: var(--mono); font-size: 0.78rem; cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--red); color: var(--red); }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; }
+    .section { padding: 1.5rem 1rem 3rem; }
+    .fbd-container { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">⚡ Physics</span>
+  <div class="nav-links" id="navLinks">
+    <button onclick="showSection('home')" class="active" data-sec="home">Home</button>
+    <button onclick="showSection('equations')" data-sec="equations">Equations</button>
+    <button onclick="showSection('kinematics')" data-sec="kinematics">Kinematics</button>
+    <button onclick="showSection('graphs')" data-sec="graphs">Graphs</button>
+    <button onclick="showSection('freefall')" data-sec="freefall">Free Fall</button>
+    <button onclick="showSection('newtons')" data-sec="newtons">Newton's Laws</button>
+    <button onclick="showSection('fbd')" data-sec="fbd">FBDs</button>
+    <button onclick="showSection('quiz')" data-sec="quiz">Practice Quiz</button>
+  </div>
+</nav>
+
+<div id="progress-bar-wrap">
+  <span id="progress-label">Quiz: 0 / 15 answered</span>
+  <div id="progress-track"><div id="progress-fill"></div></div>
+  <span id="progress-pct">0%</span>
+</div>
+
+<!-- ═══════════════════ HOME ═══════════════════ -->
+<section class="section active" id="home">
+  <div class="hero">
+    <div class="hero-label">Unit 2 Exam Prep</div>
+    <h1>Motion &amp; <span>Forces</span></h1>
+    <p>Everything you need to know, organized the way it'll show up on the test. Work through each section, then crush the practice quiz.</p>
+    <div class="pill-row">
+      <span class="pill active-pill">Equations</span>
+      <span class="pill active-pill">Kinematics</span>
+      <span class="pill active-pill">Graphs</span>
+      <span class="pill active-pill">Free Fall</span>
+      <span class="pill active-pill">Newton's 3 Laws</span>
+      <span class="pill active-pill">Free Body Diagrams</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="icon-badge badge-gold">📋</span>
+      <h3>Exam Formula Sheet — Know These Cold</h3>
+    </div>
+    <div class="card-body">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:0.75rem;">
+        <div>
+          <span class="formula-label">Acceleration</span>
+          <div class="formula-box">a = (v<sub>f</sub> − v<sub>o</sub>) / t</div>
+          <div class="formula-vars">vf = final vel · vo = initial vel · t = time</div>
+        </div>
+        <div>
+          <span class="formula-label">Kinematic (position)</span>
+          <div class="formula-box">d = v<sub>o</sub>t + ½at²</div>
+          <div class="formula-vars">d = displacement · used for train problems</div>
+        </div>
+        <div>
+          <span class="formula-label">Newton's 2nd Law</span>
+          <div class="formula-box">F = ma</div>
+          <div class="formula-vars">F in Newtons · m in kg · a in m/s²</div>
+        </div>
+        <div>
+          <span class="formula-label">Free Fall</span>
+          <div class="formula-box">d = ½gt²</div>
+          <div class="formula-vars">g = 9.8 m/s² · dropped from rest</div>
+        </div>
+        <div>
+          <span class="formula-label">Impact Velocity</span>
+          <div class="formula-box">v<sub>f</sub> = gt</div>
+          <div class="formula-vars">for objects dropped from rest</div>
+        </div>
+        <div>
+          <span class="formula-label">Speed / Velocity</span>
+          <div class="formula-box">v = d / t</div>
+          <div class="formula-vars">d in meters · t in seconds</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="icon-badge badge-teal">🗂️</span>
+      <h3>What's on the Exam — At a Glance</h3>
+    </div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Topic</th><th>What You Need to Do</th><th>Point Value</th></tr></thead>
+        <tbody>
+          <tr><td>Solving & rearranging equations</td><td>Isolate any variable (V=IR, v=d/t)</td><td>3 pts each</td></tr>
+          <tr><td>Acceleration concepts</td><td>Identify types; know the sign convention</td><td>2 pts each</td></tr>
+          <tr><td>Kinematics calculations</td><td>Use d = v₀t + ½at² for trains/objects</td><td>2–4 pts</td></tr>
+          <tr><td>Reading motion graphs</td><td>Slope of v-t = acceleration; area of a-t = Δv</td><td>4 pts each</td></tr>
+          <tr><td>Free fall</td><td>Solve for time and impact velocity</td><td>2–4 pts</td></tr>
+          <tr><td>Newton's Laws</td><td>Identify, apply, and explain all three</td><td>2 pts each</td></tr>
+          <tr><td>F = ma calculations</td><td>Solve for F, m, or a</td><td>3 pts each</td></tr>
+          <tr><td>Show-your-work problems</td><td>List data → equation → solve → answer w/units</td><td>4 pts each</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="icon-badge badge-red">⚠️</span>
+      <h3>Top Mistakes — Don't Be That Student</h3>
+    </div>
+    <div class="card-body">
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap:0.75rem;">
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="color:var(--red); font-weight:700; margin-bottom:0.4rem;">❌ Rearranging</div>
+          <div style="font-size:0.88rem;">Don't leave a fraction in the denominator. Clear fractions <em>first</em>, then isolate.</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="color:var(--red); font-weight:700; margin-bottom:0.4rem;">❌ Negative acceleration</div>
+          <div style="font-size:0.88rem;">Negative acceleration isn't always "bad" — it just means the acceleration points opposite to the direction you chose as positive.</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="color:var(--red); font-weight:700; margin-bottom:0.4rem;">❌ Graphs</div>
+          <div style="font-size:0.88rem;">On a v-t graph, slope = acceleration, NOT speed. On an a-t graph, the AREA under the curve = change in velocity.</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="color:var(--red); font-weight:700; margin-bottom:0.4rem;">❌ Newton's 3rd Law</div>
+          <div style="font-size:0.88rem;">Action-reaction pairs act on DIFFERENT objects — that's why they don't cancel. If forces are on the same object, they can balance.</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="color:var(--red); font-weight:700; margin-bottom:0.4rem;">❌ Free fall</div>
+          <div style="font-size:0.88rem;">You must NEGLECT air resistance to use g = 9.8 m/s². Air resistance changes everything.</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="color:var(--red); font-weight:700; margin-bottom:0.4rem;">❌ Show your work</div>
+          <div style="font-size:0.88rem;">No work shown = no partial credit. Always: list known values → write equation → substitute → solve → units.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ EQUATIONS ═══════════════════ -->
+<section class="section" id="equations">
+  <div class="section-title">Solving &amp; Rearranging Equations</div>
+  <div class="section-sub">The exam will give you a formula and ask you to solve for a different variable. Here's the method.</div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-gold">🔢</span><h3>The 5-Step Method</h3></div>
+    <div class="card-body">
+      <div class="step-row"><div class="step-num">1</div><div>Write down the original equation exactly as given.</div></div>
+      <div class="step-row"><div class="step-num">2</div><div>Identify the variable you want to isolate.</div></div>
+      <div class="step-row"><div class="step-num">3</div><div>If there's a fraction, multiply both sides to clear it first.</div></div>
+      <div class="step-row"><div class="step-num">4</div><div>Use inverse operations (division undoes multiplication, subtraction undoes addition) to get your variable alone.</div></div>
+      <div class="step-row"><div class="step-num">5</div><div>Check: no fractions left in the denominator. Units make sense.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-teal">📐</span><h3>Exam Examples — Step by Step</h3></div>
+    <div class="card-body">
+      <p style="margin-bottom:1rem; font-weight:600;">Example 1: Solve V = IR for R</p>
+      <div class="step-row"><div class="step-num">1</div><div>V = IR</div></div>
+      <div class="step-row"><div class="step-num">2</div><div>R is multiplied by I. Divide both sides by I.</div></div>
+      <div class="step-row"><div class="step-num">3</div><div style="font-family:var(--mono);">V/I = IR/I → the I's cancel on the right</div></div>
+      <div class="formula-box" style="margin:0.75rem 0;">R = V / I ✓</div>
+
+      <p style="margin-bottom:1rem; font-weight:600; margin-top:1.25rem;">Example 2: Solve v = d/t for t</p>
+      <div class="step-row"><div class="step-num">1</div><div>v = d/t — there's a fraction. Clear it first.</div></div>
+      <div class="step-row"><div class="step-num">2</div><div>Multiply both sides by t: v·t = d</div></div>
+      <div class="step-row"><div class="step-num">3</div><div>Now t is multiplied by v. Divide both sides by v.</div></div>
+      <div class="formula-box" style="margin:0.75rem 0;">t = d / v ✓</div>
+
+      <p style="margin-bottom:1rem; font-weight:600; margin-top:1.25rem;">Example 3: Solve F = ma for m</p>
+      <div class="step-row"><div class="step-num">1</div><div>F = ma. No fraction. m is multiplied by a.</div></div>
+      <div class="step-row"><div class="step-num">2</div><div>Divide both sides by a: F/a = ma/a</div></div>
+      <div class="formula-box" style="margin:0.75rem 0;">m = F / a ✓</div>
+
+      <button class="hint-toggle" onclick="toggleHint('hint-eq')">💡 Common trap</button>
+      <div class="hint-box" id="hint-eq">
+        Students sometimes try to solve V = IR for R and write R = VI. That's wrong — if R was multiplied by I, you divide by I, not multiply. Always ask: what operation connects the variable to what's next to it? Then do the opposite.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-green">✏️</span><h3>Practice — Try Before You Check</h3></div>
+    <div class="card-body">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:600; margin-bottom:0.4rem;">Solve F = ma for a</div>
+          <button class="hint-toggle" onclick="toggleHint('p1-eq')">Show answer</button>
+          <div class="hint-box" id="p1-eq">a = F / m (divide both sides by m)</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:600; margin-bottom:0.4rem;">Solve d = ½gt² for t</div>
+          <button class="hint-toggle" onclick="toggleHint('p2-eq')">Show answer</button>
+          <div class="hint-box" id="p2-eq">Multiply both sides by 2: 2d = gt². Then divide by g: t² = 2d/g. Then take the square root: t = √(2d/g)</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:600; margin-bottom:0.4rem;">Solve V = IR for I</div>
+          <button class="hint-toggle" onclick="toggleHint('p3-eq')">Show answer</button>
+          <div class="hint-box" id="p3-eq">I = V / R (divide both sides by R)</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:600; margin-bottom:0.4rem;">Solve a = (vf − vo)/t for vf</div>
+          <button class="hint-toggle" onclick="toggleHint('p4-eq')">Show answer</button>
+          <div class="hint-box" id="p4-eq">Multiply both sides by t: at = vf − vo. Then add vo: vf = at + vo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ KINEMATICS ═══════════════════ -->
+<section class="section" id="kinematics">
+  <div class="section-title">Kinematics — Motion Calculations</div>
+  <div class="section-sub">These are the train problems, the car problems, the "how far did it travel" problems. One formula does most of the work.</div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-gold">🚂</span><h3>The Key Equation</h3></div>
+    <div class="card-body">
+      <div class="formula-box" style="font-size:1.3rem;">d = v<sub>o</sub>t + ½at²</div>
+      <div class="formula-vars" style="margin-top:0.5rem;">
+        d = displacement (meters) · v₀ = initial velocity (m/s) · a = acceleration (m/s²) · t = time (s)
+      </div>
+      <div style="margin-top:1rem; padding:0.75rem; background:var(--card2); border-radius:7px; border:1px solid var(--border); font-size:0.88rem;">
+        <strong style="color:var(--gold);">When acceleration is negative</strong> — the ½at² part subtracts from the distance. That's how a train <em>slowing down</em> travels less than you'd expect from the initial velocity alone.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-teal">📐</span><h3>Worked Example — Train Problem</h3><span class="card-tag">EXAM TYPE</span></div>
+    <div class="card-body">
+      <p style="font-style:italic; color:var(--muted); margin-bottom:0.75rem;">"A train is slowing down with an average acceleration of −6.0 m/s². If its initial velocity is 60.0 m/s, how far does it travel in 5.0 seconds?"</p>
+      <div class="step-row"><div class="step-num">1</div><div><strong>Identify your data:</strong> v₀ = 60.0 m/s · a = −6.0 m/s² · t = 5.0 s · d = ?</div></div>
+      <div class="step-row"><div class="step-num">2</div><div><strong>Write the equation:</strong> d = v₀t + ½at²</div></div>
+      <div class="step-row"><div class="step-num">3</div><div><strong>Substitute:</strong> d = (60.0)(5.0) + ½(−6.0)(5.0)²</div></div>
+      <div class="step-row"><div class="step-num">4</div><div>d = 300 + ½(−6.0)(25) = 300 + (−75) = 300 − 75</div></div>
+      <div class="formula-box">d = 225 m ≈ 230 m ✓</div>
+      <button class="hint-toggle" onclick="toggleHint('train-hint')">💡 Why is a negative?</button>
+      <div class="hint-box" id="train-hint">The train is slowing down, so acceleration points opposite to its motion. We call the direction of motion positive, so acceleration is negative. This is deceleration — the train is still moving forward, just getting slower.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-green">✏️</span><h3>Try It — Second Train Problem</h3><span class="card-tag">EXAM TYPE</span></div>
+    <div class="card-body">
+      <p style="font-style:italic; color:var(--muted); margin-bottom:0.75rem;">"A train slows down at −4.0 m/s². Initial velocity is 50.0 m/s. How far does it travel in 8.0 s?"</p>
+      <button class="hint-toggle" onclick="toggleHint('train2-hint')">Work it out, then check</button>
+      <div class="hint-box" id="train2-hint">
+        <strong>Data:</strong> v₀=50, a=−4.0, t=8.0<br>
+        d = (50)(8) + ½(−4)(64) = 400 + (−128) = <strong>272 m ≈ 270 m</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-red">📋</span><h3>Three Types of Acceleration to Know</h3></div>
+    <div class="card-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px,1fr)); gap:0.75rem;">
+        <div style="border:1px solid var(--accent2); border-radius:8px; padding:0.75rem; text-align:center;">
+          <div style="font-size:1.5rem;">🚀</div>
+          <div style="font-weight:700; color:var(--accent2); margin:0.3rem 0;">Speeding Up</div>
+          <div style="font-size:0.85rem;">v and a point same direction. a is positive (in the direction of motion).</div>
+        </div>
+        <div style="border:1px solid var(--gold); border-radius:8px; padding:0.75rem; text-align:center;">
+          <div style="font-size:1.5rem;">🛑</div>
+          <div style="font-weight:700; color:var(--gold); margin:0.3rem 0;">Slowing Down</div>
+          <div style="font-size:0.85rem;">a points opposite to v. a is negative. Object is decelerating.</div>
+        </div>
+        <div style="border:1px solid var(--teal); border-radius:8px; padding:0.75rem; text-align:center;">
+          <div style="font-size:1.5rem;">↩️</div>
+          <div style="font-weight:700; color:var(--teal); margin:0.3rem 0;">Changing Direction</div>
+          <div style="font-size:0.85rem;">Speed may stay constant, but velocity changes. Still acceleration.</div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem; padding:0.65rem; background:rgba(232,184,75,0.08); border-radius:7px; border:1px solid rgba(232,184,75,0.2); font-size:0.88rem;">
+        <strong style="color:var(--gold);">Which of these is acceleration?</strong> — On the exam: changing direction is acceleration. Changing mass is NOT. Changing position alone is NOT (that's just motion).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ GRAPHS ═══════════════════ -->
+<section class="section" id="graphs">
+  <div class="section-title">Reading Motion Graphs</div>
+  <div class="section-sub">The exam has both position-time and acceleration-time graphs. The key: know what slope and area mean on each type.</div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-gold">📈</span><h3>Cheat Sheet — What Each Graph Tells You</h3></div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Graph Type</th><th>Slope means…</th><th>Flat line means…</th><th>Area means…</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--accent2); font-weight:600;">Position vs. Time</td>
+            <td>Velocity</td>
+            <td>Object is not moving</td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold); font-weight:600;">Velocity vs. Time</td>
+            <td><strong>Acceleration</strong></td>
+            <td>Constant velocity (no acceleration)</td>
+            <td>Displacement</td>
+          </tr>
+          <tr>
+            <td style="color:var(--teal); font-weight:600;">Acceleration vs. Time</td>
+            <td>Jerk (not tested)</td>
+            <td>Constant acceleration</td>
+            <td><strong>Change in velocity (Δv)</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:0.75rem; padding:0.65rem; background:rgba(59,184,195,0.07); border:1px solid rgba(59,184,195,0.3); border-radius:7px; font-size:0.88rem; color:var(--teal);">
+        <strong>Exam tip:</strong> "The slope of a velocity-time graph is ____" → Answer: <strong>acceleration</strong>. That question is basically free points.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-teal">📐</span><h3>Position-Time Graph — Reading Change in Position</h3><span class="card-tag">EXAM TYPE</span></div>
+    <div class="card-body">
+      <canvas id="ptCanvas" width="500" height="260" class="fbd-canvas" style="width:100%; max-width:500px; background:var(--card2); border-radius:8px;"></canvas>
+      <div style="margin-top:0.75rem; font-size:0.88rem;">
+        <p><strong style="color:var(--gold);">Segments:</strong></p>
+        <ul style="margin-top:0.4rem; padding-left:1.2rem; display:flex; flex-direction:column; gap:0.3rem;">
+          <li>Seg 1 (0→1 hr): 0→40 mi = rising line = moving</li>
+          <li>Seg 2 (1→2 hr): 40→40 mi = flat line = stopped</li>
+          <li>Seg 3 (2→3 hr): 40→60 mi = <strong style="color:var(--accent2);">change in position = 60 − 40 = 20 mi</strong></li>
+          <li>Seg 4 (3→4 hr): 60→75 mi = rising, but slower slope</li>
+          <li>Seg 5 (4→5 hr): 75→75 mi = flat = stopped again</li>
+        </ul>
+        <div style="margin-top:0.75rem; padding:0.65rem; background:rgba(92,184,112,0.08); border-radius:7px; font-size:0.88rem;">
+          <strong style="color:var(--accent2);">"What is the change in position in the third hour?"</strong><br>
+          Read from x=2 to x=3: position goes from 40 to 60. Answer: <strong>20 miles</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-green">📐</span><h3>Acceleration-Time Graph — Finding Δv from Area</h3><span class="card-tag">EXAM TYPE</span></div>
+    <div class="card-body">
+      <canvas id="atCanvas" width="500" height="260" class="fbd-canvas" style="width:100%; max-width:500px; background:var(--card2); border-radius:8px;"></canvas>
+      <div style="margin-top:0.75rem; font-size:0.88rem;">
+        <p><strong>"Calculate the change in velocity from 20 to 30 seconds"</strong></p>
+        <div class="step-row" style="margin-top:0.6rem;"><div class="step-num">1</div><div>Find the section from t=20 to t=30s on the graph</div></div>
+        <div class="step-row"><div class="step-num">2</div><div>The acceleration is 6 m/s² (constant in that region)</div></div>
+        <div class="step-row"><div class="step-num">3</div><div>Δv = area = height × width = 6 m/s² × 10 s</div></div>
+        <div class="formula-box">Δv = 60 m/s ✓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FREE FALL ═══════════════════ -->
+<section class="section" id="freefall">
+  <div class="section-title">Free Fall &amp; Gravity</div>
+  <div class="section-sub">Objects in free fall accelerate at g = 9.8 m/s² — but only when you ignore air resistance.</div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-gold">🌍</span><h3>Free Fall Essentials</h3></div>
+    <div class="card-body">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0.75rem;">
+        <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem;">
+          <div style="color:var(--gold); font-weight:700; margin-bottom:0.4rem;">What must you neglect?</div>
+          <div style="font-size:0.88rem;"><strong>Air resistance</strong> — without it, all objects fall at exactly the same rate regardless of mass.</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem;">
+          <div style="color:var(--gold); font-weight:700; margin-bottom:0.4rem;">g = 9.8 m/s²</div>
+          <div style="font-size:0.88rem;">Every second, velocity increases by 9.8 m/s. This is a constant near Earth's surface.</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:8px; padding:0.75rem;">
+          <div style="color:var(--gold); font-weight:700; margin-bottom:0.4rem;">Gravity & mass</div>
+          <div style="font-size:0.88rem;">Gravitational force INCREASES as mass increases. Decreases as distance between objects increases.</div>
+        </div>
+      </div>
+      <div class="formula-box" style="margin-top:0.9rem;">d = ½gt² &nbsp;&nbsp;&nbsp; v<sub>f</sub> = gt</div>
+      <div class="formula-vars">Use these when dropped from rest (v₀ = 0)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-teal">🏢</span><h3>Willis Tower Problem — Worked Example</h3><span class="card-tag">EXAM TYPE</span></div>
+    <div class="card-body">
+      <p style="font-style:italic; color:var(--muted); margin-bottom:0.75rem;">"The Willis Tower is 442 m high. A rock is dropped from the top. Neglecting air resistance, how long does it take to reach the ground?"</p>
+      <div class="step-row"><div class="step-num">1</div><div><strong>Data:</strong> d = 442 m · g = 9.8 m/s² · t = ?</div></div>
+      <div class="step-row"><div class="step-num">2</div><div><strong>Equation:</strong> d = ½gt²</div></div>
+      <div class="step-row"><div class="step-num">3</div><div>442 = ½(9.8)t² → 442 = 4.9t²</div></div>
+      <div class="step-row"><div class="step-num">4</div><div>t² = 442/4.9 = 90.2</div></div>
+      <div class="step-row"><div class="step-num">5</div><div>t = √90.2 = <strong>9.50 s</strong></div></div>
+      <div class="formula-box">t = 9.50 s ✓</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-green">👓</span><h3>Martha's Glasses — Full Show-Your-Work Example</h3><span class="card-tag">EXAM TYPE</span></div>
+    <div class="card-body">
+      <p style="font-style:italic; color:var(--muted); margin-bottom:0.75rem;">"Martha's glasses fall from a second-floor window and hit the ground in 2.41 seconds. Find (A) height of window, and (B) impact velocity."</p>
+      <p style="font-weight:700; margin-bottom:0.4rem; color:var(--accent2);">Part A — Height</p>
+      <div class="step-row"><div class="step-num">1</div><div>Data: t = 2.41 s · g = 9.8 m/s² · d = ?</div></div>
+      <div class="step-row"><div class="step-num">2</div><div>d = ½gt² = ½(9.8)(2.41)² = ½(9.8)(5.808)</div></div>
+      <div class="formula-box">d ≈ 28.5 m</div>
+      <p style="font-weight:700; margin:0.75rem 0 0.4rem; color:var(--accent2);">Part B — Impact Velocity</p>
+      <div class="step-row"><div class="step-num">1</div><div>v<sub>f</sub> = gt = (9.8)(2.41)</div></div>
+      <div class="formula-box">v<sub>f</sub> ≈ 23.6 m/s</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ NEWTON'S LAWS ═══════════════════ -->
+<section class="section" id="newtons">
+  <div class="section-title">Newton's Three Laws</div>
+  <div class="section-sub">Know each law, what it predicts, and what happens when forces are balanced vs. unbalanced.</div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="icon-badge" style="background:rgba(232,184,75,0.15); font-size:1rem; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%;">1</span>
+      <h3>First Law — Law of Inertia</h3>
+    </div>
+    <div class="card-body">
+      <div style="font-size:1rem; font-style:italic; color:var(--muted); margin-bottom:0.75rem; border-left:3px solid var(--gold); padding-left:0.75rem;">
+        "An object at rest stays at rest, and an object in motion stays in motion — unless acted on by an unbalanced force."
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:700; color:var(--accent2); margin-bottom:0.3rem;">Inertia</div>
+          <div style="font-size:0.88rem;">Resistance to a change in motion. Determined by <strong>mass</strong>. More mass = more inertia = harder to start, stop, or change direction.</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:700; color:var(--accent2); margin-bottom:0.3rem;">Key exam point</div>
+          <div style="font-size:0.88rem;">Moving objects do NOT need a force to keep moving. They need a force to <em>change</em> their motion. This is what most students get wrong.</div>
+        </div>
+      </div>
+      <div style="font-size:0.88rem; padding:0.65rem; background:rgba(232,184,75,0.07); border-radius:7px; border:1px solid rgba(232,184,75,0.2);">
+        <strong style="color:var(--gold);">Which statement describes Newton's 1st Law?</strong><br>
+        → "Describes what an object in motion will do until acted on by an unbalanced force."<br>
+        (NOT about mass changing, NOT about inertia being reduced)
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="icon-badge" style="background:rgba(59,184,195,0.15); font-size:1rem; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%;">2</span>
+      <h3>Second Law — F = ma</h3>
+    </div>
+    <div class="card-body">
+      <div style="font-size:1rem; font-style:italic; color:var(--muted); margin-bottom:0.75rem; border-left:3px solid var(--teal); padding-left:0.75rem;">
+        "The acceleration of an object is directly proportional to the net force, and inversely proportional to its mass."
+      </div>
+      <div class="formula-box" style="font-size:1.2rem;">F = ma &nbsp;→&nbsp; a = F/m &nbsp;→&nbsp; m = F/a</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:0.75rem;">
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:700; color:var(--teal); margin-bottom:0.3rem;">Directly proportional</div>
+          <div style="font-size:0.88rem;">Force ↑ → Acceleration ↑ (double the force = double the acceleration, same mass)</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:700; color:var(--teal); margin-bottom:0.3rem;">Inversely proportional</div>
+          <div style="font-size:0.88rem;">Mass ↑ → Acceleration ↓ (double the mass = half the acceleration, same force)</div>
+        </div>
+      </div>
+      <p style="margin-top:1rem; font-weight:600;">David's Bike — Exam Example</p>
+      <div style="font-size:0.88rem; font-style:italic; color:var(--muted); margin:0.4rem 0 0.75rem;">"David's bike accelerates from rest to 45.0 m/s in 6.00 s. Combined mass = 225.43 kg. Find the unbalanced force."</div>
+      <div class="step-row"><div class="step-num">1</div><div>First find a: a = (vf − vo)/t = (45.0 − 0)/6.00 = 7.50 m/s²</div></div>
+      <div class="step-row"><div class="step-num">2</div><div>Then find F: F = ma = (225.43)(7.50)</div></div>
+      <div class="formula-box">F ≈ 1,691 N ✓</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="icon-badge" style="background:rgba(224,90,78,0.15); font-size:1rem; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%;">3</span>
+      <h3>Third Law — Action-Reaction</h3>
+    </div>
+    <div class="card-body">
+      <div style="font-size:1rem; font-style:italic; color:var(--muted); margin-bottom:0.75rem; border-left:3px solid var(--red); padding-left:0.75rem;">
+        "For every action force, there is an equal and opposite reaction force."
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.75rem;">
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:700; color:var(--red); margin-bottom:0.3rem;">Key fact: Different objects</div>
+          <div style="font-size:0.88rem;">Action and reaction forces always act on <strong>different objects</strong>. That's why they don't cancel.</div>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:7px; padding:0.75rem;">
+          <div style="font-weight:700; color:var(--red); margin-bottom:0.3rem;">True for all objects</div>
+          <div style="font-size:0.88rem;">It's true for ALL objects interacting — not just objects at rest. Always, always.</div>
+        </div>
+      </div>
+      <div style="padding:0.65rem; background:rgba(224,90,78,0.07); border-radius:7px; border:1px solid rgba(224,90,78,0.2); font-size:0.88rem;">
+        <strong style="color:var(--red);">Exam statement:</strong> "Whenever an object exerts a force on another, the second object exerts a force of the same magnitude in the opposite direction."<br>
+        → <strong>True for all objects interacting</strong> (not just at rest, and they don't cancel)
+      </div>
+      <div style="margin-top:0.75rem; font-size:0.88rem;">
+        <strong>Examples on the exam:</strong>
+        <ul style="padding-left:1.2rem; margin-top:0.4rem; display:flex; flex-direction:column; gap:0.3rem;">
+          <li>Your foot pushes the ground backward → ground pushes your foot forward</li>
+          <li>Earth pulls rock down → rock pulls Earth up (same magnitude, Earth just barely moves)</li>
+          <li>Rocket pushes gas backward → gas pushes rocket forward</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FBD ═══════════════════ -->
+<section class="section" id="fbd">
+  <div class="section-title">Free Body Diagrams</div>
+  <div class="section-sub">You won't be asked to draw FBDs on this exam — but reading and interpreting them is fair game, and they're the foundation for every force calculation you'll do.</div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-gold">📌</span><h3>FBD Rules — Always</h3></div>
+    <div class="card-body">
+      <div class="step-row"><div class="step-num">1</div><div><strong>One object only.</strong> Draw ONLY forces acting ON that object — not forces it exerts.</div></div>
+      <div class="step-row"><div class="step-num">2</div><div><strong>All arrows start at the dot</strong> (the object) and point away in the direction of each force.</div></div>
+      <div class="step-row"><div class="step-num">3</div><div><strong>Arrow length = force size.</strong> Equal forces get equal-length arrows.</div></div>
+      <div class="step-row"><div class="step-num">4</div><div><strong>Label every arrow</strong> with its symbol (Fg, FN, Fa, Ff, FT).</div></div>
+      <div class="step-row"><div class="step-num">5</div><div><strong>No motion arrows.</strong> Velocity and acceleration are NOT forces — don't put them on the diagram.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-teal">🔤</span><h3>The Force Catalog</h3></div>
+    <div class="card-body">
+      <table>
+        <thead><tr><th>Force</th><th>Symbol</th><th>Direction</th><th>When it shows up</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--gold);">Weight / Gravity</td><td style="font-family:var(--mono);">Fg = mg</td><td>Always straight DOWN</td><td>Always — every object near Earth</td></tr>
+          <tr><td style="color:var(--accent2);">Normal</td><td style="font-family:var(--mono);">FN</td><td>Perpendicular to surface (usually UP)</td><td>When object touches a surface</td></tr>
+          <tr><td style="color:var(--teal);">Applied</td><td style="font-family:var(--mono);">Fa</td><td>Direction of the push/pull</td><td>When a person or thing pushes/pulls</td></tr>
+          <tr><td style="color:var(--red);">Friction</td><td style="font-family:var(--mono);">Ff</td><td>Opposite to motion</td><td>When sliding or trying to slide on a surface</td></tr>
+          <tr><td style="color:var(--muted);">Tension</td><td style="font-family:var(--mono);">FT</td><td>Along rope, away from object</td><td>When a rope or cable pulls</td></tr>
+          <tr><td style="color:var(--muted);">Air Resistance</td><td style="font-family:var(--mono);">Fair</td><td>Opposite to motion through air</td><td>When moving fast through air</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-green">🖼️</span><h3>Interactive FBD Gallery — Click to Analyze</h3></div>
+    <div class="card-body">
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem;">
+        <button class="choice-btn" style="flex:1 1 auto;" onclick="loadFBD('rest')">📦 Box at rest</button>
+        <button class="choice-btn" style="flex:1 1 auto;" onclick="loadFBD('moving')">🚗 Constant velocity</button>
+        <button class="choice-btn" style="flex:1 1 auto;" onclick="loadFBD('freefall')">🍎 Free fall</button>
+        <button class="choice-btn" style="flex:1 1 auto;" onclick="loadFBD('terminal')">🪂 Terminal velocity</button>
+        <button class="choice-btn" style="flex:1 1 auto;" onclick="loadFBD('accel')">🚀 Accelerating</button>
+      </div>
+      <canvas id="fbdMainCanvas" width="300" height="300" style="display:block; margin:0 auto; background:#0a1510; border-radius:10px; border:1px solid var(--border); max-width:300px;"></canvas>
+      <div id="fbdInfo" style="margin-top:1rem; padding:0.75rem; background:var(--card2); border-radius:7px; border:1px solid var(--border); font-size:0.88rem;"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon-badge badge-red">⚠️</span><h3>Common FBD Mistakes on Exams</h3></div>
+    <div class="card-body">
+      <div style="display:flex; flex-direction:column; gap:0.6rem;">
+        <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+          <span style="color:var(--red); font-weight:700; flex-shrink:0;">❌</span>
+          <div>Drawing a "force of motion" arrow pointing in the direction the object is moving — if nothing is pushing it that way, there's NO arrow.</div>
+        </div>
+        <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+          <span style="color:var(--red); font-weight:700; flex-shrink:0;">❌</span>
+          <div>Forgetting the normal force when the object is on a surface. If it's touching something solid, FN is there.</div>
+        </div>
+        <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+          <span style="color:var(--red); font-weight:700; flex-shrink:0;">❌</span>
+          <div>Drawing the force the object exerts on something else. FBDs show forces ON the object only.</div>
+        </div>
+        <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+          <span style="color:var(--red); font-weight:700; flex-shrink:0;">❌</span>
+          <div>Thinking FN and Fg are a Newton's 3rd Law pair — they're not. Both act on the SAME object (the box). Third-law pairs are on different objects.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ QUIZ ═══════════════════ -->
+<section class="section" id="quiz">
+  <div class="section-title">Practice Quiz</div>
+  <div class="section-sub">Same format and difficulty as the real exam. No pressure — wrong answers show you exactly what to review.</div>
+
+  <div id="score-display" style="display:none;">
+    <div id="score-num">0 / 15</div>
+    <div id="score-label">QUIZ SCORE</div>
+    <div id="score-msg" style="margin-top:0.5rem; font-size:0.9rem;"></div>
+  </div>
+
+  <div id="quiz-container"></div>
+
+  <div style="text-align:right; margin-top:0.5rem;">
+    <button class="reset-btn" onclick="resetQuiz()">↺ Reset Quiz</button>
+  </div>
+</section>
+
+<script>
+/* ── NAV ── */
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b => {
+    b.classList.toggle('active', b.dataset.sec === id);
+  });
+  window.scrollTo(0, 0);
+}
+
+/* ── HINTS ── */
+function toggleHint(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+/* ── POSITION-TIME GRAPH ── */
+(function drawPT() {
+  const c = document.getElementById('ptCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const pad = {l:50, r:20, t:20, b:40};
+  const W2 = W - pad.l - pad.r, H2 = H - pad.t - pad.b;
+  const toX = t => pad.l + (t/5) * W2;
+  const toY = p => pad.t + H2 - (p/80) * H2;
+  const data = [[0,0],[1,40],[2,40],[3,60],[4,75],[5,75]];
+  const colors = ['#3bb8c3','#5cb870','#e8b84b','#5cb870','#8ca68f'];
+
+  ctx.clearRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle = '#2d4030'; ctx.lineWidth = 0.5;
+  for(let t=0;t<=5;t++){ctx.beginPath();ctx.moveTo(toX(t),pad.t);ctx.lineTo(toX(t),pad.t+H2);ctx.stroke();}
+  for(let p=0;p<=80;p+=20){ctx.beginPath();ctx.moveTo(pad.l,toY(p));ctx.lineTo(pad.l+W2,toY(p));ctx.stroke();}
+
+  // Axes
+  ctx.strokeStyle = '#5cb870'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+H2); ctx.lineTo(pad.l+W2,pad.t+H2); ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#8ca68f'; ctx.font = '11px IBM Plex Mono, monospace'; ctx.textAlign = 'center';
+  for(let t=0;t<=5;t++){ctx.fillText(t, toX(t), pad.t+H2+16);}
+  ctx.fillText('Time (hr)', pad.l+W2/2, H-4);
+  ctx.textAlign = 'right';
+  for(let p=0;p<=80;p+=20){ctx.fillText(p, pad.l-6, toY(p)+4);}
+  ctx.save(); ctx.translate(12, pad.t+H2/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.fillText('Position (mi)',0,0); ctx.restore();
+
+  // Segments
+  for(let i=0;i<data.length-1;i++){
+    ctx.strokeStyle = colors[i]; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(toX(data[i][0]), toY(data[i][1]));
+    ctx.lineTo(toX(data[i+1][0]), toY(data[i+1][1]));
+    ctx.stroke();
+  }
+  // Highlight segment 3
+  ctx.strokeStyle = '#e8b84b'; ctx.lineWidth = 4;
+  ctx.setLineDash([6,3]);
+  ctx.beginPath(); ctx.moveTo(toX(2), toY(40)); ctx.lineTo(toX(3), toY(60)); ctx.stroke();
+  ctx.setLineDash([]);
+  // Annotation
+  ctx.fillStyle = '#e8b84b'; ctx.font = 'bold 12px Work Sans, sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText('Δd = 20 mi', toX(2)+8, toY(50)-4);
+  // Dots
+  data.forEach(([t,p]) => {
+    ctx.beginPath(); ctx.arc(toX(t), toY(p), 5, 0, Math.PI*2);
+    ctx.fillStyle = '#5cb870'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
+  });
+})();
+
+/* ── ACCEL-TIME GRAPH ── */
+(function drawAT() {
+  const c = document.getElementById('atCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const pad = {l:50, r:20, t:20, b:40};
+  const W2 = W - pad.l - pad.r, H2 = H - pad.t - pad.b;
+  const toX = t => pad.l + (t/30) * W2;
+  const toY = a => pad.t + H2 - (a/7) * H2;
+  const data = [[0,0],[5,5],[10,0],[20,0],[20,6],[30,6]];
+
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle = '#2d4030'; ctx.lineWidth = 0.5;
+  for(let t=0;t<=30;t+=5){ctx.beginPath();ctx.moveTo(toX(t),pad.t);ctx.lineTo(toX(t),pad.t+H2);ctx.stroke();}
+  for(let a=0;a<=7;a++){ctx.beginPath();ctx.moveTo(pad.l,toY(a));ctx.lineTo(pad.l+W2,toY(a));ctx.stroke();}
+
+  ctx.strokeStyle = '#5cb870'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+H2); ctx.lineTo(pad.l+W2,pad.t+H2); ctx.stroke();
+
+  ctx.fillStyle = '#8ca68f'; ctx.font = '11px IBM Plex Mono, monospace'; ctx.textAlign = 'center';
+  [0,5,10,15,20,25,30].forEach(t => ctx.fillText(t, toX(t), pad.t+H2+16));
+  ctx.fillText('Time (s)', pad.l+W2/2, H-4);
+  ctx.textAlign = 'right';
+  [0,1,2,3,4,5,6,7].forEach(a => ctx.fillText(a, pad.l-6, toY(a)+4));
+  ctx.save(); ctx.translate(12, pad.t+H2/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.fillText('Accel. (m/s²)',0,0); ctx.restore();
+
+  // Main line
+  ctx.strokeStyle = '#3bb8c3'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(toX(0), toY(0));
+  ctx.lineTo(toX(5), toY(5)); ctx.lineTo(toX(10), toY(0));
+  ctx.lineTo(toX(20), toY(0)); ctx.lineTo(toX(20), toY(6)); ctx.lineTo(toX(30), toY(6));
+  ctx.stroke();
+
+  // Highlight area 20-30
+  ctx.fillStyle = 'rgba(232,184,75,0.15)';
+  ctx.beginPath(); ctx.moveTo(toX(20), toY(0)); ctx.lineTo(toX(20), toY(6)); ctx.lineTo(toX(30), toY(6)); ctx.lineTo(toX(30), toY(0)); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#e8b84b'; ctx.lineWidth = 2; ctx.setLineDash([4,3]);
+  ctx.strokeRect(toX(20), toY(6), toX(30)-toX(20), toY(0)-toY(6));
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#e8b84b'; ctx.font = 'bold 11px Work Sans, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('Area = Δv', (toX(20)+toX(30))/2, (toY(0)+toY(6))/2);
+  ctx.fillText('= 60 m/s', (toX(20)+toX(30))/2, (toY(0)+toY(6))/2+15);
+})();
+
+/* ── FBD DIAGRAMS ── */
+function loadFBD(type) {
+  const c = document.getElementById('fbdMainCanvas');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const cx = W/2, cy = H/2;
+  ctx.clearRect(0,0,W,H);
+
+  // Object dot
+  ctx.fillStyle = '#3a7d44';
+  ctx.fillRect(cx-25, cy-25, 50, 50);
+  ctx.strokeStyle = '#5cb870'; ctx.lineWidth = 2; ctx.strokeRect(cx-25, cy-25, 50, 50);
+
+  function arrow(x1,y1,x2,y2,color,label) {
+    const angle = Math.atan2(y2-y1, x2-x1);
+    const hs = 10;
+    ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.fillStyle = color;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - hs*Math.cos(angle-0.4), y2 - hs*Math.sin(angle-0.4));
+    ctx.lineTo(x2 - hs*Math.cos(angle+0.4), y2 - hs*Math.sin(angle+0.4));
+    ctx.closePath(); ctx.fill();
+    // label
+    const lx = x2 + 14*Math.cos(angle); const ly = y2 + 14*Math.sin(angle);
+    ctx.fillStyle = color; ctx.font = 'bold 13px IBM Plex Mono, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(label, lx, ly);
+  }
+
+  const fbdData = {
+    rest: {
+      arrows:[
+        {x1:cx,y1:cy-25,x2:cx,y2:cy-90,color:'#5cb870',label:'FN'},
+        {x1:cx,y1:cy+25,x2:cx,y2:cy+90,color:'#e8b84b',label:'Fg'},
+      ],
+      info:'<strong>Box at rest on a surface.</strong><br>Forces are BALANCED (ΣF = 0). The normal force (FN, up) equals the weight (Fg, down). No horizontal forces because nothing is pushing or pulling it. Net force = 0, so no acceleration — 1st Law!'
+    },
+    moving: {
+      arrows:[
+        {x1:cx,y1:cy-25,x2:cx,y2:cy-90,color:'#5cb870',label:'FN'},
+        {x1:cx,y1:cy+25,x2:cx,y2:cy+90,color:'#e8b84b',label:'Fg'},
+        {x1:cx-25,y1:cy,x2:cx-90,y2:cy,color:'#e05a4e',label:'Ff'},
+        {x1:cx+25,y1:cy,x2:cx+90,y2:cy,color:'#3bb8c3',label:'Fa'},
+      ],
+      info:'<strong>Box moving at constant velocity.</strong><br>Fa and Ff are equal and opposite → ΣF = 0. The box KEEPS moving at constant velocity (1st Law). Constant velocity does NOT mean no forces — it means balanced forces. FN = Fg vertically.'
+    },
+    freefall: {
+      arrows:[
+        {x1:cx,y1:cy+25,x2:cx,y2:cy+100,color:'#e8b84b',label:'Fg'},
+      ],
+      info:'<strong>Object in free fall.</strong><br>ONLY gravity acts on it — that\'s what "free fall" means. No normal force (not touching a surface), no air resistance (neglected). The object accelerates downward at g = 9.8 m/s².'
+    },
+    terminal: {
+      arrows:[
+        {x1:cx,y1:cy+25,x2:cx,y2:cy+80,color:'#e8b84b',label:'Fg'},
+        {x1:cx,y1:cy-25,x2:cx,y2:cy-80,color:'#3bb8c3',label:'Fair'},
+      ],
+      info:'<strong>Object at terminal velocity.</strong><br>Air resistance equals gravity: ΣF = 0. No more acceleration — the object falls at a constant (terminal) velocity. The FBD looks like "at rest" but the object is definitely moving. Balanced forces ≠ stopped.'
+    },
+    accel: {
+      arrows:[
+        {x1:cx,y1:cy-25,x2:cx,y2:cy-90,color:'#5cb870',label:'FN'},
+        {x1:cx,y1:cy+25,x2:cx,y2:cy+90,color:'#e8b84b',label:'Fg'},
+        {x1:cx-25,y1:cy,x2:cx-55,y2:cy,color:'#e05a4e',label:'Ff'},
+        {x1:cx+25,y1:cy,x2:cx+110,y2:cy,color:'#3bb8c3',label:'Fa'},
+      ],
+      info:'<strong>Object accelerating to the right.</strong><br>Fa > Ff → ΣF points right → acceleration points right (2nd Law). The arrows for Fa are longer than Ff to show it\'s the bigger force. Vertical forces still balanced.'
+    }
+  };
+
+  const d = fbdData[type];
+  if (d) {
+    d.arrows.forEach(a => arrow(a.x1,a.y1,a.x2,a.y2,a.color,a.label));
+    document.getElementById('fbdInfo').innerHTML = d.info;
+  }
+}
+loadFBD('rest');
+
+/* ── QUIZ ── */
+const quizData = [
+  {
+    num:1, pts:3, topic:'Equations',
+    stem:'Solve V = IR for R.',
+    choices:['R = VI','R = I/V','R = V/I','R = V + I'],
+    correct:2,
+    explain:'V = IR means R is multiplied by I. Divide both sides by I: V/I = R. So R = V/I.'
+  },
+  {
+    num:2, pts:3, topic:'Equations',
+    stem:'Solve v = d/t for t.',
+    choices:['t = d/v','t = vd','t = v/d','t = 1/(vd)'],
+    correct:0,
+    explain:'There\'s a fraction. Multiply both sides by t: v·t = d. Then divide by v: t = d/v.'
+  },
+  {
+    num:3, pts:2, topic:'Acceleration',
+    stem:'Which of these counts as acceleration? (A) object changes direction  (B) object changes mass  (C) object changes position',
+    choices:['A only','B only','A and C','B and C'],
+    correct:0,
+    explain:'Acceleration is any change in velocity — which includes changing direction (velocity is speed + direction). Changing mass or just changing position is NOT acceleration.'
+  },
+  {
+    num:4, pts:2, topic:'Kinematics',
+    stem:'A train has a = −6.0 m/s², v₀ = 60.0 m/s. How far does it travel in 5.0 s?',
+    choices:['140 m','230 m','270 m','530 m'],
+    correct:1,
+    explain:'d = v₀t + ½at² = (60)(5) + ½(−6)(25) = 300 − 75 = 225 m ≈ 230 m.'
+  },
+  {
+    num:5, pts:2, topic:'Kinematics',
+    stem:'A train has a = −4.0 m/s², v₀ = 50.0 m/s. How far does it travel in 8.0 s?',
+    choices:['78 m','130 m','270 m','380 m'],
+    correct:2,
+    explain:'d = (50)(8) + ½(−4)(64) = 400 − 128 = 272 m ≈ 270 m.'
+  },
+  {
+    num:6, pts:4, topic:'Graphs',
+    stem:'On a position-time graph, the object goes from 40 mi to 60 mi during the third hour (t=2 to t=3). What is the change in position?',
+    choices:['0 miles','15 miles','20 miles','60 miles'],
+    correct:2,
+    explain:'Change in position = final − initial = 60 − 40 = 20 miles. The 60 miles is total distance from the start, not the change.'
+  },
+  {
+    num:7, pts:4, topic:'Graphs',
+    stem:'On an acceleration-time graph, acceleration = 6 m/s² from t=20s to t=30s. What is the change in velocity?',
+    choices:['30 m/s','60 m/s','90 m/s','180 m/s'],
+    correct:1,
+    explain:'On an a-t graph, area under the curve = Δv. Area = height × width = 6 × 10 = 60 m/s.'
+  },
+  {
+    num:8, pts:2, topic:'Graphs',
+    stem:'The slope of a velocity-time graph is ___.',
+    choices:['acceleration','displacement','force','velocity'],
+    correct:0,
+    explain:'Slope = rise/run. On a v-t graph, rise = change in velocity, run = change in time. That\'s the definition of acceleration.'
+  },
+  {
+    num:9, pts:2, topic:'Free Fall',
+    stem:'For objects in free fall to accelerate at exactly −9.8 m/s², which must be neglected?',
+    choices:['Initial velocity','Mass and weight','Air resistance','Surface area'],
+    correct:2,
+    explain:'Air resistance changes how fast an object falls. Without it (neglecting it), all objects fall at g = 9.8 m/s² regardless of mass.'
+  },
+  {
+    num:10, pts:3, topic:'Free Fall',
+    stem:'The Willis Tower is 442 m tall. A rock is dropped. How long until it hits the ground?',
+    choices:['9.50 s','13.4 s','46.5 s','90.2 s'],
+    correct:0,
+    explain:'d = ½gt² → 442 = ½(9.8)t² = 4.9t² → t² = 90.2 → t = 9.50 s.'
+  },
+  {
+    num:11, pts:2, topic:'Gravity',
+    stem:'The gravitational force between two objects ___.',
+    choices:['increases as the masses of the objects increase','increases as the volumes decrease','decreases as weights increase','decreases as distance decreases'],
+    correct:0,
+    explain:'Gravity increases with mass and decreases with distance. More mass → stronger pull. Greater distance → weaker pull.'
+  },
+  {
+    num:12, pts:2, topic:"Newton's Laws",
+    stem:"Newton's first law describes ___.",
+    choices:['what an object does as its mass changes','what an object in motion does until an unbalanced force acts','why an unbalanced force changes motion','why inertia is reduced when stopping'],
+    correct:1,
+    explain:"The 1st Law: objects in motion stay in motion (same speed and direction) UNTIL an unbalanced force acts. It's about maintaining the current state of motion."
+  },
+  {
+    num:13, pts:2, topic:'Inertia',
+    stem:'Which quantity determines inertia?',
+    choices:['Force','Mass','Position','Velocity'],
+    correct:1,
+    explain:'Inertia is determined by mass alone. More mass = more inertia = more resistance to changes in motion.'
+  },
+  {
+    num:14, pts:2, topic:"Newton's 3rd Law",
+    stem:'"Whenever an object exerts a force on another, the second exerts an equal force in the opposite direction." This is…',
+    choices:['True for all objects interacting','True only for objects at rest','False — they would cancel','False — two forces cannot happen'],
+    correct:0,
+    explain:"Newton's 3rd Law is ALWAYS true for all interacting objects. They don't cancel because the forces act on DIFFERENT objects."
+  },
+  {
+    num:15, pts:3, topic:'F = ma',
+    stem:"David's bike: mass = 225.43 kg, accelerates from rest to 45.0 m/s in 6.00 s. Find the unbalanced force.",
+    choices:['205 N','987 N','1,570 N','1,690 N'],
+    correct:3,
+    explain:'First find a = (45−0)/6 = 7.5 m/s². Then F = ma = 225.43 × 7.5 ≈ 1,691 N.'
+  }
+];
+
+let answered = 0;
+let correct = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  quizData.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-q';
+    div.id = `q-${qi}`;
+    const letters = ['A','B','C','D'];
+    div.innerHTML = `
+      <div class="quiz-q-header">
+        <span class="quiz-num">Q${q.num}</span>
+        <span style="font-size:0.82rem; color:var(--muted);">${q.topic}</span>
+        <span style="margin-left:auto; font-family:var(--mono); font-size:0.72rem; color:var(--muted);">${q.pts} pts</span>
+      </div>
+      <div class="quiz-stem">${q.stem}</div>
+      <div class="quiz-choices" id="choices-${qi}">
+        ${q.choices.map((c,ci) => `
+          <button class="choice-btn" onclick="answer(${qi},${ci})" id="choice-${qi}-${ci}">
+            <span class="choice-letter">${letters[ci]}</span>${c}
+          </button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="feedback-${qi}"></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function answer(qi, ci) {
+  const q = quizData[qi];
+  const isRight = ci === q.correct;
+  const letters = ['A','B','C','D'];
+  // Disable all buttons for this question
+  document.querySelectorAll(`#choices-${qi} button`).forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    if (i === ci && !isRight) btn.classList.add('wrong');
+  });
+  // Show feedback
+  const fb = document.getElementById(`feedback-${qi}`);
+  fb.classList.add('show', isRight ? 'correct' : 'wrong');
+  fb.innerHTML = (isRight ? '✓ Correct! ' : `✗ The answer was ${letters[q.correct]}. `) + q.explain;
+  // Update score
+  answered++;
+  if (isRight) correct++;
+  updateProgress();
+  if (answered === quizData.length) showScore();
+}
+
+function updateProgress() {
+  const pct = Math.round((answered / quizData.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-label').textContent = `Quiz: ${answered} / ${quizData.length} answered`;
+}
+
+function showScore() {
+  const sd = document.getElementById('score-display');
+  sd.style.display = 'block';
+  document.getElementById('score-num').textContent = `${correct} / ${quizData.length}`;
+  const pct = Math.round((correct/quizData.length)*100);
+  let msg = '';
+  if (pct === 100) msg = '🏆 Perfect score! You are ready.';
+  else if (pct >= 80) msg = '💪 Solid work. Review the ones you missed.';
+  else if (pct >= 60) msg = '📖 Getting there. Focus on your wrong answers above.';
+  else msg = '🔄 More review needed — work through each section again.';
+  document.getElementById('score-msg').textContent = msg;
+  sd.scrollIntoView({behavior:'smooth'});
+}
+
+function resetQuiz() {
+  answered = 0; correct = 0;
+  document.getElementById('score-display').style.display = 'none';
+  updateProgress();
+  buildQuiz();
+}
+
+buildQuiz();
+</script>
+</body>
+</html>

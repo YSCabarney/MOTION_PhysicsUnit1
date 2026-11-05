@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bad Movie Physics — Pre-Test</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1520; --surface:#141d2e; --card:#1a2440; --card2:#1f2b4a;
+    --border:#2a3a60; --accent:#4a7de8; --accent2:#7aa8ff;
+    --gold:#f0c040; --teal:#3bd4c3; --red:#f05a6e; --green:#5cd88a;
+    --text:#e8ecf5; --muted:#7a90b8;
+    --mono:'IBM Plex Mono',monospace; --serif:'Fraunces',serif; --sans:'Work Sans',sans-serif;
+  }
+  @media(prefers-color-scheme:light){
+    :root{--bg:#f0f2f8;--surface:#e4e9f5;--card:#fff;--card2:#f5f7fc;
+    --border:#c0cce0;--accent:#2a5de0;--accent2:#1a44b8;
+    --gold:#a07000;--teal:#1a9e94;--red:#c01830;--green:#1a9040;
+    --text:#0d1530;--muted:#4a5e88;}
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.65;}
+
+  /* ── HEADER ── */
+  .site-header{
+    background:linear-gradient(135deg,#06091a 0%,#0d1836 60%,#111f42 100%);
+    border-bottom:2px solid var(--accent);
+    padding:2.5rem 1.5rem 2rem; text-align:center;
+  }
+  .eyebrow{font-family:var(--mono);font-size:.72rem;color:var(--accent2);
+    text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;}
+  .site-header h1{font-family:var(--serif);font-size:clamp(2rem,5.5vw,3.4rem);
+    font-weight:900;line-height:1.1;color:var(--text);}
+  .site-header h1 em{font-style:italic;color:var(--red);}
+  .header-sub{color:var(--muted);font-size:.95rem;max-width:580px;margin:.75rem auto 0;}
+
+  /* ── PROGRESS ── */
+  .prog-wrap{background:var(--surface);border-bottom:1px solid var(--border);
+    padding:.4rem 1.5rem;display:flex;align-items:center;gap:.75rem;
+    font-size:.78rem;font-family:var(--mono);color:var(--muted);
+    position:sticky;top:0;z-index:50;}
+  .prog-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+  .prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--teal));
+    border-radius:3px;transition:width .4s;}
+
+  /* ── LAYOUT ── */
+  main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem;}
+
+  /* ── SCENE HEADER ── */
+  .scene-header{display:flex;align-items:center;gap:.75rem;
+    margin:2.5rem 0 .75rem;padding-bottom:.6rem;border-bottom:2px solid var(--border);}
+  .scene-num{font-family:var(--serif);font-size:2rem;font-weight:900;
+    color:var(--accent);line-height:1;flex-shrink:0;}
+  .scene-title{font-family:var(--serif);font-size:1.3rem;font-weight:700;}
+  .scene-meta{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-top:.1rem;}
+
+  /* ── SUBMIT BANNER ── */
+  .submit-banner{
+    background:linear-gradient(135deg,#0d2a1a,#0a1f28);
+    border:2px solid var(--green);border-radius:12px;
+    padding:1.25rem 1.4rem;margin-bottom:1.5rem;
+    display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-start;
+  }
+  .submit-banner-icon{font-size:2rem;flex-shrink:0;line-height:1;padding-top:.1rem;}
+  .submit-banner-body{flex:1;min-width:200px;}
+  .submit-banner-title{font-family:var(--serif);font-weight:700;font-size:1.1rem;
+    color:var(--green);margin-bottom:.35rem;}
+  .submit-banner-steps{font-size:.88rem;padding-left:1.1rem;margin:.4rem 0 .75rem;}
+  .submit-banner-steps li{margin-bottom:.3rem;color:var(--text);}
+  .submit-banner-steps li strong{color:var(--accent2);}
+  .doc-link-btn{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:var(--green);color:#051a0a;border-radius:7px;
+    padding:.6rem 1.1rem;font-family:var(--sans);font-weight:700;font-size:.9rem;
+    text-decoration:none;transition:background .15s;border:none;cursor:pointer;
+  }
+  .doc-link-btn:hover{background:#3fbb6a;}
+  .submit-note{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-top:.5rem;}
+
+  /* ── INTRO BOX ── */
+  .intro-box{background:var(--card);border:1px solid var(--border);border-radius:10px;
+    padding:1.1rem 1.25rem;margin-bottom:1.5rem;}
+  .intro-box p{font-size:.93rem;margin-bottom:.5rem;}
+  .intro-box p:last-child{margin-bottom:0;}
+  .intro-box strong{color:var(--accent2);}
+
+  /* ── WATCH BUTTON ── */
+  .watch-block{margin-bottom:1rem;}
+  .watch-btn{display:inline-flex;align-items:center;gap:.6rem;
+    background:var(--red);color:#fff;border:none;border-radius:8px;
+    padding:.7rem 1.2rem;font-family:var(--sans);font-weight:700;font-size:.95rem;
+    cursor:pointer;text-decoration:none;transition:background .15s;}
+  .watch-btn:hover{background:#c01830;}
+  .watch-note{font-family:var(--mono);font-size:.72rem;color:var(--muted);
+    margin-top:.4rem;display:block;}
+  .watch-note span{color:var(--gold);}
+
+  /* ── QUESTION CARDS ── */
+  .q-card{background:var(--card);border:1px solid var(--border);
+    border-radius:10px;margin-bottom:1rem;overflow:hidden;}
+  .q-header{background:linear-gradient(135deg,#101e3a,#0a1428);
+    padding:.65rem 1rem;display:flex;align-items:center;gap:.6rem;
+    border-bottom:1px solid var(--border);}
+  .q-num{font-family:var(--mono);font-size:.7rem;background:var(--accent);
+    color:#fff;padding:.1rem .45rem;border-radius:3px;font-weight:600;flex-shrink:0;}
+  .q-type{font-family:var(--mono);font-size:.68rem;color:var(--muted);}
+  .q-pts{margin-left:auto;font-family:var(--mono);font-size:.7rem;
+    background:var(--gold);color:#1a1000;padding:.1rem .4rem;border-radius:3px;font-weight:700;}
+  .q-body{padding:1rem;}
+  .q-stem{font-weight:600;font-size:.95rem;margin-bottom:.75rem;}
+  .q-context{color:var(--muted);font-size:.88rem;margin-bottom:.75rem;
+    font-style:italic;border-left:3px solid var(--border);padding-left:.75rem;}
+
+  /* ── MC CHOICES ── */
+  .mc-choices{display:flex;flex-direction:column;gap:.4rem;}
+  .mc-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:7px;
+    padding:.55rem .85rem;text-align:left;cursor:pointer;
+    font-family:var(--sans);font-size:.9rem;color:var(--text);
+    transition:border-color .15s,background .15s;display:flex;align-items:flex-start;gap:.65rem;}
+  .mc-btn:hover:not(:disabled){border-color:var(--teal);background:rgba(59,212,195,.07);}
+  .mc-btn.correct{border-color:var(--green);background:rgba(92,216,138,.12);color:var(--green);}
+  .mc-btn.wrong{border-color:var(--red);background:rgba(240,90,110,.1);color:var(--red);}
+  .mc-btn:disabled{cursor:default;}
+  .mc-letter{font-family:var(--mono);font-weight:600;font-size:.8rem;min-width:20px;padding-top:1px;}
+
+  /* ── FEEDBACK ── */
+  .q-feedback{display:none;margin-top:.75rem;padding:.65rem .85rem;
+    border-radius:7px;font-size:.88rem;border-left:3px solid;}
+  .q-feedback.show{display:block;}
+  .q-feedback.correct{border-color:var(--green);background:rgba(92,216,138,.08);color:var(--green);}
+  .q-feedback.wrong{border-color:var(--red);background:rgba(240,90,110,.08);color:var(--red);}
+  .q-feedback.info{border-color:var(--teal);background:rgba(59,212,195,.07);color:var(--teal);}
+
+  /* ── TEXT BOXES ── */
+  .answer-box{width:100%;background:var(--card2);border:1.5px solid var(--border);
+    border-radius:7px;padding:.65rem .85rem;color:var(--text);
+    font-family:var(--sans);font-size:.9rem;resize:vertical;min-height:90px;
+    transition:border-color .15s;}
+  .answer-box:focus{outline:none;border-color:var(--accent);}
+  .answer-box.submitted{border-color:var(--green);background:rgba(92,216,138,.05);}
+  .answer-box:disabled{opacity:.7;}
+
+  /* ── BUTTONS ── */
+  .check-btn{background:var(--accent);border:none;color:#fff;border-radius:7px;
+    padding:.5rem 1.1rem;font-family:var(--sans);font-size:.88rem;font-weight:600;
+    cursor:pointer;transition:background .15s;margin-top:.6rem;}
+  .check-btn:hover{background:var(--accent2);}
+  .check-btn:disabled{background:var(--muted);cursor:default;}
+  .reset-btn{background:none;border:1.5px solid var(--border);color:var(--muted);
+    border-radius:6px;padding:.4rem .9rem;font-family:var(--mono);font-size:.75rem;
+    cursor:pointer;transition:.15s;margin-top:.5rem;}
+  .reset-btn:hover{border-color:var(--red);color:var(--red);}
+
+  /* ── FBD TASK ── */
+  .fbd-task{background:var(--card2);border:1.5px dashed var(--border);
+    border-radius:8px;padding:1rem;text-align:center;margin:.75rem 0;}
+  .fbd-label{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-top:.5rem;}
+  .fbd-legend{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0;font-size:.78rem;font-family:var(--mono);}
+  .fbd-leg-item{display:flex;align-items:center;gap:.3rem;}
+  .fbd-swatch{width:14px;height:4px;border-radius:2px;}
+
+  /* ── CALCULATION GRID ── */
+  .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;}
+  .calc-part label{font-size:.82rem;color:var(--muted);display:block;margin-bottom:.3rem;}
+  .calc-part .answer-box{min-height:100px;}
+
+  /* ── SCENE DIVIDER ── */
+  .scene-divider{height:2px;
+    background:linear-gradient(90deg,var(--accent),transparent);
+    margin:2.5rem 0 0;border-radius:1px;}
+
+  /* ── SCORE ── */
+  #final-score{display:none;text-align:center;padding:2.5rem 1.5rem;
+    background:var(--card);border:2px solid var(--accent);border-radius:12px;margin:2rem 0;}
+  #final-score h2{font-family:var(--serif);font-size:1.5rem;font-weight:700;
+    color:var(--muted);margin-bottom:.5rem;}
+  #score-fraction{font-family:var(--serif);font-size:3.5rem;font-weight:900;
+    color:var(--accent2);line-height:1;}
+  #score-label{font-family:var(--mono);font-size:.72rem;color:var(--muted);}
+  #score-msg{margin-top:.75rem;font-size:.95rem;}
+
+  @media(max-width:600px){
+    main{padding:1.5rem 1rem 4rem;}
+    .site-header h1{font-size:1.9rem;}
+    .calc-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="eyebrow">Unit 2 Pre-Test · Motion &amp; Forces · 25 points</div>
+  <h1>Hollywood Got the Physics <em>Wrong.</em><br>Your Job Is to Catch It.</h1>
+  <p class="header-sub">Watch each clip, then answer the questions using the physics concepts from this unit. No explanations given — you have to figure it out.</p>
+</header>
+
+<div class="prog-wrap">
+  <span id="prog-label">Progress: 0 / 11 answered</span>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+  <span id="prog-pct">0%</span>
+</div>
+
+<main>
+
+  <!-- SUBMISSION BANNER -->
+  <div class="submit-banner">
+    <div class="submit-banner-icon">📄</div>
+    <div class="submit-banner-body">
+      <div class="submit-banner-title">Your Answer Sheet — Open This First</div>
+      <ol class="submit-banner-steps">
+        <li><strong>Open the answer sheet</strong> using the button below. It will open in a new tab.</li>
+        <li><strong>Add your name and date</strong> at the top of the doc.</li>
+        <li><strong>Keep both tabs open</strong> — watch the clips and answer the multiple choice here, then write your full answers (written questions, calculations, FBD descriptions) in the doc.</li>
+        <li><strong>For FBDs:</strong> draw your diagram on paper, then describe it in the doc's answer table.</li>
+        <li><strong>When you're done:</strong> go to <em>File → Share → Share with others</em> in the doc and share it with your teacher, OR submit the link through Canvas.</li>
+      </ol>
+      <a class="doc-link-btn" href="https://claude.ai/artifact/KpdgmvdGuLNJAvELYfQV2K" target="_blank" rel="noopener">
+        📝 Open Answer Sheet
+      </a>
+      <div class="submit-note">Opens in Claude Docs · Sign in with your school account if prompted</div>
+    </div>
+  </div>
+
+  <div class="intro-box">
+    <p><strong>How this works:</strong> Each scene shows physics that is wrong in one or more ways. Watch carefully — you may want to pause and rewatch. Then answer each question using physics vocabulary from the unit: inertia, Newton's laws, acceleration, net force, free fall, free body diagrams, mass vs. weight.</p>
+    <p>Multiple choice questions here are auto-graded for instant feedback. All written answers, calculations, and FBD descriptions go in the answer sheet doc. <strong>Show all math work</strong> on the calculation problems — no work, no credit.</p>
+    <p style="color:var(--gold);"><strong>⚠ If a video link doesn't load:</strong> Tell your teacher and move on — written questions can still be answered based on what you know about the scene from the description.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SCENE 1  Wile E. Coyote
+  ══════════════════════════════════════════ -->
+  <div class="scene-header">
+    <div class="scene-num">01</div>
+    <div>
+      <div class="scene-title">Wile E. Coyote Runs Off a Cliff 🏔️</div>
+      <div class="scene-meta">Looney Tunes &nbsp;·&nbsp; Concepts: free fall · gravity · Newton's 1st Law</div>
+    </div>
+  </div>
+
+  <div class="watch-block">
+    <a class="watch-btn" href="https://www.youtube.com/watch?v=lJuYcULzUoQ" target="_blank" rel="noopener">
+      ▶ Watch: "Coyote Falls" (Warner Bros. Animation, 3 min)
+    </a>
+    <span class="watch-note">Official Warner Bros. YouTube · <span>Focus on what happens right as Wile E. goes off the edge, and how he falls.</span></span>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q1</span><span class="q-type">Multiple Choice · Free Fall &amp; Newton's 1st Law</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">When Wile E. runs off the cliff, he keeps moving forward in mid-air for a moment before he falls. Which statement best describes what should actually happen, and why?</div>
+      <div class="mc-choices" id="mc-1">
+        <button class="mc-btn" onclick="checkMC(this,'mc-1',0,2,'Close — but the key issue is what happens to gravity the instant his feet leave the cliff. Gravity does not wait. The moment there is no ground pushing up on him (no normal force), gravity is the only force acting and he accelerates downward immediately.')">
+          <span class="mc-letter">A</span>He should slow down in mid-air because there is no longer anything pushing him forward.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-1',1,2,'Close — but the key issue is what happens to gravity the instant his feet leave the cliff. Gravity does not wait. The moment there is no ground pushing up on him (no normal force), gravity is the only force acting and he accelerates downward immediately.')">
+          <span class="mc-letter">B</span>He should keep moving forward at constant speed — his horizontal inertia is correct. But he should also start falling downward immediately the instant his feet leave the cliff, since gravity acts right away with no surface to provide a normal force.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-1',2,2,'Close — but the key issue is what happens to gravity the instant his feet leave the cliff. Gravity does not wait. The moment there is no ground pushing up on him (no normal force), gravity is the only force acting and he accelerates downward immediately.')">
+          <span class="mc-letter">C</span>He should stop immediately once he runs off the edge, since there is nothing solid to run on.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-1',3,2,'Close — but the key issue is what happens to gravity the instant his feet leave the cliff. Gravity does not wait. The moment there is no ground pushing up on him (no normal force), gravity is the only force acting and he accelerates downward immediately.')">
+          <span class="mc-letter">D</span>He should fly upward briefly because his upward running motion would carry him up before gravity takes over.</button>
+      </div>
+      <div class="q-feedback" id="fb-mc-1"></div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q2</span><span class="q-type">Multiple Choice · Free Fall Calculation</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">In the cartoon, Wile E. appears to fall for about 4 seconds before hitting the ground. Using d = ½gt², and neglecting air resistance, how tall would that cliff actually be?</div>
+      <div class="mc-choices" id="mc-2">
+        <button class="mc-btn" onclick="checkMC(this,'mc-2',0,1,'d = ½(9.8)(4²) = ½(9.8)(16) = 78.4 m. That\'s about 257 feet — roughly the height of a 25-story building. And Wile E. walks away from that. Classic cartoon physics.')">
+          <span class="mc-letter">A</span>19.6 m</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-2',1,1,'d = ½(9.8)(4²) = ½(9.8)(16) = 78.4 m. That\'s about 257 feet — roughly the height of a 25-story building. And Wile E. walks away from that. Classic cartoon physics.')">
+          <span class="mc-letter">B</span>78.4 m</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-2',2,1,'d = ½(9.8)(4²) = ½(9.8)(16) = 78.4 m. That\'s about 257 feet — roughly the height of a 25-story building. And Wile E. walks away from that. Classic cartoon physics.')">
+          <span class="mc-letter">C</span>39.2 m</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-2',3,1,'d = ½(9.8)(4²) = ½(9.8)(16) = 78.4 m. That\'s about 257 feet — roughly the height of a 25-story building. And Wile E. walks away from that. Classic cartoon physics.')">
+          <span class="mc-letter">D</span>156.8 m</button>
+      </div>
+      <div class="q-feedback" id="fb-mc-2"></div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q3</span><span class="q-type">Free Body Diagram + Written</span><span class="q-pts">3 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">Draw a free body diagram (on paper) for Wile E. at the exact moment his feet leave the cliff edge — mid-air, before he has fallen at all. Then describe it below.</div>
+      <div class="q-context">Which forces are present? Which forces are NOT present, and why? What does the net force tell you about his acceleration at that moment?</div>
+      <div class="fbd-task">
+        <canvas id="fbd-coyote" width="240" height="200"></canvas>
+        <div class="fbd-label">↑ Hint: what is touching him? What is NOT touching him?</div>
+      </div>
+      <div class="fbd-legend">
+        <div class="fbd-leg-item"><div class="fbd-swatch" style="background:#f0c040;"></div>Fg (weight)</div>
+        <div class="fbd-leg-item"><div class="fbd-swatch" style="background:#5cd88a;"></div>FN (normal)</div>
+        <div class="fbd-leg-item"><div class="fbd-swatch" style="background:#3bd4c3;"></div>Fa (applied)</div>
+        <div class="fbd-leg-item"><div class="fbd-swatch" style="background:#f05a6e;"></div>Fair (air resistance)</div>
+      </div>
+      <textarea class="answer-box" id="sa-3" placeholder="Describe your FBD: 'I drew ___ pointing ___ because ___. I did NOT draw ___ because ___. The net force is ___, which means his acceleration is ___.'"></textarea>
+      <button class="check-btn" onclick="submitSA('sa-3','fb-sa-3')">Submit</button>
+      <div class="q-feedback info" id="fb-sa-3">
+        <strong>Recorded.</strong> Correct answer: only Fg (weight) pointing straight down. No FN — there is no surface in contact with him. No Fa — running ended when he left the cliff. Minimal Fair at the first instant. Net force = Fg downward → acceleration = g = 9.8 m/s² downward, immediately.
+      </div>
+    </div>
+  </div>
+
+  <div class="scene-divider"></div>
+
+  <!-- ══════════════════════════════════════════
+       SCENE 2  Back to the Future
+  ══════════════════════════════════════════ -->
+  <div class="scene-header">
+    <div class="scene-num">02</div>
+    <div>
+      <div class="scene-title">Back to the Future — The DeLorean Hits 88 mph 🚗⚡</div>
+      <div class="scene-meta">Back to the Future (1985) &nbsp;·&nbsp; Concepts: kinematics · acceleration · Newton's 2nd Law · inertia</div>
+    </div>
+  </div>
+
+  <div class="watch-block">
+    <a class="watch-btn" href="https://www.youtube.com/watch?v=RxtRKzJHIFM" target="_blank" rel="noopener">
+      ▶ Watch: Clock Tower Scene — DeLorean launch (Movieclips, ~3 min)
+    </a>
+    <span class="watch-note">Official Movieclips channel · <span>Focus on how fast the DeLorean accelerates and how Marty reacts in the seat.</span></span>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q4</span><span class="q-type">Multiple Choice · Newton's 1st Law &amp; Inertia</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">When the DeLorean accelerates rapidly, Marty gets pushed back hard into his seat. A lot of people say he is being "pushed backward by a force." What is actually happening, according to Newton's First Law?</div>
+      <div class="mc-choices" id="mc-4">
+        <button class="mc-btn" onclick="checkMC(this,'mc-4',0,1,'Exactly. This is inertia — Marty\'s body has mass, and mass resists changes in motion. The seat accelerates forward with the car; Marty\'s body tries to stay where it was (at rest). The seat pushes forward on his back; his back pushes backward on the seat (Newton\'s 3rd Law). He is not being pushed backward — the car is moving forward away from his natural state of rest.')">
+          <span class="mc-letter">A</span>Marty's body has inertia — it resists the change in motion and "wants" to stay at rest while the car accelerates forward around him. The seat pressing into his back is what actually pushes him forward.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-4',1,1,'Exactly. This is inertia — Marty\'s body has mass, and mass resists changes in motion. The seat accelerates forward with the car; Marty\'s body tries to stay where it was (at rest). The seat pushes forward on his back; his back pushes backward on the seat (Newton\'s 3rd Law). He is not being pushed backward — the car is moving forward away from his natural state of rest.')">
+          <span class="mc-letter">B</span>A backward force from the acceleration pushes Marty into the seat.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-4',2,1,'Exactly. This is inertia — Marty\'s body has mass, and mass resists changes in motion. The seat accelerates forward with the car; Marty\'s body tries to stay where it was (at rest). The seat pushes forward on his back; his back pushes backward on the seat (Newton\'s 3rd Law). He is not being pushed backward — the car is moving forward away from his natural state of rest.')">
+          <span class="mc-letter">C</span>Gravity increases during acceleration, pressing him downward and backward.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-4',3,1,'Exactly. This is inertia — Marty\'s body has mass, and mass resists changes in motion. The seat accelerates forward with the car; Marty\'s body tries to stay where it was (at rest). The seat pushes forward on his back; his back pushes backward on the seat (Newton\'s 3rd Law). He is not being pushed backward — the car is moving forward away from his natural state of rest.')">
+          <span class="mc-letter">D</span>The engine force is so large it creates a shockwave that pushes him backward.</button>
+      </div>
+      <div class="q-feedback" id="fb-mc-4"></div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q5</span><span class="q-type">Calculation — Show Your Work</span><span class="q-pts">3 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">In the film, the DeLorean goes from 0 to 88 mph (39.3 m/s) in about 7 seconds. The DeLorean + Doc + Marty have a combined mass of about 1,500 kg.</div>
+      <div class="q-context">Use the format: (1) List your known data, (2) Write the equation, (3) Substitute and solve, (4) State your answer with units.</div>
+      <div class="calc-grid">
+        <div class="calc-part">
+          <label>Part A — Find the acceleration of the DeLorean (use a = Δv/t)</label>
+          <textarea class="answer-box" id="sa-5a" placeholder="Known: vo = ?, vf = ?, t = ?&#10;Equation: a = (vf - vo) / t&#10;Solve:&#10;Answer:"></textarea>
+        </div>
+        <div class="calc-part">
+          <label>Part B — Find the net force required (use F = ma)</label>
+          <textarea class="answer-box" id="sa-5b" placeholder="Known: m = ?, a = (from Part A)&#10;Equation: F = ma&#10;Solve:&#10;Answer:"></textarea>
+        </div>
+      </div>
+      <button class="check-btn" onclick="submitSA('sa-5a','fb-sa-5'); submitSA('sa-5b','fb-sa-5b')">Submit Both Parts</button>
+      <div class="q-feedback info" id="fb-sa-5" style="margin-top:.4rem;">
+        <strong>Part A recorded.</strong> Expected: a = (39.3 − 0)/7 ≈ 5.6 m/s²
+      </div>
+      <div class="q-feedback info" id="fb-sa-5b" style="margin-top:.3rem;">
+        <strong>Part B recorded.</strong> Expected: F = (1500)(5.6) ≈ 8,400 N — roughly the force of a small rocket engine. The real DeLorean DMC-12 engine could not come close to this, which is why the physics is impossible.
+      </div>
+    </div>
+  </div>
+
+  <div class="scene-divider"></div>
+
+  <!-- ══════════════════════════════════════════
+       SCENE 3  The Matrix lobby fight
+  ══════════════════════════════════════════ -->
+  <div class="scene-header">
+    <div class="scene-num">03</div>
+    <div>
+      <div class="scene-title">The Matrix — Lobby Fight Scene 🥋</div>
+      <div class="scene-meta">The Matrix (1999) &nbsp;·&nbsp; Concepts: Newton's 2nd &amp; 3rd Law · F = ma · action-reaction pairs</div>
+    </div>
+  </div>
+
+  <div class="watch-block">
+    <a class="watch-btn" href="https://www.youtube.com/watch?v=m8e-FF8MsqU" target="_blank" rel="noopener">
+      ▶ Watch: The Matrix — Lobby Scene (Movieclips, ~3 min)
+    </a>
+    <span class="watch-note">Official Movieclips channel · <span>Pay close attention to what happens to Neo vs. what happens to the guards he hits. Watch how they react differently.</span></span>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q6</span><span class="q-type">Multiple Choice · Newton's 3rd Law</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">Neo kicks a guard and the guard flies backward across the room. Neo barely moves. According to Newton's Third Law, what is wrong with this picture?</div>
+      <div class="mc-choices" id="mc-6">
+        <button class="mc-btn" onclick="checkMC(this,'mc-6',0,2,'Exactly right. The 3rd Law says the guard pushes back on Neo with the exact same force. Same force on both. But Neo has less mass than the guard, so by F=ma, Neo should actually have a greater acceleration — he should move MORE, not less. The movie violates both the 3rd and 2nd Laws to make Neo look powerful.')">
+          <span class="mc-letter">A</span>When Neo's foot hits the guard, the guard must push back on Neo's foot with the exact same force. Since Neo has less mass, he should actually accelerate more than the guard — not less.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-6',1,2,'Exactly right. The 3rd Law says the guard pushes back on Neo with the exact same force. Same force on both. But Neo has less mass than the guard, so by F=ma, Neo should actually have a greater acceleration — he should move MORE, not less. The movie violates both the 3rd and 2nd Laws to make Neo look powerful.')">
+          <span class="mc-letter">B</span>The guard feels a bigger force than Neo because the guard is bigger and heavier.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-6',2,2,'Exactly right. The 3rd Law says the guard pushes back on Neo with the exact same force. Same force on both. But Neo has less mass than the guard, so by F=ma, Neo should actually have a greater acceleration — he should move MORE, not less. The movie violates both the 3rd and 2nd Laws to make Neo look powerful.')">
+          <span class="mc-letter">C</span>Only the person being kicked experiences a force. The kicker doesn't feel anything.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-6',3,2,'Exactly right. The 3rd Law says the guard pushes back on Neo with the exact same force. Same force on both. But Neo has less mass than the guard, so by F=ma, Neo should actually have a greater acceleration — he should move MORE, not less. The movie violates both the 3rd and 2nd Laws to make Neo look powerful.')">
+          <span class="mc-letter">D</span>The scene is physically possible because Neo is moving very fast when he kicks.</button>
+      </div>
+      <div class="q-feedback" id="fb-mc-6"></div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q7</span><span class="q-type">Calculation + Analysis — Show Your Work</span><span class="q-pts">3 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">Suppose Neo (mass: 73 kg) kicks a guard (mass: 91 kg) with a force of 1,100 N.</div>
+      <div class="q-context">By Newton's 3rd Law, what force does the guard exert back on Neo? Then use F = ma to find the acceleration of each person. Finally, explain: does the movie show this correctly? What does it get wrong?</div>
+      <textarea class="answer-box" id="sa-7" style="min-height:140px;" placeholder="Force on guard = ___N (direction: ___)&#10;Force on Neo = ___N (direction: ___)  [Newton's 3rd Law]&#10;&#10;Guard acceleration: a = F/m = ___/91 = ___ m/s²&#10;Neo acceleration: a = F/m = ___/73 = ___ m/s²&#10;&#10;Does the movie show this correctly? What is wrong?"></textarea>
+      <button class="check-btn" onclick="submitSA('sa-7','fb-sa-7')">Submit</button>
+      <div class="q-feedback info" id="fb-sa-7">
+        <strong>Recorded.</strong> Force on guard = 1,100 N forward. Force on Neo = 1,100 N backward (same magnitude, opposite direction — 3rd Law). Guard: a = 1100/91 ≈ 12.1 m/s². Neo: a = 1100/73 ≈ 15.1 m/s². Neo has less mass so he should accelerate MORE backward — the opposite of what the movie shows.
+      </div>
+    </div>
+  </div>
+
+  <div class="scene-divider"></div>
+
+  <!-- ══════════════════════════════════════════
+       SCENE 4  Apollo 13
+  ══════════════════════════════════════════ -->
+  <div class="scene-header">
+    <div class="scene-num">04</div>
+    <div>
+      <div class="scene-title">Apollo 13 — Objects Floating in the Capsule 🚀</div>
+      <div class="scene-meta">Apollo 13 (1995) &nbsp;·&nbsp; Concepts: Newton's 1st Law · inertia · free body diagrams · weight vs. mass</div>
+    </div>
+  </div>
+
+  <div class="watch-block">
+    <a class="watch-btn" href="https://www.youtube.com/watch?v=DZDV8YE0s7U" target="_blank" rel="noopener">
+      ▶ Watch: Apollo 13 — weightlessness scene (Universal Pictures, ~2 min)
+    </a>
+    <span class="watch-note">Official Universal Pictures channel · <span>Watch how objects and people move inside the capsule — do they behave the way Newton's Laws predict?</span></span>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q8</span><span class="q-type">Multiple Choice · Weight vs. Mass · Newton's 1st Law</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">In the film, the astronauts and objects appear "weightless" and float inside the capsule. Which of the following best explains what is physically happening? (This one is actually a mix of right and wrong in the movie — read carefully.)</div>
+      <div class="mc-choices" id="mc-8">
+        <button class="mc-btn" onclick="checkMC(this,'mc-8',0,1,'This is the most correct answer. The astronauts\' mass never changes — mass is a measure of matter and is the same everywhere. Their weight (the gravitational force on them) is actually not zero in low Earth orbit — Earth\'s gravity still pulls them. They float because the capsule and everything in it is in free fall around Earth together. With no surface contact, there is no normal force, so they feel weightless. The movie actually gets the floating mostly right for this reason.')">
+          <span class="mc-letter">A</span>The astronauts' mass is unchanged, but they feel weightless because they and the capsule are both in free fall together — gravity still acts on them, but there is no surface to push back (no normal force), so they feel no weight.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-8',1,1,'This is the most correct answer. The astronauts\' mass never changes — mass is a measure of matter and is the same everywhere. Their weight (the gravitational force on them) is actually not zero in low Earth orbit — Earth\'s gravity still pulls them. They float because the capsule and everything in it is in free fall around Earth together. With no surface contact, there is no normal force, so they feel weightless. The movie actually gets the floating mostly right for this reason.')">
+          <span class="mc-letter">B</span>They are far enough from Earth that gravity is zero, so they have no weight and no mass.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-8',2,1,'This is the most correct answer. The astronauts\' mass never changes — mass is a measure of matter and is the same everywhere. Their weight (the gravitational force on them) is actually not zero in low Earth orbit — Earth\'s gravity still pulls them. They float because the capsule and everything in it is in free fall around Earth together. With no surface contact, there is no normal force, so they feel weightless. The movie actually gets the floating mostly right for this reason.')">
+          <span class="mc-letter">C</span>Space cancels the force of gravity, so there is no net force on them and they float at rest.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-8',3,1,'This is the most correct answer. The astronauts\' mass never changes — mass is a measure of matter and is the same everywhere. Their weight (the gravitational force on them) is actually not zero in low Earth orbit — Earth\'s gravity still pulls them. They float because the capsule and everything in it is in free fall around Earth together. With no surface contact, there is no normal force, so they feel weightless. The movie actually gets the floating mostly right for this reason.')">
+          <span class="mc-letter">D</span>Moving at high speed reduces the effect of gravity, like how a car going fast feels lighter on a hill.</button>
+      </div>
+      <div class="q-feedback" id="fb-mc-8"></div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q9</span><span class="q-type">Free Body Diagram + Written</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">Draw two free body diagrams on paper — then describe them below.</div>
+      <div class="q-context"><strong>Situation A:</strong> An astronaut standing on Earth before launch (at rest on the launch pad).<br><strong>Situation B:</strong> The same astronaut floating inside the capsule in orbit.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.75rem 0;">
+        <div class="fbd-task" style="border-color:var(--accent);">
+          <canvas id="fbd-astro-ground" width="180" height="160"></canvas>
+          <div class="fbd-label">Situation A: On the launch pad</div>
+        </div>
+        <div class="fbd-task" style="border-color:var(--muted);">
+          <canvas id="fbd-astro-orbit" width="180" height="160"></canvas>
+          <div class="fbd-label">Situation B: In orbit</div>
+        </div>
+      </div>
+      <textarea class="answer-box" id="sa-9" placeholder="Situation A — forces I drew and why:&#10;&#10;Situation B — forces I drew and why:&#10;&#10;What is the same in both situations? What is different? What does this tell you about mass vs. weight?"></textarea>
+      <button class="check-btn" onclick="submitSA('sa-9','fb-sa-9')">Submit</button>
+      <div class="q-feedback info" id="fb-sa-9">
+        <strong>Recorded.</strong> Situation A: Fg (down) + FN (up), equal length arrows → ΣF = 0, at rest. Situation B: Fg (down) only — gravity still acts! But no FN because no surface contact → ΣF = Fg downward → constant free fall. Mass is the same in both; weight (Fg = mg) is similar but slightly less in orbit. The astronaut is not "weightless" — they are in perpetual free fall.
+      </div>
+    </div>
+  </div>
+
+  <div class="scene-divider"></div>
+
+  <!-- ══════════════════════════════════════════
+       SCENE 5  Star Wars — debris in space
+  ══════════════════════════════════════════ -->
+  <div class="scene-header">
+    <div class="scene-num">05</div>
+    <div>
+      <div class="scene-title">Star Wars — Debris After an Explosion in Space 💥</div>
+      <div class="scene-meta">Star Wars (various) &nbsp;·&nbsp; Concepts: Newton's 1st Law · inertia · sound in vacuum</div>
+    </div>
+  </div>
+
+  <div class="watch-block">
+    <a class="watch-btn" href="https://www.youtube.com/watch?v=sYqRMFD7HJM" target="_blank" rel="noopener">
+      ▶ Watch: Star Wars space battle — Death Star explosion scene (Star Wars official, ~1 min)
+    </a>
+    <span class="watch-note">Star Wars official channel · <span>Watch the explosion and what happens to the debris afterward. Also notice the sounds.</span></span>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q10</span><span class="q-type">Multiple Choice · Newton's 1st Law in Space</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">After an explosion in space, we see debris pieces slow down and stop floating after a few seconds. We also hear a loud boom. Identify TWO things that are physically wrong with this scene.</div>
+      <div class="mc-choices" id="mc-10">
+        <button class="mc-btn" onclick="checkMC(this,'mc-10',0,2,'Correct on both counts. (1) Sound is a mechanical wave — it needs a medium (air, water, solid) to travel. Space is essentially a vacuum. No medium = no sound. The explosion itself might be possible if the ship has its own oxygen supply, but the sound would not reach another ship. (2) With no air resistance in space, nothing is there to slow the debris. By Newton\'s 1st Law, objects in motion stay in motion at the same speed and direction. The debris would fly outward forever unless another force acts on it.')">
+          <span class="mc-letter">A</span>(1) You cannot hear sound in the vacuum of space — sound needs a medium to travel through. (2) Debris would not slow down and stop — with no air resistance, Newton's 1st Law says it would keep moving at constant velocity forever.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-10',1,2,'Correct on both counts. (1) Sound is a mechanical wave — it needs a medium (air, water, solid) to travel. Space is essentially a vacuum. No medium = no sound. The explosion itself might be possible if the ship has its own oxygen supply, but the sound would not reach another ship. (2) With no air resistance in space, nothing is there to slow the debris. By Newton\'s 1st Law, objects in motion stay in motion at the same speed and direction. The debris would fly outward forever unless another force acts on it.')">
+          <span class="mc-letter">B</span>(1) Explosions cannot happen in space. (2) Debris should float gently, not fly outward fast.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-10',2,2,'Correct on both counts. (1) Sound is a mechanical wave — it needs a medium (air, water, solid) to travel. Space is essentially a vacuum. No medium = no sound. The explosion itself might be possible if the ship has its own oxygen supply, but the sound would not reach another ship. (2) With no air resistance in space, nothing is there to slow the debris. By Newton\'s 1st Law, objects in motion stay in motion at the same speed and direction. The debris would fly outward forever unless another force acts on it.')">
+          <span class="mc-letter">C</span>(1) The explosion should be silent. (2) The debris should move faster because there's no gravity to slow it down.</button>
+        <button class="mc-btn" onclick="checkMC(this,'mc-10',3,2,'Correct on both counts. (1) Sound is a mechanical wave — it needs a medium (air, water, solid) to travel. Space is essentially a vacuum. No medium = no sound. The explosion itself might be possible if the ship has its own oxygen supply, but the sound would not reach another ship. (2) With no air resistance in space, nothing is there to slow the debris. By Newton\'s 1st Law, objects in motion stay in motion at the same speed and direction. The debris would fly outward forever unless another force acts on it.')">
+          <span class="mc-letter">D</span>(1) The sound is too quiet for such a large explosion. (2) Debris should sink toward the nearest planet.</button>
+      </div>
+      <div class="q-feedback" id="fb-mc-10"></div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-header"><span class="q-num">Q11</span><span class="q-type">Short Answer — Written</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="q-stem">A piece of debris from the Death Star explosion has a mass of 500 kg. After the blast, it is moving at 120 m/s to the right, in deep space with no other forces acting on it.</div>
+      <div class="q-context">What is its velocity 10 minutes later? What is its acceleration? Draw a free body diagram for this piece of debris on paper and describe it below. Use Newton's Laws to explain your answer — not just common sense.</div>
+      <textarea class="answer-box" id="sa-11" placeholder="Velocity after 10 minutes: ___&#10;Acceleration: ___&#10;&#10;FBD description: (what forces, if any, are on it?)&#10;&#10;Newton's Law that explains this:"></textarea>
+      <button class="check-btn" onclick="submitSA('sa-11','fb-sa-11')">Submit</button>
+      <div class="q-feedback info" id="fb-sa-11">
+        <strong>Recorded.</strong> Velocity after 10 minutes: still 120 m/s to the right — unchanged. Acceleration: 0 m/s² (no change in velocity). FBD: no forces (or only negligible gravity from distant objects) → ΣF = 0. Newton's 1st Law: an object in motion stays in motion at constant velocity unless acted on by an unbalanced force. With no air resistance or other force in deep space, nothing changes its motion.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FINAL SCORE ── -->
+  <div id="final-score">
+    <h2>Multiple Choice Score</h2>
+    <div id="score-fraction">0 / 6</div>
+    <div id="score-label">MC QUESTIONS CORRECT</div>
+    <div id="score-msg"></div>
+    <p style="margin-top:1rem;font-size:.85rem;color:var(--muted);">Written &amp; calculation questions will be graded by your teacher.</p>
+  </div>
+
+  <div style="text-align:right;margin-top:1rem;">
+    <button class="reset-btn" onclick="if(confirm('Reset all answers?'))location.reload()">↺ Reset All</button>
+  </div>
+
+</main>
+
+<script>
+/* ── PROGRESS ── */
+const TOTAL = 11;
+let answeredCount = 0;
+function updateProgress() {
+  const pct = Math.round(answeredCount/TOTAL*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-pct').textContent = pct+'%';
+  document.getElementById('prog-label').textContent = `Progress: ${answeredCount} / ${TOTAL} answered`;
+}
+
+/* ── MULTIPLE CHOICE ── */
+const LETTERS = ['A','B','C','D'];
+let mcCorrect = 0, mcAnswered = 0;
+
+function checkMC(btn, groupId, chosen, correct, explain) {
+  const group = document.getElementById(groupId);
+  group.querySelectorAll('.mc-btn').forEach((b,i) => {
+    b.disabled = true;
+    if (i === correct) b.classList.add('correct');
+    if (i === chosen && chosen !== correct) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb-'+groupId);
+  const isRight = chosen === correct;
+  fb.className = 'q-feedback show ' + (isRight ? 'correct' : 'wrong');
+  fb.innerHTML = (isRight ? '✓ Correct! ' : `✗ The answer was ${LETTERS[correct]}. `) + explain;
+  mcAnswered++; if (isRight) mcCorrect++;
+  answeredCount++; updateProgress();
+  if (mcAnswered === 6) showFinalScore();
+}
+
+/* ── SHORT ANSWER ── */
+function submitSA(inputId, fbId) {
+  const inp = document.getElementById(inputId);
+  const fb  = document.getElementById(fbId);
+  if (!inp || !inp.value.trim()) {
+    inp.style.borderColor = 'var(--red)'; return;
+  }
+  inp.classList.add('submitted');
+  inp.disabled = true;
+  fb.style.display = 'block';
+  if (!fb.classList.contains('show')) {
+    fb.classList.add('show');
+    answeredCount++; updateProgress();
+  }
+}
+
+/* ── FINAL SCORE ── */
+function showFinalScore() {
+  const sd = document.getElementById('final-score');
+  sd.style.display = 'block';
+  document.getElementById('score-fraction').textContent = `${mcCorrect} / 6`;
+  const pct = Math.round(mcCorrect/6*100);
+  let msg = pct===100 ? '🏆 Perfect on MC. You\'re ready for the exam.'
+    : pct>=83 ? '💪 Strong — review the explanations on the ones you missed.'
+    : pct>=67 ? '📖 Decent start. Go back through the study guide for the concepts you missed.'
+    : '🔄 Review the study guide before the exam — pay extra attention to Newton\'s Laws and free fall.';
+  document.getElementById('score-msg').textContent = msg;
+  sd.scrollIntoView({behavior:'smooth'});
+}
+
+/* ── FBD DRAWINGS ── */
+function drawFBD(id, cfg) {
+  const c = document.getElementById(id); if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height, cx = W/2, cy = H/2;
+  ctx.clearRect(0,0,W,H);
+  // box
+  ctx.fillStyle = '#1a2440';
+  ctx.fillRect(cx-18,cy-18,36,36);
+  ctx.strokeStyle = cfg.boxColor||'#4a7de8'; ctx.lineWidth=2;
+  ctx.strokeRect(cx-18,cy-18,36,36);
+
+  function arrow(x1,y1,x2,y2,col,lbl) {
+    const ang = Math.atan2(y2-y1,x2-x1);
+    ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.fillStyle=col;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    const h=7;
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-h*Math.cos(ang-.4),y2-h*Math.sin(ang-.4));
+    ctx.lineTo(x2-h*Math.cos(ang+.4),y2-h*Math.sin(ang+.4));
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle=col; ctx.font='bold 10px IBM Plex Mono,monospace';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(lbl, x2+15*Math.cos(ang), y2+15*Math.sin(ang));
+  }
+  (cfg.arrows||[]).forEach(a => arrow(...a));
+  if (cfg.label) {
+    ctx.fillStyle='#7a90b8'; ctx.font='10px IBM Plex Mono,monospace';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    cfg.label.forEach((l,i) => ctx.fillText(l, cx, cy+28+i*13));
+  }
+}
+
+// Coyote mid-air: only Fg down
+drawFBD('fbd-coyote', {
+  boxColor:'#f05a6e',
+  arrows:[[120,90,120,150,'#f0c040','Fg']],
+  label:['Only Fg','No FN, no Fa','ΣF = Fg↓']
+});
+
+// Astronaut on ground: Fg down + FN up equal
+drawFBD('fbd-astro-ground', {
+  boxColor:'#4a7de8',
+  arrows:[[90,80,90,30,'#5cd88a','FN'],[90,100,90,150,'#f0c040','Fg']],
+  label:['ΣF = 0','at rest']
+});
+
+// Astronaut in orbit: only Fg down
+drawFBD('fbd-astro-orbit', {
+  boxColor:'#7a90b8',
+  arrows:[[90,90,90,145,'#f0c040','Fg']],
+  label:['No FN','ΣF = Fg↓','free fall!']
+});
+
+updateProgress();
+</script>
+</body>
+</html>
