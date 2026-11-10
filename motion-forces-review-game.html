@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Blitz — Motion & Forces Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Work+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+  /* ── RESET & BASE ─────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+  }
+
+  body {
+    font-family: 'Work Sans', sans-serif;
+    background: #0d1f14;
+    color: #e8ede9;
+    overflow-x: hidden;
+  }
+
+  /* ── COLOR TOKENS (no CSS vars in inline styles — use literals) ── */
+  :root {
+    --bg:         #0d1f14;
+    --surface:    #142010;
+    --card:       #1a2d1f;
+    --accent:     #3dba6a;
+    --accent-dim: #1f4d2e;
+    --gold:       #f5b800;
+    --gold-dim:   #3d2e00;
+    --red:        #e53e3e;
+    --red-dim:    #3d0f0f;
+    --text:       #e8ede9;
+    --text-muted: #7a9e80;
+    --border:     #2a3d2f;
+    --mono:       'IBM Plex Mono', monospace;
+  }
+
+  /* ── WRAPPER (relative so flash overlay clips to it) ─── */
+  #appWrap {
+    position: relative;
+    min-height: 100%;
+    overflow: hidden;
+  }
+
+  /* ── SCREENS ───────────────────────────── */
+  .screen { display: none; flex-direction: column; min-height: 100%; }
+  .screen.active { display: flex; }
+
+  /* ── FLASH OVERLAY (absolute, not fixed — Canvas-safe) ── */
+  #flash {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.08s ease-out;
+  }
+  #flash.show { opacity: 0.2; }
+
+  /* ── SETUP SCREEN ───────────────────────── */
+  #setupScreen {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .setup-logo {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 8vw, 72px);
+    font-weight: 900;
+    color: #3dba6a;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .setup-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: #7a9e80;
+    margin-bottom: 40px;
+  }
+  .setup-label {
+    font-size: 13px;
+    color: #7a9e80;
+    margin-bottom: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .player-setup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .player-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #1a2d1f;
+    border: 1px solid #2a3d2f;
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+  .player-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .player-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #e8ede9;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 15px;
+    outline: none;
+  }
+  .player-input::placeholder { color: #7a9e80; }
+
+  .player-toggle {
+    background: none;
+    border: 1px solid #2a3d2f;
+    border-radius: 6px;
+    color: #7a9e80;
+    padding: 3px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Work Sans', sans-serif;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .player-toggle.on { border-color: #3dba6a; color: #3dba6a; }
+
+  .setup-error {
+    color: #e53e3e;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 12px;
+    min-height: 20px;
+  }
+
+  .btn-start {
+    background: #3dba6a;
+    color: #0d1f14;
+    border: none;
+    border-radius: 10px;
+    padding: 16px 48px;
+    font-size: 18px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-start:hover { background: #35a85e; }
+
+  /* ── GAME SCREEN ────────────────────────── */
+  .game-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: #142010;
+    border-bottom: 1px solid #2a3d2f;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .scoreboard { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .score-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #1a2d1f;
+    border: 1.5px solid #2a3d2f;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: transform 0.15s;
+  }
+  .score-chip.active-turn { transform: scale(1.06); }
+
+  .score-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .timer-wrap { display: flex; align-items: center; gap: 10px; }
+
+  .timer-display {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    font-weight: 600;
+    min-width: 48px;
+    text-align: center;
+    color: #3dba6a;
+  }
+  .timer-display.urgent {
+    color: #e53e3e;
+    animation: pulse 0.5s infinite alternate;
+  }
+  @keyframes pulse { from { opacity: 1; } to { opacity: 0.3; } }
+
+  .q-counter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: #7a9e80;
+  }
+
+  /* ── QUESTION AREA ──────────────────────── */
+  .question-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px 20px;
+    max-width: 760px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .q-category {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #7a9e80;
+    background: #1a2d1f;
+    border: 1px solid #2a3d2f;
+    border-radius: 20px;
+    padding: 3px 14px;
+    margin-bottom: 16px;
+  }
+
+  .q-points-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: #f5b800;
+    background: #3d2e00;
+    border-radius: 20px;
+    padding: 3px 12px;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+
+  .q-text-big {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(18px, 4vw, 28px);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.35;
+    margin-bottom: 28px;
+    max-width: 640px;
+  }
+
+  /* ── CHOICES ────────────────────────────── */
+  .choices-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 640px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 500px) { .choices-grid { grid-template-columns: 1fr; } }
+
+  .choice-btn {
+    background: #1a2d1f;
+    border: 1.5px solid #2a3d2f;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 15px;
+    font-family: 'Work Sans', sans-serif;
+    color: #e8ede9;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    transition: border-color 0.12s, background 0.12s;
+    width: 100%;
+  }
+  .choice-btn:not(:disabled):hover {
+    border-color: #3dba6a;
+    background: #1f4d2e;
+  }
+  .choice-btn:disabled { cursor: default; }
+  .choice-btn.correct  { background: #0a3d1f !important; border-color: #3dba6a !important; }
+  .choice-btn.wrong    { background: #3d0f0f !important; border-color: #e53e3e !important; }
+  .choice-btn.reveal-correct { background: #0a3d1f !important; border-color: #3dba6a !important; }
+
+  .choice-letter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: #7a9e80;
+    padding-top: 2px;
+    min-width: 16px;
+    flex-shrink: 0;
+  }
+
+  /* ── FEEDBACK ───────────────────────────── */
+  .feedback-box {
+    min-height: 44px;
+    text-align: center;
+    font-size: 15px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 640px;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .feedback-box.show { display: block; }
+  .feedback-box.correct-fb { background: #0a3d1f; color: #3dba6a; }
+  .feedback-box.wrong-fb   { background: #3d0f0f; color: #ff9090; }
+
+  /* ── BUZZER ROW ─────────────────────────── */
+  .buzzer-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .buzzer-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    color: #0d1f14;
+    min-width: 110px;
+    transition: opacity 0.12s;
+  }
+  .buzzer-btn:not(:disabled):hover { opacity: 0.85; }
+  .buzzer-btn:disabled { opacity: 0.3; cursor: default; }
+
+  /* ── NEXT BUTTON ────────────────────────── */
+  .btn-next {
+    background: #3dba6a;
+    color: #0d1f14;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 36px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Work Sans', sans-serif;
+    cursor: pointer;
+    display: none;
+    margin-top: 4px;
+  }
+  .btn-next.show { display: inline-block; }
+  .btn-next:hover { background: #35a85e; }
+
+  /* ── END SCREEN ────────────────────────── */
+  #endScreen {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .end-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 7vw, 60px);
+    font-weight: 900;
+    color: #3dba6a;
+    margin-bottom: 6px;
+  }
+  .end-subtitle {
+    color: #7a9e80;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    margin-bottom: 36px;
+  }
+
+  .podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+  .podium-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .podium-name  { font-size: 15px; font-weight: 600; }
+  .podium-score { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #7a9e80; }
+  .podium-bar {
+    width: 76px;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10px;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 18px;
+    color: #0d1f14;
+  }
+
+  .btn-restart {
+    background: none;
+    border: 1.5px solid #3dba6a;
+    color: #3dba6a;
+    border-radius: 8px;
+    padding: 12px 32px;
+    font-size: 15px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-restart:hover { background: #1f4d2e; }
+</style>
+</head>
+<body>
+<div id="appWrap">
+
+  <!-- FLASH OVERLAY -->
+  <div id="flash"></div>
+
+  <!-- ── SETUP ──────────────────────────── -->
+  <div class="screen active" id="setupScreen">
+    <div class="setup-logo">Physics<br>Blitz ⚡</div>
+    <div class="setup-sub">Motion &amp; Forces · Unit 2 Review</div>
+
+    <div class="setup-label">Who's playing? Tap to toggle on/off</div>
+    <div class="player-setup" id="playerSetup">
+      <div class="player-row">
+        <div class="player-dot" style="background:#3dba6a"></div>
+        <input class="player-input" type="text" placeholder="Player 1 name">
+        <button class="player-toggle on" onclick="togglePlayer(this)">ON</button>
+      </div>
+      <div class="player-row">
+        <div class="player-dot" style="background:#f5b800"></div>
+        <input class="player-input" type="text" placeholder="Player 2 name">
+        <button class="player-toggle on" onclick="togglePlayer(this)">ON</button>
+      </div>
+      <div class="player-row">
+        <div class="player-dot" style="background:#e06bff"></div>
+        <input class="player-input" type="text" placeholder="Player 3 name">
+        <button class="player-toggle on" onclick="togglePlayer(this)">ON</button>
+      </div>
+      <div class="player-row">
+        <div class="player-dot" style="background:#4db8ff"></div>
+        <input class="player-input" type="text" placeholder="Player 4 name">
+        <button class="player-toggle" onclick="togglePlayer(this)">OFF</button>
+      </div>
+    </div>
+
+    <div class="setup-error" id="setupError"></div>
+    <button class="btn-start" onclick="startGame()">Start Game</button>
+  </div>
+
+  <!-- ── GAME ───────────────────────────── -->
+  <div class="screen" id="gameScreen">
+    <div class="game-topbar">
+      <div class="scoreboard" id="scoreboard"></div>
+      <div class="timer-wrap">
+        <span class="q-counter" id="qCounter">Q 1 / 15</span>
+        <div class="timer-display" id="timer">20</div>
+      </div>
+    </div>
+
+    <div class="question-area">
+      <div class="q-category"  id="qCategory">02.01</div>
+      <div class="q-points-badge" id="qPoints">+1 pt</div>
+      <div class="q-text-big"  id="qText"></div>
+      <div class="choices-grid" id="choicesGrid"></div>
+      <div class="feedback-box" id="feedbackBox"></div>
+      <div class="buzzer-row"  id="buzzerRow"></div>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">Next Question →</button>
+    </div>
+  </div>
+
+  <!-- ── END ────────────────────────────── -->
+  <div class="screen" id="endScreen">
+    <div class="end-title">Game Over!</div>
+    <div class="end-subtitle">Final Scores</div>
+    <div class="podium" id="podium"></div>
+    <button class="btn-restart" onclick="restartGame()">Play Again</button>
+  </div>
+
+</div><!-- /appWrap -->
+
+<script>
+// ── PLAYER COLOR MAP (literal hex — no CSS vars in inline styles) ──
+var PLAYER_COLORS = ['#3dba6a', '#f5b800', '#e06bff', '#4db8ff'];
+
+// ── QUESTIONS ─────────────────────────────────────────────────
+var ALL_QUESTIONS = [
+  // 02.01 Algebra
+  {cat:'02.01 · Algebra', pts:1, q:'Solve v = d/t for distance (d).', choices:['d = v − t','d = v / t','d = v × t','d = t / v'], ans:2},
+  {cat:'02.01 · Algebra', pts:1, q:'Solve F = ma for acceleration (a).', choices:['a = F + m','a = F / m','a = m / F','a = F × m'], ans:1},
+  {cat:'02.01 · Algebra', pts:1, q:'Solve d = ½gt² for t².', choices:['t² = d × g / 2','t² = 2d / g','t² = g / 2d','t² = d / g'], ans:1},
+
+  // 02.02 Acceleration
+  {cat:'02.02 · Acceleration', pts:2, q:'Which of these is an example of acceleration?', choices:['Car at constant 60 mph in a straight line','Soccer ball rolling at constant speed on flat ground','Rocket slowing down to land','Book sitting still on a desk'], ans:2},
+  {cat:'02.02 · Acceleration', pts:2, q:'A car goes from 10 m/s to 40 m/s in 6 seconds. What is its acceleration?', choices:['6.7 m/s²','5.0 m/s²','30 m/s²','4.0 m/s²'], ans:1},
+  {cat:'02.02 · Kinematics', pts:2, q:'A car starts from rest and accelerates at 3.0 m/s² for 4 seconds. How far does it travel?', choices:['12.0 m','48.0 m','24.0 m','6.0 m'], ans:2},
+
+  // 02.04 Graphs
+  {cat:'02.04 · Graphs', pts:2, q:'On a position-time graph, what does a flat horizontal line mean?', choices:['Accelerating forward','Moving at constant speed','Not moving — position is not changing','Slowing down'], ans:2},
+  {cat:'02.04 · Graphs', pts:2, q:'On an acceleration-time graph, the area under the curve equals what?', choices:['Distance traveled','Net force','Change in velocity','Change in position'], ans:2},
+  {cat:'02.04 · Graphs', pts:3, q:'A position-time graph shows an object going from 20 m to 80 m over 3 hours. What is the average speed?', choices:['80 mph','26.7 mph','20 mph','60 mph'], ans:1},
+
+  // 02.05 Free fall
+  {cat:'02.05 · Free Fall', pts:2, q:'In free fall (ignoring air resistance), objects near Earth accelerate downward at:', choices:['1.6 m/s²','9.8 m/s²','19.6 m/s²','4.9 m/s²'], ans:1},
+  {cat:'02.05 · Free Fall', pts:3, q:'A ball is dropped from a roof and falls for 2 seconds. How far did it fall? (g = 9.8 m/s²)', choices:['9.8 m','19.6 m','39.2 m','4.9 m'], ans:1},
+  {cat:'02.05 · Free Fall', pts:3, q:'A rock dropped from a bridge hits the water in 3 seconds. What is its impact velocity?', choices:['9.8 m/s','19.6 m/s','29.4 m/s','44.1 m/s'], ans:2},
+
+  // 02.06 Newton's Laws
+  {cat:"02.06 · Newton's Laws", pts:1, q:"Newton's First Law: an object at rest stays at rest unless acted on by what?", choices:['Gravity only','An unbalanced net force','Inertia','Friction only'], ans:1},
+  {cat:"02.06 · Newton's Laws", pts:1, q:'You push a wall with 50 N. How hard does the wall push back on you?', choices:['0 N — walls cannot push','25 N','50 N','100 N'], ans:2},
+  {cat:"02.06 · Newton's Laws", pts:2, q:'Which quantity determines how much inertia an object has?', choices:['Volume','Speed','Weight','Mass'], ans:3},
+
+  // 02.07 F = ma
+  {cat:'02.07 · F = ma', pts:3, q:'A 50 kg student sits still in a chair. What is the net force on the student?', choices:['490 N downward','490 N upward','0 N','9.8 N'], ans:2},
+  {cat:'02.07 · F = ma', pts:3, q:'A 1,200 kg car accelerates at 2.5 m/s². What is the net force on the car?', choices:['480 N','3,000 N','12,000 N','2,500 N'], ans:1},
+  {cat:'02.07 · F = ma', pts:4, q:'A 500 N force is applied to a 40 kg object from rest. How far does it travel in 4 seconds?', choices:['50 m','100 m','200 m','25 m'], ans:1}
+];
+
+// ── STATE ──────────────────────────────────────────────────────
+var players       = [];
+var questions     = [];
+var currentQ      = 0;
+var scores        = [];
+var timerInterval = null;
+var timeLeft      = 0;
+var questionAnswered = false;
+var buzzedPlayer  = null;
+
+// ── SETUP ──────────────────────────────────────────────────────
+function togglePlayer(btn) {
+  var turningOn = (btn.textContent === 'OFF');
+  btn.textContent = turningOn ? 'ON' : 'OFF';
+  if (turningOn) {
+    btn.classList.add('on');
+  } else {
+    btn.classList.remove('on');
+  }
+}
+
+function startGame() {
+  var rows = document.querySelectorAll('.player-row');
+  players = [];
+
+  rows.forEach(function(row, i) {
+    var toggle = row.querySelector('.player-toggle');
+    if (toggle.classList.contains('on')) {
+      var nameInput = row.querySelector('.player-input');
+      var name = nameInput.value.trim() || ('Player ' + (i + 1));
+      players.push({ name: name, color: PLAYER_COLORS[i] });
+    }
+  });
+
+  if (players.length < 2) {
+    document.getElementById('setupError').textContent = 'Need at least 2 players turned on!';
+    return;
+  }
+  document.getElementById('setupError').textContent = '';
+
+  // shuffle and pick 15
+  var pool = ALL_QUESTIONS.slice().sort(function() { return Math.random() - 0.5; });
+  questions = pool.slice(0, 15);
+  currentQ  = 0;
+  scores    = players.map(function() { return 0; });
+
+  buildScoreboard();
+  showScreen('gameScreen');
+  loadQuestion();
+}
+
+// ── SCOREBOARD ─────────────────────────────────────────────────
+function buildScoreboard() {
+  var sb = document.getElementById('scoreboard');
+  sb.innerHTML = players.map(function(p, i) {
+    return '<div class="score-chip" id="chip-' + i + '">' +
+      '<div class="score-dot" style="background:' + p.color + '"></div>' +
+      '<span>' + escHtml(p.name) + '</span>' +
+      '<span style="color:' + p.color + ';font-weight:600" id="chip-score-' + i + '">0</span>' +
+      '</div>';
+  }).join('');
+}
+
+function updateScoreboard() {
+  players.forEach(function(p, i) {
+    var el = document.getElementById('chip-score-' + i);
+    if (el) el.textContent = scores[i];
+  });
+}
+
+// ── QUESTION FLOW ──────────────────────────────────────────────
+function loadQuestion() {
+  if (currentQ >= questions.length) { endGame(); return; }
+
+  var q = questions[currentQ];
+  questionAnswered = false;
+  buzzedPlayer     = null;
+
+  document.getElementById('qCounter').textContent  = 'Q ' + (currentQ + 1) + ' / ' + questions.length;
+  document.getElementById('qCategory').textContent = q.cat;
+  document.getElementById('qPoints').textContent   = '+' + q.pts + ' pt' + (q.pts > 1 ? 's' : '');
+  document.getElementById('qText').textContent     = q.q;
+
+  // choices
+  var letters = ['A', 'B', 'C', 'D'];
+  var grid = document.getElementById('choicesGrid');
+  grid.innerHTML = '';
+  q.choices.forEach(function(c, i) {
+    var btn = document.createElement('button');
+    btn.className   = 'choice-btn';
+    btn.disabled    = true;
+    btn.setAttribute('data-idx', i);
+    // use addEventListener — no inline onclick in dynamically created elements
+    btn.addEventListener('click', function() { answerChosen(i); });
+
+    var letter = document.createElement('span');
+    letter.className   = 'choice-letter';
+    letter.textContent = letters[i];
+    btn.appendChild(letter);
+    btn.appendChild(document.createTextNode(c));
+    grid.appendChild(btn);
+  });
+
+  // reset feedback + next btn
+  var fb = document.getElementById('feedbackBox');
+  fb.className   = 'feedback-box';
+  fb.textContent = '';
+  document.getElementById('btnNext').className = 'btn-next';
+
+  // buzzers
+  buildBuzzers();
+
+  // timer — 20s to buzz
+  startTimer(20);
+}
+
+function buildBuzzers() {
+  var row = document.getElementById('buzzerRow');
+  row.innerHTML = '';
+  players.forEach(function(p, i) {
+    var btn = document.createElement('button');
+    btn.className         = 'buzzer-btn';
+    btn.id                = 'buzzer-' + i;
+    btn.style.background  = p.color;
+    btn.textContent       = '\uD83D\uDD14 ' + p.name;   // 🔔 bell emoji via unicode
+    btn.addEventListener('click', function() { buzz(i); });
+    row.appendChild(btn);
+  });
+}
+
+function startTimer(secs) {
+  clearInterval(timerInterval);
+  timeLeft = secs;
+  var display = document.getElementById('timer');
+  display.textContent = timeLeft;
+  display.className   = 'timer-display';
+
+  timerInterval = setInterval(function() {
+    timeLeft--;
+    display.textContent = timeLeft;
+    if (timeLeft <= 5)  display.className = 'timer-display urgent';
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timeUp();
+    }
+  }, 1000);
+}
+
+function buzz(playerIdx) {
+  if (questionAnswered)    return;
+  if (buzzedPlayer !== null) return;
+
+  buzzedPlayer = playerIdx;
+  clearInterval(timerInterval);
+
+  // lock all buzzers, unlock choices
+  players.forEach(function(p, i) {
+    var b = document.getElementById('buzzer-' + i);
+    if (b) b.disabled = true;
+  });
+  document.querySelectorAll('.choice-btn').forEach(function(b) {
+    b.disabled = false;
+  });
+
+  // highlight active player chip
+  document.querySelectorAll('.score-chip').forEach(function(c, i) {
+    if (i === playerIdx) {
+      c.classList.add('active-turn');
+    } else {
+      c.classList.remove('active-turn');
+    }
+  });
+
+  flashScreen(players[playerIdx].color);
+
+  // 10s to pick an answer
+  startTimer(10);
+}
+
+function answerChosen(idx) {
+  if (questionAnswered) return;
+  questionAnswered = true;
+  clearInterval(timerInterval);
+  document.getElementById('timer').className = 'timer-display';
+
+  var q    = questions[currentQ];
+  var btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  if (btns[q.ans]) btns[q.ans].classList.add('reveal-correct');
+
+  var fb = document.getElementById('feedbackBox');
+  if (idx === q.ans) {
+    if (btns[idx]) btns[idx].classList.add('correct');
+    if (buzzedPlayer !== null) scores[buzzedPlayer] += q.pts;
+    updateScoreboard();
+    fb.className   = 'feedback-box correct-fb show';
+    var pname = (buzzedPlayer !== null && players[buzzedPlayer]) ? players[buzzedPlayer].name : 'the team';
+    fb.textContent = '\u2705 Correct! +' + q.pts + ' pt' + (q.pts > 1 ? 's' : '') + ' for ' + pname;
+  } else {
+    if (btns[idx]) btns[idx].classList.add('wrong');
+    fb.className   = 'feedback-box wrong-fb show';
+    fb.textContent = '\u274C Not quite. The correct answer is highlighted above.';
+  }
+
+  document.getElementById('btnNext').className = 'btn-next show';
+  document.querySelectorAll('.score-chip').forEach(function(c) {
+    c.classList.remove('active-turn');
+  });
+}
+
+function timeUp() {
+  if (questionAnswered) return;
+  questionAnswered = true;
+
+  var q    = questions[currentQ];
+  var btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(function(b) { b.disabled = true; });
+  if (btns[q.ans]) btns[q.ans].classList.add('reveal-correct');
+
+  players.forEach(function(p, i) {
+    var b = document.getElementById('buzzer-' + i);
+    if (b) b.disabled = true;
+  });
+
+  var fb = document.getElementById('feedbackBox');
+  fb.className   = 'feedback-box wrong-fb show';
+  fb.textContent = '\u23F1\uFE0F Time\'s up! The correct answer is highlighted above.';
+
+  document.getElementById('btnNext').className = 'btn-next show';
+  document.querySelectorAll('.score-chip').forEach(function(c) {
+    c.classList.remove('active-turn');
+  });
+}
+
+function nextQuestion() {
+  currentQ++;
+  loadQuestion();
+}
+
+// ── END SCREEN ─────────────────────────────────────────────────
+function endGame() {
+  showScreen('endScreen');
+
+  var ranked = players.map(function(p, i) {
+    return { name: p.name, color: p.color, score: scores[i] };
+  }).sort(function(a, b) { return b.score - a.score; });
+
+  var maxScore = Math.max.apply(null, ranked.map(function(r) { return r.score; }));
+  if (maxScore < 1) maxScore = 1;
+
+  var medals = ['\uD83E\uDD47', '\uD83E\uDD48', '\uD83E\uDD49', ''];  // 🥇🥈🥉
+  var rankLabels = ['1st','2nd','3rd',''];
+  var podium = document.getElementById('podium');
+  podium.innerHTML = '';
+
+  ranked.forEach(function(r, i) {
+    var h = Math.max(60, Math.round((r.score / maxScore) * 160));
+
+    var slot = document.createElement('div');
+    slot.className = 'podium-slot';
+
+    var nameEl = document.createElement('div');
+    nameEl.className   = 'podium-name';
+    nameEl.textContent = (medals[i] || '') + ' ' + r.name;
+
+    var scoreEl = document.createElement('div');
+    scoreEl.className   = 'podium-score';
+    scoreEl.textContent = r.score + ' pts';
+
+    var bar = document.createElement('div');
+    bar.className        = 'podium-bar';
+    bar.style.height     = h + 'px';
+    bar.style.background = r.color;
+    bar.textContent      = rankLabels[i] || '';
+
+    slot.appendChild(nameEl);
+    slot.appendChild(scoreEl);
+    slot.appendChild(bar);
+    podium.appendChild(slot);
+  });
+}
+
+function restartGame() {
+  showScreen('setupScreen');
+}
+
+// ── HELPERS ────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) {
+    s.classList.remove('active');
+  });
+  var target = document.getElementById(id);
+  if (target) target.classList.add('active');
+}
+
+function flashScreen(color) {
+  var f = document.getElementById('flash');
+  if (!f) return;
+  f.style.background = color;
+  f.classList.add('show');
+  setTimeout(function() { f.classList.remove('show'); }, 350);
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
