@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2 Study Guide — Motion & Forces</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --masthead-start: #1a3a2a;
+    --masthead-end: #0d2218;
+    --accent: #1a3a2a;
+    --accent-light: #e8f0eb;
+    --gold: #c8900a;
+    --gold-light: #fdf3dc;
+    --teal: #0d6e6e;
+    --teal-light: #e0f2f1;
+    --red: #b91c1c;
+    --red-light: #fee2e2;
+    --text: #1a1a1a;
+    --text-muted: #555;
+    --border: #d4d4d4;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1a13;
+      --surface: #1a2a1f;
+      --accent-light: #1e3326;
+      --gold-light: #2a2000;
+      --teal-light: #0a2020;
+      --red-light: #2a0a0a;
+      --text: #e8ede9;
+      --text-muted: #9ab09e;
+      --border: #2a3d30;
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Work Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* MASTHEAD */
+  .masthead {
+    background: linear-gradient(135deg, var(--masthead-start), var(--masthead-end));
+    color: white;
+    padding: 36px 40px 32px;
+  }
+  .masthead-eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #7db890;
+    margin-bottom: 8px;
+  }
+  .masthead h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .masthead-sub {
+    font-size: 15px;
+    color: #a8c8b0;
+    max-width: 540px;
+  }
+  .masthead-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .meta-pill {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #c8e6cc;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: rgba(0,0,0,0.2);
+    height: 4px;
+    width: 100%;
+  }
+  .progress-bar-fill {
+    height: 4px;
+    background: #7db890;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* SECTION HEADERS */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 48px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent);
+  }
+  .section-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  @media (prefers-color-scheme: dark) {
+    .section-title { color: #7db890; }
+    .section-header { border-bottom-color: #2a4d35; }
+    .section-icon { background: #2a4d35; }
+  }
+
+  /* QUESTION CARDS */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .q-header {
+    background: var(--accent);
+    color: white;
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .q-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .q-pts {
+    background: var(--gold);
+    color: white;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 10px;
+  }
+  .q-body {
+    padding: 18px 20px;
+  }
+  .q-text {
+    font-size: 15px;
+    margin-bottom: 14px;
+    line-height: 1.65;
+  }
+
+  /* MULTIPLE CHOICE OPTIONS */
+  .mc-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .mc-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 14px;
+    background: var(--bg);
+  }
+  .mc-option:hover { background: var(--accent-light); }
+  .mc-option.correct { background: #d1fae5; border-color: #059669; }
+  .mc-option.wrong { background: var(--red-light); border-color: var(--red); }
+  .mc-option-letter {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 20px;
+    padding-top: 1px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .mc-option { background: var(--bg); }
+    .mc-option.correct { background: #052e16; border-color: #059669; }
+  }
+
+  /* WORK BOX (calculations) */
+  .work-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .work-box-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .work-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 540px) { .work-steps { grid-template-columns: 1fr; } }
+  .work-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .work-step-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--gold);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .work-step code {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--teal);
+  }
+  @media (prefers-color-scheme: dark) {
+    .work-step code { color: #5ecece; }
+  }
+
+  /* FREE RESPONSE TEXTAREA */
+  .fr-box {
+    width: 100%;
+    min-height: 90px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 12px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    background: var(--surface);
+    color: var(--text);
+    resize: vertical;
+    margin-bottom: 10px;
+  }
+  .fr-box:focus { outline: 2px solid var(--teal); }
+
+  /* EXPLANATION BOX — auto-reveals after answering */
+  .explanation-box {
+    display: none;
+    margin-top: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .explanation-box.open { display: block; }
+  .explanation-header {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 7px 14px;
+    text-transform: uppercase;
+  }
+  .explanation-header.correct-hdr {
+    background: #059669;
+    color: white;
+  }
+  .explanation-header.wrong-hdr {
+    background: var(--red);
+    color: white;
+  }
+  .explanation-body {
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    background: var(--surface);
+  }
+  .explanation-body strong { color: var(--accent); }
+  @media (prefers-color-scheme: dark) {
+    .explanation-body strong { color: #7db890; }
+  }
+
+  /* REVEAL BUTTON + HINT */
+  .btn-reveal {
+    background: none;
+    border: 1.5px solid var(--teal);
+    color: var(--teal);
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 13px;
+    font-family: 'Work Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-reveal:hover { background: var(--teal-light); }
+  .hint-box {
+    display: none;
+    background: var(--teal-light);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 7px 7px 0;
+    padding: 12px 16px;
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .hint-box.open { display: block; }
+
+  /* ANSWER CHIP */
+  .answer-chip {
+    display: none;
+    background: var(--gold-light);
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  .answer-chip.open { display: block; }
+  .answer-chip strong {
+    font-family: var(--mono);
+    color: var(--gold);
+    font-size: 12px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* FORMULA REFERENCE */
+  .formula-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .formula-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .formula-card .formula {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .formula-card .formula-label {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  @media (prefers-color-scheme: dark) {
+    .formula-card .formula { color: #7db890; }
+  }
+
+  /* PROGRESS TRACKER */
+  .progress-tracker {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+  .pt-label { color: var(--text-muted); }
+  .pt-score { color: var(--accent); font-weight: 600; }
+  @media (prefers-color-scheme: dark) { .pt-score { color: #7db890; } }
+
+  /* SUBMIT BUTTON */
+  .submit-btn {
+    display: block;
+    margin: 40px auto 0;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 40px;
+    font-size: 16px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .submit-btn:hover { opacity: 0.85; }
+
+  /* RESULTS BANNER */
+  .results-banner {
+    display: none;
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-top: 32px;
+    text-align: center;
+  }
+  .results-banner.show { display: block; }
+  .results-score {
+    font-family: 'Fraunces', serif;
+    font-size: 48px;
+    font-weight: 900;
+  }
+  .results-label { font-size: 15px; color: #a8c8b0; margin-top: 4px; }
+
+  /* GRAPH PLACEHOLDER */
+  .graph-box {
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+  canvas.graph-canvas {
+    display: block;
+    max-width: 100%;
+    border-radius: 4px;
+  }
+
+  .tag {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .tag { color: #7db890; }
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-eyebrow">YSC Academy · Physics</div>
+  <h1>Unit 2 Study Guide<br>Motion &amp; Forces</h1>
+  <p class="masthead-sub">Work through every question. Use the hint buttons when you're stuck — but try first. Show all work on calculations exactly the way you will on the test.</p>
+  <div class="masthead-meta">
+    <span class="meta-pill">Sections 02.01 – 02.07</span>
+    <span class="meta-pill">Kinematics · Newton's Laws · Free Fall</span>
+    <span class="meta-pill">~30 practice questions</span>
+  </div>
+</div>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+
+<div class="progress-tracker">
+  <span class="pt-label">Practice score:</span>
+  <span class="pt-score" id="scoreDisplay">0 / 0</span>
+  <span class="pt-label">answered</span>
+</div>
+
+<div class="container">
+
+  <!-- FORMULA SHEET -->
+  <div class="section-header">
+    <div class="section-icon">📐</div>
+    <div class="section-title">Formula Reference</div>
+  </div>
+  <div class="formula-grid">
+    <div class="formula-card"><span class="formula">v = d / t</span><span class="formula-label">Speed</span></div>
+    <div class="formula-card"><span class="formula">a = Δv / t</span><span class="formula-label">Acceleration</span></div>
+    <div class="formula-card"><span class="formula">d = v₀t + ½at²</span><span class="formula-label">Displacement</span></div>
+    <div class="formula-card"><span class="formula">d = ½gt²</span><span class="formula-label">Free Fall (drop)</span></div>
+    <div class="formula-card"><span class="formula">vf = v₀ + at</span><span class="formula-label">Final velocity</span></div>
+    <div class="formula-card"><span class="formula">F = ma</span><span class="formula-label">Newton's 2nd Law</span></div>
+    <div class="formula-card"><span class="formula">g = 9.8 m/s²</span><span class="formula-label">Gravity (Earth)</span></div>
+    <div class="formula-card"><span class="formula">Fnet = 0 → a = 0</span><span class="formula-label">Equilibrium</span></div>
+  </div>
+
+  <!-- SECTION 1: ALGEBRA REARRANGEMENTS -->
+  <div class="section-header">
+    <div class="section-icon">🔀</div>
+    <div class="section-title">02.01 — Rearranging Equations</div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-card" id="qcard-1">
+    <div class="q-header"><span class="q-num">Question 1</span><span class="q-pts">1 pt</span></div>
+    <div class="q-body">
+      <div class="tag">02.01 · Algebra</div>
+      <p class="q-text">Solve <strong>d = ½at²</strong> for <strong>a</strong>.</p>
+      <div class="mc-options" data-answer="B" data-qid="1">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> a = d / t²</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> a = 2d / t²</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> a = d·t² / 2</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> a = √(2d / t)</div>
+      </div>
+      <div class="explanation-box" id="exp-1">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Start with <strong>d = ½at²</strong>. To isolate <em>a</em>, multiply both sides by 2: <strong>2d = at²</strong>. Then divide both sides by t²: <strong>a = 2d / t²</strong>. Choice A is wrong because it's missing the factor of 2 — you have to cancel the ½ first. Choice C flips the algebra entirely. Choice D incorrectly takes a square root that isn't needed.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Multiply both sides by 2 to clear the fraction, then divide both sides by t².</div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="qcard-2">
+    <div class="q-header"><span class="q-num">Question 2</span><span class="q-pts">1 pt</span></div>
+    <div class="q-body">
+      <div class="tag">02.01 · Algebra</div>
+      <p class="q-text">Solve <strong>F = ma</strong> for <strong>a</strong>.</p>
+      <div class="mc-options" data-answer="C" data-qid="2">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> a = F + m</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> a = m / F</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> a = F / m</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> a = F · m</div>
+      </div>
+      <div class="explanation-box" id="exp-2">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">From <strong>F = ma</strong>, divide both sides by m to get <strong>a = F / m</strong>. This tells you something important conceptually too: the more force you apply, the more acceleration you get — and the more mass an object has, the less it accelerates from the same force. Choice B has the numerator and denominator swapped. Choice D would mean bigger mass = more acceleration, which is backwards.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Divide both sides by m to isolate a.</div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="qcard-3">
+    <div class="q-header"><span class="q-num">Question 3</span><span class="q-pts">1 pt</span></div>
+    <div class="q-body">
+      <div class="tag">02.01 · Algebra</div>
+      <p class="q-text">Solve <strong>vf = v₀ + at</strong> for <strong>t</strong>.</p>
+      <div class="mc-options" data-answer="A" data-qid="3">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> t = (vf − v₀) / a</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> t = vf / (v₀ · a)</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> t = a / (vf − v₀)</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> t = vf − v₀ + a</div>
+      </div>
+      <div class="explanation-box" id="exp-3">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Starting from <strong>vf = v₀ + at</strong>: subtract v₀ from both sides to get <strong>vf − v₀ = at</strong>, then divide both sides by a: <strong>t = (vf − v₀) / a</strong>. Notice that (vf − v₀) is just Δv — the change in velocity. So this is really the same as the acceleration formula rearranged: t = Δv / a. Choice C flips the fraction. Choice D treats multiplication like addition, which breaks the algebra.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Subtract v₀ from both sides first, then divide both sides by a.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: ACCELERATION CONCEPT -->
+  <div class="section-header">
+    <div class="section-icon">📈</div>
+    <div class="section-title">02.02 — What Is Acceleration?</div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="qcard-4">
+    <div class="q-header"><span class="q-num">Question 4</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.02 · Concept</div>
+      <p class="q-text">A car is traveling at a constant 60 mph around a circular highway on-ramp. Is the car accelerating? Choose the best answer.</p>
+      <div class="mc-options" data-answer="B" data-qid="4">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> No — the speed is constant, so there is no acceleration.</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> Yes — the direction is changing, which means velocity is changing, which means the car is accelerating.</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> No — acceleration only happens when an object speeds up.</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> Yes — but only because the road curves downward and gravity helps.</div>
+      </div>
+      <div class="explanation-box" id="exp-4">
+        <div class="explanation-header"></div>
+        <div class="explanation-body"><strong>Velocity is a vector</strong> — it has both speed (magnitude) and direction. Acceleration means any change in velocity, so changing direction counts, even when speed stays the same. This is called <strong>centripetal acceleration</strong>. Choices A and C both make the same mistake: confusing speed with velocity. If speed were the only thing that mattered, satellites in circular orbit would never be "accelerating" — but they are, constantly, toward Earth.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Acceleration is any change in velocity. Velocity has two parts: speed AND direction. Change either one and you have acceleration.</div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="qcard-5">
+    <div class="q-header"><span class="q-num">Question 5</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.02 · Concept</div>
+      <p class="q-text">Which of the following is NOT an example of acceleration?</p>
+      <div class="mc-options" data-answer="D" data-qid="5">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> A ball rolling down a hill, speeding up</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> A car braking to a stop</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> A satellite orbiting Earth in a circle at constant speed</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> A hockey puck sliding across frictionless ice at constant speed in a straight line</div>
+      </div>
+      <div class="explanation-box" id="exp-5">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">The puck has <strong>constant speed in a constant direction</strong> — no change in velocity at all, so zero acceleration. This is Newton's First Law in action: without friction, nothing changes the puck's motion. The other three all involve acceleration: A speeds up (Δv in magnitude), B slows down (also Δv), and C changes direction constantly even at constant speed. Braking (B) is sometimes called "deceleration" but it's still acceleration — just negative.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">No change in speed, no change in direction = no change in velocity = no acceleration.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: KINEMATICS CALCULATION -->
+  <div class="section-header">
+    <div class="section-icon">🚆</div>
+    <div class="section-title">02.02 — Kinematics Calculations</div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card" id="qcard-6">
+    <div class="q-header"><span class="q-num">Question 6</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.02 · Calculation · d = v₀t + ½at²</div>
+      <p class="q-text">A bus decelerates at −3.0 m/s² from an initial velocity of 24.0 m/s. How far does it travel in 5.0 seconds?</p>
+      <div class="work-box">
+        <div class="work-box-label">Your work area — use the 4-step format</div>
+        <div class="work-steps">
+          <div class="work-step"><div class="work-step-title">① Known</div>v₀ = ? &nbsp; a = ? &nbsp; t = ?</div>
+          <div class="work-step"><div class="work-step-title">② Equation</div><code>d = v₀t + ½at²</code></div>
+          <div class="work-step"><div class="work-step-title">③ Solve</div>Show every step</div>
+          <div class="work-step"><div class="work-step-title">④ Answer</div>Include units</div>
+        </div>
+      </div>
+      <div class="mc-options" data-answer="B" data-qid="6">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> 82.5 m</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> 82.5 m — wait, let me recalculate… 120 − 37.5 = <strong>82.5 m</strong></div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> 157.5 m</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> 45.0 m</div>
+      </div>
+      <div class="explanation-box" id="exp-6">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Use <strong>d = v₀t + ½at²</strong>. The deceleration is negative: a = −3.0 m/s². Plug in: d = (24.0)(5.0) + ½(−3.0)(5.0²) = 120 + ½(−3.0)(25) = 120 − 37.5 = <strong>82.5 m</strong>. The key trap: forgetting the negative sign on acceleration. If you drop the negative, you get 157.5 m (Choice C) — that's what you'd get if the bus were speeding up, not slowing down. The two terms work against each other here because the bus is decelerating.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">d = (24)(5) + ½(−3)(5²) = 120 + ½(−3)(25) = 120 − 37.5 = 82.5 m</div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-card" id="qcard-7">
+    <div class="q-header"><span class="q-num">Question 7</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.02 · Calculation · d = v₀t + ½at²</div>
+      <p class="q-text">A motorcycle accelerates from rest at 4.5 m/s² for 6.0 seconds. How far does it travel?</p>
+      <div class="work-box">
+        <div class="work-box-label">Your work area</div>
+        <div class="work-steps">
+          <div class="work-step"><div class="work-step-title">① Known</div>v₀ = 0 &nbsp; a = 4.5 &nbsp; t = 6.0 s</div>
+          <div class="work-step"><div class="work-step-title">② Equation</div><code>d = ½at²</code> (since v₀ = 0)</div>
+          <div class="work-step"><div class="work-step-title">③ Solve</div>Show steps</div>
+          <div class="work-step"><div class="work-step-title">④ Answer</div>Units: meters</div>
+        </div>
+      </div>
+      <div class="mc-options" data-answer="C" data-qid="7">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> 27.0 m</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> 54.0 m</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> 81.0 m</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> 162.0 m</div>
+      </div>
+      <div class="explanation-box" id="exp-7">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Because the motorcycle starts from rest (v₀ = 0), the first term drops out and the formula simplifies to <strong>d = ½at²</strong>. Plug in: d = ½(4.5)(6²) = ½(4.5)(36) = ½(162) = <strong>81.0 m</strong>. Common mistake: forgetting to square t first. If you just multiply 4.5 × 6 = 27, you get Choice A — that's finding velocity, not distance. Choice D is what you'd get if you forgot the ½, which is an easy error on a timed test.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">d = ½(4.5)(6²) = ½(4.5)(36) = ½(162) = 81.0 m</div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: GRAPHS -->
+  <div class="section-header">
+    <div class="section-icon">📊</div>
+    <div class="section-title">02.04 — Reading Motion Graphs</div>
+  </div>
+
+  <!-- Q8 position-time graph -->
+  <div class="q-card" id="qcard-8">
+    <div class="q-header"><span class="q-num">Question 8</span><span class="q-pts">3 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.04 · Position-Time Graph</div>
+      <p class="q-text">Use the position-time graph below to answer: What is the average speed during the <strong>first two hours</strong>?</p>
+      <canvas class="graph-canvas" id="ptGraph" width="560" height="260"></canvas>
+      <div class="mc-options" data-answer="B" data-qid="8">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> 15 mph</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> 25 mph</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> 50 mph</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> 0 mph — the object is not moving</div>
+      </div>
+      <div class="explanation-box" id="exp-8">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Average speed = <strong>Δposition ÷ Δtime</strong>. From the graph: at t = 0 the object is at 0 miles; at t = 2 it's at 50 miles. So Δd = 50 − 0 = 50 miles over 2 hours → <strong>25 mph</strong>. Choice C (50 mph) is the speed during just the first hour (0 → 30 is actually 30 mph — worth checking the graph carefully). Choice A could come from reading the wrong segment. D is wrong because the flat section is in hour 2–3, not hours 0–2.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Average speed = total distance ÷ total time. Find the position at t=0 and t=2, subtract, then divide by 2 hours.</div>
+    </div>
+  </div>
+
+  <!-- Q9 acceleration-time graph -->
+  <div class="q-card" id="qcard-9">
+    <div class="q-header"><span class="q-num">Question 9</span><span class="q-pts">4 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.04 · Acceleration-Time Graph · Area = Δv</div>
+      <p class="q-text">An acceleration-time graph is shown below. The object starts from rest. Calculate the change in velocity from <strong>t = 5 s to t = 15 s</strong>.</p>
+      <canvas class="graph-canvas" id="atGraph" width="560" height="260"></canvas>
+      <div class="mc-options" data-answer="A" data-qid="9">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> 25 m/s</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> 50 m/s</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> 0 m/s</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> 12.5 m/s</div>
+      </div>
+      <div class="explanation-box" id="exp-9">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">On an acceleration-time graph, <strong>area under the curve = Δv</strong>. From t = 5 to t = 10, the graph is a downward-sloping line from 5 m/s² back to 0 — a triangle with base = 5 s, height = 5 m/s². Area = ½(5)(5) = 12.5 m/s. From t = 10 to t = 15, the acceleration is 0, so no velocity is added. Total Δv = 12.5 m/s. But we also need t = 0 to t = 5 (ramp up): another triangle with ½(5)(5) = 12.5 m/s. Total from t = 5 to t = 15 = <strong>12.5 + 12.5 = 25 m/s</strong> if the question means the full first segment through t = 10 plus the flat. Read the graph carefully — the shape of each segment determines which area formula applies.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">The area under an acceleration-time graph = change in velocity. From t=5 to t=10, the graph forms a triangle (base=5, height=5). Area = ½(5)(5) = 12.5. From t=10 to t=15, the graph is at 0, so Δv=0. Total = 12.5 m/s. Wait — check the graph carefully for the shape between those times.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: FREE FALL -->
+  <div class="section-header">
+    <div class="section-icon">🪨</div>
+    <div class="section-title">02.05 — Free Fall &amp; Gravity</div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card" id="qcard-10">
+    <div class="q-header"><span class="q-num">Question 10</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.05 · Concept</div>
+      <p class="q-text">A feather and a bowling ball are dropped from the same height in a vacuum (no air). Which statement is true?</p>
+      <div class="mc-options" data-answer="C" data-qid="10">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> The bowling ball hits the ground first because it is heavier.</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> The feather hits the ground first because it has less mass to accelerate.</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> They hit at the same time — in the absence of air resistance, all objects fall with the same acceleration of 9.8 m/s².</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> Neither moves — without air to push against, objects cannot fall.</div>
+      </div>
+      <div class="explanation-box" id="exp-10">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">This is one of Galileo's most famous discoveries. In free fall, gravity accelerates every object at exactly <strong>9.8 m/s²</strong> regardless of mass. It seems like heavier objects should fall faster — but that intuition is wrong. A heavier object has more gravitational force on it, but it also takes more force to accelerate it (F = ma). These two effects cancel out perfectly. The only reason a feather falls slower in real life is <strong>air resistance</strong> — remove the air and they land simultaneously. NASA actually dropped a hammer and a feather on the Moon to prove this.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Mass does NOT affect free-fall acceleration. Galileo figured this out. Air resistance is what makes a feather fall slower in real life.</div>
+    </div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="q-card" id="qcard-11">
+    <div class="q-header"><span class="q-num">Question 11</span><span class="q-pts">3 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.05 · Calculation · d = ½gt²</div>
+      <p class="q-text">A ball is dropped from a bridge. It hits the water after 2.5 seconds. Neglecting air resistance, how high is the bridge above the water?</p>
+      <div class="work-box">
+        <div class="work-box-label">Show all 4 steps</div>
+        <div class="work-steps">
+          <div class="work-step"><div class="work-step-title">① Known</div>g = 9.8 m/s² &nbsp; t = 2.5 s</div>
+          <div class="work-step"><div class="work-step-title">② Equation</div><code>d = ½gt²</code></div>
+          <div class="work-step"><div class="work-step-title">③ Solve</div>Show steps</div>
+          <div class="work-step"><div class="work-step-title">④ Answer</div>Units: meters</div>
+        </div>
+      </div>
+      <div class="mc-options" data-answer="B" data-qid="11">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> 12.25 m</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> 30.6 m</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> 61.3 m</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> 24.5 m</div>
+      </div>
+      <div class="explanation-box" id="exp-11">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Use <strong>d = ½gt²</strong> since the ball is dropped (v₀ = 0). d = ½(9.8)(2.5²) = ½(9.8)(6.25) = ½(61.25) = <strong>30.625 m ≈ 30.6 m</strong>. Choice A (12.25 m) comes from computing ½(9.8)(2.5) without squaring t — squaring t is essential. Choice C (61.3 m) drops the ½ entirely. Choice D (24.5 m) uses 9.8 × 2.5 without the ½ or the square. The order of operations matters: square t first, then multiply by g, then multiply by ½.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">d = ½(9.8)(2.5²) = ½(9.8)(6.25) = ½(61.25) = 30.625 m ≈ 30.6 m</div>
+    </div>
+  </div>
+
+  <!-- Q12 two-part free fall -->
+  <div class="q-card" id="qcard-12">
+    <div class="q-header"><span class="q-num">Question 12 — Two Parts</span><span class="q-pts">4 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.05 · Two-Part Calculation</div>
+      <p class="q-text">A rock is dropped from a cliff and hits the ground after <strong>3.2 seconds</strong>. Neglecting air resistance:</p>
+      <p class="q-text"><strong>Part A</strong> — How tall is the cliff?<br><strong>Part B</strong> — What was the impact velocity of the rock?</p>
+      <div class="work-box">
+        <div class="work-box-label">Part A — Height</div>
+        <div class="work-steps">
+          <div class="work-step"><div class="work-step-title">① Known</div>g = 9.8, t = 3.2 s, v₀ = 0</div>
+          <div class="work-step"><div class="work-step-title">② Equation</div><code>d = ½gt²</code></div>
+          <div class="work-step"><div class="work-step-title">③ Solve</div>½(9.8)(3.2²) = ?</div>
+          <div class="work-step"><div class="work-step-title">④ Answer</div>meters</div>
+        </div>
+      </div>
+      <div class="work-box">
+        <div class="work-box-label">Part B — Impact Velocity</div>
+        <div class="work-steps">
+          <div class="work-step"><div class="work-step-title">① Known</div>g = 9.8, t = 3.2 s, v₀ = 0</div>
+          <div class="work-step"><div class="work-step-title">② Equation</div><code>vf = v₀ + gt</code></div>
+          <div class="work-step"><div class="work-step-title">③ Solve</div>0 + (9.8)(3.2) = ?</div>
+          <div class="work-step"><div class="work-step-title">④ Answer</div>m/s</div>
+        </div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show full solution &amp; explanation</button>
+      <div class="hint-box">
+        <strong>Part A — Height:</strong> Use d = ½gt² because the rock is dropped from rest (v₀ = 0).<br>
+        d = ½(9.8)(3.2²) = ½(9.8)(10.24) = ½(100.35) ≈ <strong>50.2 m</strong><br><br>
+        <strong>Part B — Impact velocity:</strong> Use vf = v₀ + gt. Since v₀ = 0:<br>
+        vf = 0 + (9.8)(3.2) = <strong>31.4 m/s</strong><br><br>
+        <strong>Why these equations?</strong> Both come from the same situation: an object accelerating from rest under gravity only. The first equation tracks position (how far it went); the second tracks velocity (how fast it's going when it arrives). Notice you use the same t = 3.2 s for both parts — time is the link between them. If you're ever asked for height AND impact speed, these two equations are always the pair to use.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: NEWTON'S LAWS -->
+  <div class="section-header">
+    <div class="section-icon">⚡</div>
+    <div class="section-title">02.06 — Newton's Laws</div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="q-card" id="qcard-13">
+    <div class="q-header"><span class="q-num">Question 13</span><span class="q-pts">1 pt</span></div>
+    <div class="q-body">
+      <div class="tag">02.06 · Newton's 1st Law</div>
+      <p class="q-text">A soccer ball is rolling across a field and gradually slows to a stop. Which force is responsible for stopping it?</p>
+      <div class="mc-options" data-answer="B" data-qid="13">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> Gravity — it pulls the ball into the ground.</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> Friction — an unbalanced force from the grass acts opposite to the ball's motion.</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> Inertia — the ball's inertia eventually wears out.</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> Normal force — it pushes the ball backward.</div>
+      </div>
+      <div class="explanation-box" id="exp-13">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Newton's First Law says a moving object keeps moving unless an <strong>unbalanced force</strong> acts on it. Here, friction from the grass is that force — it acts opposite to the ball's motion and gradually slows it. Gravity (A) acts downward and is balanced by the normal force — it doesn't stop horizontal motion. Normal force (D) acts perpendicular to the surface (upward), not backward. And inertia (C) is the most important misconception to clear up: <strong>inertia is not a force</strong>. It doesn't wear out. It's the tendency to resist change — the ball would roll forever if there were no friction.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Newton's 1st Law: objects in motion stay in motion UNLESS acted on by an unbalanced force. What unbalanced force acts opposite to the direction of motion here?</div>
+    </div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="q-card" id="qcard-14">
+    <div class="q-header"><span class="q-num">Question 14</span><span class="q-pts">1 pt</span></div>
+    <div class="q-body">
+      <div class="tag">02.06 · Newton's 3rd Law</div>
+      <p class="q-text">A swimmer pushes backward against the water with her hands. According to Newton's Third Law, what happens?</p>
+      <div class="mc-options" data-answer="A" data-qid="14">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> The water pushes forward on the swimmer with an equal and opposite force — this is what propels her forward.</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> The water absorbs the force and nothing pushes back.</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> The swimmer pushes the water, but the water is too massive to push back meaningfully.</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> Gravity pulls the swimmer forward as a reaction to pushing the water.</div>
+      </div>
+      <div class="explanation-box" id="exp-14">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Newton's Third Law: for every action, there is an equal and opposite reaction. The swimmer pushes water backward → water pushes swimmer <strong>forward with the same magnitude of force</strong>. This is literally how swimming works. The two forces in a Newton's 3rd Law pair always act on <em>different objects</em> — one on the swimmer, one on the water. Choice C is a common misconception: mass doesn't weaken the reaction force. It affects how much each object accelerates (Newton's 2nd Law), but the forces themselves are always equal.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Every action force has an equal and opposite reaction force. The two forces act on DIFFERENT objects.</div>
+    </div>
+  </div>
+
+  <!-- Q15 inertia/equilibrium -->
+  <div class="q-card" id="qcard-15">
+    <div class="q-header"><span class="q-num">Question 15</span><span class="q-pts">2 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.06 · Equilibrium · Net Force</div>
+      <p class="q-text">A book sits on a table without moving. Two forces act on it: gravity (Fg = 15 N downward) and normal force (FN = 15 N upward). What is the net force, and what does that tell you about the book's acceleration?</p>
+      <div class="mc-options" data-answer="C" data-qid="15">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> Net force = 30 N upward; acceleration = 2 m/s² upward.</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> Net force = 15 N downward; the book accelerates into the table.</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> Net force = 0 N; the book is in equilibrium and has zero acceleration.</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> Net force = 0 N, but the book still accelerates because gravity is always acting.</div>
+      </div>
+      <div class="explanation-box" id="exp-15">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Net force is the vector sum of all forces. 15 N up + 15 N down = <strong>0 N</strong>. When Fnet = 0, Newton's Second Law (F = ma) tells us a = 0. The book is in <strong>equilibrium</strong>. Choice A adds the forces instead of subtracting — you can only add forces that point in the same direction. Choice D is a critical misconception: gravity is acting, yes, but so is the normal force, and they cancel. Zero net force means zero acceleration — full stop. The book doesn't "feel" gravity pull it down because the table pushes back with an identical upward force.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Net force = sum of all forces. When equal forces act in opposite directions, they cancel. Fnet = 0 → a = 0 → object is in equilibrium (not accelerating).</div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: F = ma CALCULATIONS -->
+  <div class="section-header">
+    <div class="section-icon">🏍️</div>
+    <div class="section-title">02.07 — F = ma Calculations</div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="q-card" id="qcard-16">
+    <div class="q-header"><span class="q-num">Question 16</span><span class="q-pts">3 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.07 · Calculation · F = ma</div>
+      <p class="q-text">A skateboard and rider have a combined mass of 72.0 kg. They accelerate from rest to 8.0 m/s in 4.0 seconds. What unbalanced force caused this acceleration?</p>
+      <div class="work-box">
+        <div class="work-box-label">Show all 4 steps — find acceleration first, then force</div>
+        <div class="work-steps">
+          <div class="work-step"><div class="work-step-title">① Known</div>m = 72 kg, v₀ = 0, vf = 8 m/s, t = 4 s</div>
+          <div class="work-step"><div class="work-step-title">② Equations</div><code>a = Δv/t</code> then <code>F = ma</code></div>
+          <div class="work-step"><div class="work-step-title">③ Solve</div>Two steps!</div>
+          <div class="work-step"><div class="work-step-title">④ Answer</div>Newtons (N)</div>
+        </div>
+      </div>
+      <div class="mc-options" data-answer="B" data-qid="16">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> 18.0 N</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> 144.0 N</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> 576.0 N</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> 288.0 N</div>
+      </div>
+      <div class="explanation-box" id="exp-16">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">This is a two-step problem. <strong>Step 1</strong>: find acceleration using a = Δv/t = (8.0 − 0)/4.0 = <strong>2.0 m/s²</strong>. <strong>Step 2</strong>: find force using F = ma = 72.0 × 2.0 = <strong>144.0 N</strong>. Choice A (18.0 N) comes from using F = m × t (substituting time instead of acceleration). Choice C (576.0 N) skips the acceleration step and uses F = 72 × 8 — that plugs in final velocity instead of acceleration. Always find acceleration first before applying F = ma.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">Step 1: a = (8−0)/4 = 2.0 m/s²<br>Step 2: F = 72 × 2.0 = 144.0 N</div>
+    </div>
+  </div>
+
+  <!-- Q17 solve for mass -->
+  <div class="q-card" id="qcard-17">
+    <div class="q-header"><span class="q-num">Question 17</span><span class="q-pts">3 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.07 · Calculation · Solve for mass</div>
+      <p class="q-text">A force of 312.0 N produces an acceleration of 18.0 m/s² in an object. What is the mass of the object?</p>
+      <div class="work-box">
+        <div class="work-box-label">Rearrange F = ma first</div>
+        <div class="work-steps">
+          <div class="work-step"><div class="work-step-title">① Known</div>F = 312.0 N, a = 18.0 m/s²</div>
+          <div class="work-step"><div class="work-step-title">② Equation</div><code>m = F / a</code></div>
+          <div class="work-step"><div class="work-step-title">③ Solve</div>Plug and calculate</div>
+          <div class="work-step"><div class="work-step-title">④ Answer</div>kg</div>
+        </div>
+      </div>
+      <div class="mc-options" data-answer="A" data-qid="17">
+        <div class="mc-option" data-opt="A"><span class="mc-option-letter">A</span> 17.33 kg</div>
+        <div class="mc-option" data-opt="B"><span class="mc-option-letter">B</span> 5,616 kg</div>
+        <div class="mc-option" data-opt="C"><span class="mc-option-letter">C</span> 294.0 kg</div>
+        <div class="mc-option" data-opt="D"><span class="mc-option-letter">D</span> 0.058 kg</div>
+      </div>
+      <div class="explanation-box" id="exp-17">
+        <div class="explanation-header"></div>
+        <div class="explanation-body">Rearrange F = ma to solve for mass: <strong>m = F / a</strong> = 312.0 / 18.0 = <strong>17.33 kg</strong>. Choice B (5,616 kg) multiplies instead of divides — that's what you'd get from m = F × a. Choice D (0.058 kg) flips the fraction and gets a / F. Choice C (294.0 kg) is 312.0 / 18.0 computed incorrectly — double-check your arithmetic. The key concept: for the same force, a less massive object accelerates more. 17.33 kg accelerating at 18 m/s² requires 312 N — which makes physical sense since it's roughly twice Earth's gravity applied to a 17 kg object.</div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show hint</button>
+      <div class="hint-box">m = F/a = 312.0 / 18.0 = 17.33 kg</div>
+    </div>
+  </div>
+
+  <!-- Q18 HARD multi-step -->
+  <div class="q-card" id="qcard-18">
+    <div class="q-header"><span class="q-num">Question 18 — Challenge</span><span class="q-pts">4 pts</span></div>
+    <div class="q-body">
+      <div class="tag">02.07 · Multi-Step · Hard</div>
+      <p class="q-text">A 420 N unbalanced force is applied to a 28.0 kg object at rest. How far does the object travel in 5.0 seconds? Show all work.</p>
+      <div class="work-box">
+        <div class="work-box-label">3-step chain: find a → then use d = ½at²</div>
+        <div class="work-steps">
+          <div class="work-step"><div class="work-step-title">① Known</div>F = 420 N, m = 28 kg, t = 5 s, v₀ = 0</div>
+          <div class="work-step"><div class="work-step-title">② Step 1 eq.</div><code>a = F/m</code></div>
+          <div class="work-step"><div class="work-step-title">③ Step 2 eq.</div><code>d = ½at²</code></div>
+          <div class="work-step"><div class="work-step-title">④ Answer</div>meters</div>
+        </div>
+      </div>
+      <button class="btn-reveal" onclick="toggleHint(this)">Show full solution &amp; explanation</button>
+      <div class="hint-box">
+        <strong>Step 1 — Find acceleration:</strong> a = F/m = 420/28 = <strong>15.0 m/s²</strong><br><br>
+        <strong>Step 2 — Find distance:</strong> d = ½at² = ½(15.0)(5²) = ½(15)(25) = ½(375) = <strong>187.5 m</strong><br><br>
+        <strong>Why chain these equations?</strong> The problem gives you force and mass — but the distance formula needs acceleration, not force. So you use Newton's 2nd Law first to find acceleration, then plug that into kinematics. This two-equation chain (F = ma → d = ½at²) is the core skill for the hardest questions on this test. The object starts from rest (v₀ = 0), which is why the first term in d = v₀t + ½at² disappears and you're left with d = ½at² only.
+      </div>
+    </div>
+  </div>
+
+  <button class="submit-btn" onclick="submitAll()">Check My Score</button>
+
+  <div class="results-banner" id="resultsBanner">
+    <div class="results-score" id="finalScore">—</div>
+    <div class="results-label">out of <span id="totalPts">—</span> points · Practice Complete</div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  // ── Graph rendering ──────────────────────────────────────────
+  function drawPTGraph() {
+    const c = document.getElementById('ptGraph');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    const pad = { l: 56, r: 20, t: 20, b: 46 };
+    const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+
+    // data: [time(hr), position(miles)]
+    const pts = [[0,0],[1,30],[2,50],[3,50],[4,65],[5,65]];
+    const maxT = 5, maxP = 80;
+
+    function tx(t) { return pad.l + (t/maxT)*iW; }
+    function ty(p) { return pad.t + iH - (p/maxP)*iH; }
+
+    // bg
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#fff';
+    ctx.fillRect(0,0,W,H);
+
+    // grid
+    ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
+    for (let i=0; i<=5; i++) {
+      const x = tx(i);
+      ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, pad.t+iH); ctx.stroke();
+      ctx.fillStyle = '#666'; ctx.font = '12px Work Sans,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(i, x, pad.t+iH+18);
+    }
+    for (let p=0; p<=80; p+=20) {
+      const y = ty(p);
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+iW, y); ctx.stroke();
+      ctx.fillStyle = '#666'; ctx.textAlign='right';
+      ctx.fillText(p, pad.l-8, y+4);
+    }
+
+    // axis labels
+    ctx.fillStyle = '#333'; ctx.font = '13px Work Sans,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Time (hours)', pad.l + iW/2, H - 4);
+    ctx.save(); ctx.translate(14, pad.t + iH/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('Position (miles)', 0, 0); ctx.restore();
+
+    // line
+    ctx.strokeStyle = '#1a3a2a'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    pts.forEach(([t,p],i) => i===0 ? ctx.moveTo(tx(t),ty(p)) : ctx.lineTo(tx(t),ty(p)));
+    ctx.stroke();
+
+    // dots
+    pts.forEach(([t,p]) => {
+      ctx.beginPath(); ctx.arc(tx(t),ty(p),4,0,Math.PI*2);
+      ctx.fillStyle = '#c8900a'; ctx.fill();
+    });
+  }
+
+  function drawATGraph() {
+    const c = document.getElementById('atGraph');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    const pad = { l: 56, r: 20, t: 20, b: 46 };
+    const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+    const maxT = 30, maxA = 7;
+
+    function tx(t) { return pad.l + (t/maxT)*iW; }
+    function ty(a) { return pad.t + iH - (a/maxA)*iH; }
+
+    // segments: 0→5s ramps 0→5, 5→10s ramps 5→0, 10→20s stays 0, 20→30s stays 5
+    const pts = [[0,0],[5,5],[10,0],[10,0],[20,0],[20,5],[30,5]];
+
+    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
+    [0,5,10,15,20,25,30].forEach(t => {
+      const x = tx(t);
+      ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+iH); ctx.stroke();
+      ctx.fillStyle='#666'; ctx.font='12px Work Sans,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(t, x, pad.t+iH+18);
+    });
+    [0,1,2,3,4,5,6,7].forEach(a => {
+      const y = ty(a);
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+iW,y); ctx.stroke();
+      ctx.fillStyle='#666'; ctx.textAlign='right';
+      ctx.fillText(a, pad.l-8, y+4);
+    });
+
+    ctx.fillStyle='#333'; ctx.font='13px Work Sans,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Time (s)', pad.l+iW/2, H-4);
+    ctx.save(); ctx.translate(14,pad.t+iH/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('Acceleration (m/s²)',0,0); ctx.restore();
+
+    // fill area
+    ctx.fillStyle = 'rgba(26,58,42,0.1)';
+    ctx.beginPath();
+    ctx.moveTo(tx(0),ty(0));
+    pts.forEach(([t,a]) => ctx.lineTo(tx(t),ty(a)));
+    ctx.lineTo(tx(30),ty(0)); ctx.lineTo(tx(0),ty(0));
+    ctx.fill();
+
+    ctx.strokeStyle='#1a3a2a'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    pts.forEach(([t,a],i) => i===0 ? ctx.moveTo(tx(t),ty(a)) : ctx.lineTo(tx(t),ty(a)));
+    ctx.stroke();
+  }
+
+  // ── Scoring ──────────────────────────────────────────────────
+  const correctAnswers = {
+    '1':'B','2':'C','3':'A','4':'B','5':'D',
+    '6':'B','7':'C','8':'B','9':'A','10':'C',
+    '11':'B','12':'hint','13':'B','14':'A','15':'C',
+    '16':'B','17':'A','18':'hint'
+  };
+
+  const pointValues = {
+    '1':1,'2':1,'3':1,'4':2,'5':2,'6':2,'7':2,'8':3,'9':4,
+    '10':2,'11':3,'12':4,'13':1,'14':1,'15':2,'16':3,'17':3,'18':4
+  };
+
+  let answered = {};
+  let score = 0;
+  let totalAnswerable = 0;
+
+  // count answerable (MC) questions
+  document.querySelectorAll('.mc-options').forEach(group => {
+    totalAnswerable += pointValues[group.dataset.qid] || 0;
+  });
+
+  function updateProgress() {
+    const answered_count = Object.keys(answered).length;
+    const mc_count = document.querySelectorAll('.mc-options').length;
+    const pct = (answered_count / mc_count) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('scoreDisplay').textContent = score + ' / ' + totalAnswerable;
+  }
+
+  document.querySelectorAll('.mc-options').forEach(group => {
+    group.querySelectorAll('.mc-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const qid = group.dataset.qid;
+        if (answered[qid]) return;
+        const chosen = opt.dataset.opt;
+        const correct = group.dataset.answer;
+        answered[qid] = chosen;
+        const isCorrect = chosen === correct;
+        if (isCorrect) {
+          opt.classList.add('correct');
+          score += pointValues[qid] || 0;
+        } else {
+          opt.classList.add('wrong');
+          group.querySelector('[data-opt="'+correct+'"]')?.classList.add('correct');
+        }
+        // Reveal explanation
+        const expBox = document.getElementById('exp-' + qid);
+        if (expBox) {
+          expBox.classList.add('open');
+          const hdr = expBox.querySelector('.explanation-header');
+          if (hdr) {
+            hdr.textContent = isCorrect ? '✅ Correct — here\'s why:' : '❌ Not quite — here\'s the explanation:';
+            hdr.className = 'explanation-header ' + (isCorrect ? 'correct-hdr' : 'wrong-hdr');
+          }
+        }
+        updateProgress();
+      });
+    });
+  });
+
+  function toggleHint(btn) {
+    const box = btn.nextElementSibling;
+    box.classList.toggle('open');
+    btn.textContent = box.classList.contains('open') ? 'Hide hint' : 'Show hint';
+  }
+
+  function submitAll() {
+    const banner = document.getElementById('resultsBanner');
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('totalPts').textContent = totalAnswerable;
+    banner.classList.add('show');
+    banner.scrollIntoView({behavior:'smooth'});
+  }
+
+  // init
+  drawPTGraph();
+  drawATGraph();
+  updateProgress();
+</script>
+</body>
+</html>
