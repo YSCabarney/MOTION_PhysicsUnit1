@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Squares &#8212; Motion &amp; Forces</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; width: 100%; }
+body {
+  font-family: 'Work Sans', sans-serif;
+  background: #0d1f14;
+  color: #e8ede9;
+  overflow-x: hidden;
+}
+#appWrap { position: relative; min-height: 100%; overflow: hidden; }
+
+/* FLASH — explicit top/right/bottom/left for older WebViews */
+#flash {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  pointer-events: none; z-index: 200;
+  opacity: 0; transition: opacity 0.1s;
+}
+#flash.show { opacity: 0.22; }
+
+/* SCREENS */
+.screen { display: none; flex-direction: column; min-height: 100%; }
+.screen.active { display: flex; }
+
+/* ── SETUP ───────────────────────────────── */
+#setupScreen {
+  align-items: center; justify-content: center;
+  padding: 36px 24px; text-align: center;
+}
+.setup-logo {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 7vw, 64px);
+  font-weight: 900; color: #f5b800;
+  line-height: 1; margin-bottom: 6px;
+}
+.setup-tagline {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; color: #7a9e80;
+  margin-bottom: 36px;
+}
+.setup-section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: #7a9e80;
+  text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: 10px;
+}
+.team-setup {
+  display: flex; gap: 14px; margin-bottom: 28px;
+  flex-wrap: wrap; justify-content: center;
+}
+.team-row {
+  display: flex; align-items: center; gap: 10px;
+  background: #1a2d1f; border: 1.5px solid #2a3d2f;
+  border-radius: 10px; padding: 10px 16px;
+  min-width: 190px;
+}
+.team-swatch { width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; }
+.team-input {
+  flex: 1; background: none; border: none;
+  color: #e8ede9; font-family: 'Work Sans', sans-serif;
+  font-size: 15px; outline: none;
+}
+.team-input::placeholder { color: #7a9e80; }
+
+.level-toggle {
+  display: flex; margin-bottom: 32px;
+  border: 1.5px solid #2a3d2f; border-radius: 8px; overflow: hidden;
+}
+.level-btn {
+  flex: 1; padding: 10px 24px;
+  background: #1a2d1f; border: none;
+  color: #7a9e80; font-family: 'Work Sans', sans-serif;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.level-btn.active { background: #f5b800; color: #0d1f14; }
+
+.btn-start {
+  background: #3dba6a; color: #0d1f14;
+  border: none; border-radius: 10px;
+  padding: 14px 48px; font-size: 17px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 700; cursor: pointer;
+}
+.btn-start:hover { background: #35a85e; }
+.setup-error {
+  color: #e53e3e; font-size: 13px;
+  font-family: 'IBM Plex Mono', monospace;
+  margin-bottom: 10px; min-height: 18px;
+}
+
+/* ── GAME HEADER ─────────────────────────── */
+#gameScreen { flex-direction: column; }
+.game-header {
+  background: #142010;
+  border-bottom: 1px solid #2a3d2f;
+  padding: 10px 16px;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
+  flex-wrap: wrap;
+}
+.team-score-wrap { display: flex; gap: 10px; align-items: center; }
+.team-score-pill {
+  display: flex; align-items: center; gap: 8px;
+  border-radius: 20px; padding: 5px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px; font-weight: 600;
+  border: 2px solid transparent;
+}
+.team-score-pill.active-team { border-width: 2px; }
+.team-mark { font-size: 18px; font-weight: 900; }
+.level-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: #7a9e80;
+  background: #1a2d1f; border: 1px solid #2a3d2f;
+  border-radius: 20px; padding: 3px 12px;
+}
+.turn-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; color: #7a9e80;
+}
+
+/* ── GAME BODY ───────────────────────────── */
+.game-body {
+  flex: 1; display: flex;
+  flex-direction: row;
+  min-height: 0;
+}
+.board-wrap {
+  flex: 0 0 auto;
+  display: flex; align-items: flex-start;
+  justify-content: center;
+  padding: 16px;
+}
+/* Board: fixed 300px wide, falls back cleanly */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 300px;
+  max-width: 44vw;
+}
+@media (max-width: 640px) {
+  .game-body { flex-direction: column; }
+  .board { max-width: 90vw; width: 300px; }
+  .board-wrap { padding: 12px 12px 6px; }
+}
+
+/* Square: padding-bottom trick instead of aspect-ratio */
+.square {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* makes it square without aspect-ratio */
+  border-radius: 10px;
+  border: 2px solid #2a3d2f;
+  background: #1a2d1f;
+  cursor: pointer;
+  overflow: hidden;
+}
+.square-inner {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 6px;
+}
+.square:hover:not(.claimed-x):not(.claimed-o):not(.selected) {
+  border-color: #f5b800;
+  background: #252f1f;
+}
+.square.selected {
+  border-color: #f5b800;
+  background: #2a2200;
+}
+.square.claimed-x {
+  background: #0a2a3d;
+  border-color: #4db8ff;
+  cursor: default;
+}
+.square.claimed-o {
+  background: #3d0a0a;
+  border-color: #ff6b6b;
+  cursor: default;
+}
+.square.win-sq {
+  animation: winPulse 0.6s ease-in-out 3;
+}
+@keyframes winPulse {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+.sq-topic {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: #7a9e80; text-align: center;
+  line-height: 1.2; margin-bottom: 4px;
+}
+.sq-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: 600; color: #3a5a42;
+  line-height: 1;
+}
+
+/* ── RIGHT PANEL ─────────────────────────── */
+.right-panel {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 16px 20px 16px 8px; gap: 12px;
+  min-width: 0;
+  overflow-y: auto;
+}
+@media (max-width: 640px) {
+  .right-panel { padding: 8px 12px 16px; }
+}
+
+/* INSTRUCTION CARD */
+.instr-card {
+  background: #1a2d1f; border: 1px solid #2a3d2f;
+  border-radius: 10px; padding: 16px;
+  font-size: 13px; line-height: 1.7; color: #7a9e80;
+}
+.instr-card strong { color: #f5b800; display: block; margin-bottom: 6px; font-size: 14px; }
+
+/* QUESTION CARD */
+.q-card {
+  background: #1a2d1f; border: 1px solid #2a3d2f;
+  border-radius: 10px; padding: 16px;
+  display: none;
+}
+.q-card.show { display: block; }
+.q-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: #7a9e80; margin-bottom: 8px;
+}
+.q-text {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(14px, 2.2vw, 18px);
+  font-weight: 700; line-height: 1.4;
+  margin-bottom: 14px; color: #e8ede9;
+}
+
+/* CELEBRITY ANSWER */
+.celeb-box {
+  background: #142010; border: 1.5px solid #2a3d2f;
+  border-radius: 8px; padding: 12px 14px;
+  margin-bottom: 12px; display: none;
+}
+.celeb-box.show { display: block; }
+.celeb-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: #f5b800;
+  margin-bottom: 6px; text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.celeb-answer { font-size: 14px; line-height: 1.55; color: #e8ede9; }
+
+/* AGREE / DISAGREE — single display declaration */
+.agree-row {
+  display: none;
+  gap: 10px; margin-bottom: 10px;
+}
+.agree-row.show { display: flex; }
+.agree-btn {
+  flex: 1; padding: 11px 8px;
+  border: none; border-radius: 8px;
+  font-size: 14px; font-weight: 700;
+  font-family: 'Work Sans', sans-serif;
+  cursor: pointer;
+}
+.btn-agree    { background: #3dba6a; color: #0d1f14; }
+.btn-disagree { background: #e06bff; color: #0d1f14; }
+
+/* REVEAL */
+.reveal-box {
+  background: #142010; border-radius: 8px;
+  padding: 12px 14px; display: none;
+  border-left: 3px solid #3dba6a;
+  margin-bottom: 10px;
+}
+.reveal-box.show { display: block; }
+.reveal-box.wrong-reveal { border-left-color: #e53e3e; }
+.reveal-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: #3dba6a;
+  margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em;
+}
+.reveal-box.wrong-reveal .reveal-label { color: #e53e3e; }
+.reveal-text { font-size: 13px; line-height: 1.6; color: #e8ede9; }
+.reveal-text strong { color: #3dba6a; }
+.reveal-box.wrong-reveal .reveal-text strong { color: #ff9090; }
+
+/* CLAIM ROW */
+.claim-row { display: none; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.claim-row.show { display: flex; }
+.claim-btn {
+  flex: 1; padding: 10px 8px;
+  border: 2px solid transparent;
+  border-radius: 8px; font-size: 13px;
+  font-weight: 700; font-family: 'Work Sans', sans-serif;
+  cursor: pointer; min-width: 100px;
+}
+.btn-next-q {
+  width: 100%; padding: 11px;
+  background: #2a3d2f; color: #7a9e80;
+  border: none; border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+  font-family: 'Work Sans', sans-serif;
+  cursor: pointer; display: none; margin-top: 4px;
+}
+.btn-next-q.show { display: block; }
+.btn-next-q:hover { background: #3a4d3f; color: #e8ede9; }
+
+/* ── WIN SCREEN ───────────────────────────── */
+#winScreen {
+  align-items: center; justify-content: center;
+  padding: 40px 24px; text-align: center;
+}
+.win-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(40px, 9vw, 80px);
+  font-weight: 900; line-height: 1; margin-bottom: 10px;
+}
+.win-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px; color: #7a9e80; margin-bottom: 36px;
+}
+/* Win board — same padding-bottom trick */
+.win-board-preview {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 6px; width: 180px; margin: 0 auto 36px;
+}
+.win-sq {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  border-radius: 8px;
+  border: 2px solid #2a3d2f;
+  background: #1a2d1f;
+  overflow: hidden;
+}
+.win-sq-inner {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 28px; font-weight: 900;
+}
+.win-sq.x { background: #0a2a3d; border-color: #4db8ff; }
+.win-sq.x .win-sq-inner { color: #4db8ff; }
+.win-sq.o { background: #3d0a0a; border-color: #ff6b6b; }
+.win-sq.o .win-sq-inner { color: #ff6b6b; }
+
+.btn-restart {
+  background: none; border: 2px solid #3dba6a;
+  color: #3dba6a; border-radius: 8px;
+  padding: 12px 36px; font-size: 15px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600; cursor: pointer;
+}
+.btn-restart:hover { background: #1f4d2e; }
+</style>
+</head>
+<body>
+<div id="appWrap">
+<div id="flash"></div>
+
+<!-- ══════ SETUP ══════ -->
+<div class="screen active" id="setupScreen">
+  <div class="setup-logo">&#11088; Physics Squares</div>
+  <div class="setup-tagline">Motion &amp; Forces &middot; Hollywood Squares Review</div>
+
+  <div class="setup-section-label">Team Names</div>
+  <div class="team-setup">
+    <div class="team-row">
+      <div class="team-swatch" style="background:#4db8ff"></div>
+      <input class="team-input" id="teamXName" type="text" placeholder="Team X" maxlength="16">
+      <span style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#4db8ff">X</span>
+    </div>
+    <div class="team-row">
+      <div class="team-swatch" style="background:#ff6b6b"></div>
+      <input class="team-input" id="teamOName" type="text" placeholder="Team O" maxlength="16">
+      <span style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#ff6b6b">O</span>
+    </div>
+  </div>
+
+  <div class="setup-section-label">Difficulty</div>
+  <div class="level-toggle">
+    <button class="level-btn active" id="lvl1btn">Level 1 &#8212; Foundation</button>
+    <button class="level-btn" id="lvl2btn">Level 2 &#8212; Challenge</button>
+  </div>
+
+  <div class="setup-error" id="setupError"></div>
+  <button class="btn-start" id="btnStart">Start Game</button>
+</div>
+
+<!-- ══════ GAME ══════ -->
+<div class="screen" id="gameScreen">
+  <div class="game-header">
+    <div class="team-score-wrap">
+      <div class="team-score-pill" id="pillX" style="background:#0a2a3d;border-color:#4db8ff">
+        <span class="team-mark" style="color:#4db8ff">X</span>
+        <span id="nameX">Team X</span>
+        <span id="scoreX" style="color:#4db8ff;margin-left:4px">0 sq</span>
+      </div>
+      <div class="team-score-pill" id="pillO" style="background:#3d0a0a;border-color:#ff6b6b">
+        <span class="team-mark" style="color:#ff6b6b">O</span>
+        <span id="nameO">Team O</span>
+        <span id="scoreO" style="color:#ff6b6b;margin-left:4px">0 sq</span>
+      </div>
+    </div>
+    <div class="level-badge" id="levelBadge">Level 1</div>
+    <div class="turn-label" id="turnLabel">X picks first</div>
+  </div>
+
+  <div class="game-body">
+    <div class="board-wrap">
+      <div class="board" id="board"></div>
+    </div>
+
+    <div class="right-panel">
+      <div class="instr-card" id="instrCard">
+        <strong>How to play</strong>
+        Pick a square. The teacher reads the question and the celebrity's answer.
+        Your team decides: <em>Agree</em> (the answer is correct) or
+        <em>Disagree</em> (the answer is wrong or incomplete).
+        Right call &#8594; you claim the square.
+        First team to get <strong>three in a row</strong> wins!
+      </div>
+
+      <div class="q-card" id="qCard">
+        <div class="q-meta" id="qMeta"></div>
+        <div class="q-text" id="qText"></div>
+
+        <div class="celeb-box" id="celebBox">
+          <div class="celeb-label">&#11088; Celebrity Answer</div>
+          <div class="celeb-answer" id="celebAnswer"></div>
+        </div>
+
+        <div class="agree-row" id="agreeRow">
+          <button class="agree-btn btn-agree"    id="btnAgree">&#10003; Agree</button>
+          <button class="agree-btn btn-disagree" id="btnDisagree">&#10007; Disagree</button>
+        </div>
+
+        <div class="reveal-box" id="revealBox">
+          <div class="reveal-label" id="revealLabel"></div>
+          <div class="reveal-text"  id="revealText"></div>
+        </div>
+
+        <div class="claim-row" id="claimRow"></div>
+        <button class="btn-next-q" id="btnNextQ">Choose next square &#8594;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ WIN ══════ -->
+<div class="screen" id="winScreen">
+  <div class="win-title" id="winTitle"></div>
+  <div class="win-sub"   id="winSub"></div>
+  <div class="win-board-preview" id="winBoard"></div>
+  <button class="btn-restart" id="btnRestart">Play Again</button>
+</div>
+
+</div><!-- /appWrap -->
+<script>
+// ══════════════════════════════════════════
+// QUESTION BANKS
+// celebCorrect: true  = celebrity is RIGHT (team should Agree)
+// celebCorrect: false = celebrity is WRONG  (team should Disagree)
+// ══════════════════════════════════════════
+var QUESTIONS = {
+  1: [
+    {
+      topic: 'Speed & Velocity',
+      q: 'A car travels 150 meters in 5 seconds. What is its speed?',
+      celeb: '"Easy one — 30 meters per second. You just divide distance by time."',
+      celebCorrect: true,
+      explanation: 'The celebrity nailed it. Speed = distance divided by time = 150 divided by 5 = <strong>30 m/s</strong>.'
+    },
+    {
+      topic: "Newton's 1st Law",
+      q: "Newton's First Law says an object in motion stays in motion. What does that mean for a soccer ball rolling on a perfectly frictionless surface?",
+      celeb: '"It means the ball will gradually slow down and stop, because that\'s what objects naturally do."',
+      celebCorrect: false,
+      explanation: 'The celebrity has it backwards. Newton\'s First Law says objects in motion stay in motion at constant velocity UNLESS an unbalanced force acts on them. With no friction there is no unbalanced force, so the ball rolls forever.',
+      correction: 'The ball would keep rolling at the same speed indefinitely — no force means no change in motion.'
+    },
+    {
+      topic: 'Free Fall',
+      q: 'A golf ball and a bowling ball are dropped from the same height. Ignoring air resistance, which hits the ground first?',
+      celeb: '"They land at exactly the same time. Mass does not affect how fast things fall in free fall."',
+      celebCorrect: true,
+      explanation: 'The celebrity is correct. In free fall (no air resistance), all objects accelerate at <strong>9.8 m/s\u00b2</strong> regardless of mass. Galileo proved this, and NASA replicated it on the Moon with a hammer and a feather.'
+    },
+    {
+      topic: 'Acceleration',
+      q: 'A car goes from 0 to 30 m/s in 10 seconds. What is its acceleration?',
+      celeb: '"The acceleration is 300 meters per second squared — you multiply velocity times time."',
+      celebCorrect: false,
+      explanation: 'The celebrity used the wrong operation. Acceleration = change in velocity <strong>divided by</strong> time, not multiplied.',
+      correction: 'a = (30 \u2212 0) \u00f7 10 = <strong>3 m/s\u00b2</strong>'
+    },
+    {
+      topic: 'Net Force',
+      q: 'A book sits on a table without moving. Gravity pulls it down with 20 N. What is the net force on the book?',
+      celeb: '"The net force is zero. The table pushes up with 20 N to balance gravity, so the forces cancel."',
+      celebCorrect: true,
+      explanation: 'The celebrity is right. The table\'s normal force (20 N up) perfectly cancels gravity (20 N down). Net force = <strong>0 N</strong>. The book is in equilibrium.'
+    },
+    {
+      topic: 'F = ma',
+      q: 'A 10 kg object is pushed with a net force of 50 N. What is its acceleration?',
+      celeb: '"The acceleration is 5 meters per second squared. Force divided by mass."',
+      celebCorrect: true,
+      explanation: 'The celebrity is correct. F = ma rearranges to a = F \u00f7 m = 50 \u00f7 10 = <strong>5 m/s\u00b2</strong>.'
+    },
+    {
+      topic: 'Position-Time Graphs',
+      q: 'On a position-time graph, what does a straight horizontal line tell you?',
+      celeb: '"A horizontal line means the object is moving at a constant speed."',
+      celebCorrect: false,
+      explanation: 'The celebrity is wrong. A horizontal line means position is <strong>not changing at all</strong> — the object is at rest. A sloped straight line means constant speed.',
+      correction: 'Horizontal line = object is not moving (position is constant).'
+    },
+    {
+      topic: 'Gravity',
+      q: "What is the acceleration due to gravity near Earth's surface?",
+      celeb: '"Gravity accelerates falling objects at 9.8 meters per second squared, downward."',
+      celebCorrect: true,
+      explanation: 'The celebrity is correct. The standard value for gravitational acceleration near Earth\'s surface is <strong>g = 9.8 m/s\u00b2</strong>, directed downward.'
+    },
+    {
+      topic: "Newton's 3rd Law",
+      q: 'You push against a wall with 40 N of force. How much force does the wall exert on you?',
+      celeb: '"The wall pushes back with 40 N — equal and opposite. That\'s Newton\'s Third Law."',
+      celebCorrect: true,
+      explanation: 'The celebrity is right. Newton\'s Third Law: every action has an equal and opposite reaction. The wall pushes back with exactly <strong>40 N</strong> in the opposite direction.'
+    }
+  ],
+  2: [
+    {
+      topic: 'Kinematics',
+      q: 'A train decelerates at 4 m/s\u00b2 from an initial speed of 40 m/s. How far does it travel in 5 seconds?',
+      celeb: '"Using d = v\u2080t + \u00bdat\u00b2, I get 40 times 5 plus half of 4 times 25 — that\'s 200 plus 50, so 250 meters."',
+      celebCorrect: false,
+      explanation: 'The celebrity forgot the negative sign. Deceleration means <strong>a = \u22124 m/s\u00b2</strong>. The second term subtracts, it does not add.',
+      correction: 'd = (40)(5) + \u00bd(\u22124)(25) = 200 \u2212 50 = <strong>150 m</strong>'
+    },
+    {
+      topic: "Newton's 2nd Law",
+      q: 'If you double the mass of an object while keeping the net force the same, what happens to the acceleration?',
+      celeb: '"The acceleration doubles as well, because more mass means the force has more to work with."',
+      celebCorrect: false,
+      explanation: 'The celebrity has it backwards. From a = F/m, if mass doubles and force stays the same, acceleration is <strong>cut in half</strong>. Mass and acceleration are inversely proportional.',
+      correction: 'Doubling mass with the same force cuts acceleration in half.'
+    },
+    {
+      topic: 'Free Fall',
+      q: 'A rock is dropped from a cliff and hits the ground in 4 seconds. How tall is the cliff? (g = 9.8 m/s\u00b2)',
+      celeb: '"Using d = \u00bdgt\u00b2, that\'s half of 9.8 times 16 — which is 78.4 meters."',
+      celebCorrect: true,
+      explanation: 'The celebrity is correct. d = \u00bd(9.8)(4\u00b2) = \u00bd(9.8)(16) = <strong>78.4 m</strong>. Squaring t first is the key step.'
+    },
+    {
+      topic: 'Velocity vs. Speed',
+      q: 'A runner completes one full lap of a 400 m track in 60 seconds. What is her average velocity?',
+      celeb: '"Her average speed is about 6.7 m/s, and her average velocity is the same thing."',
+      celebCorrect: false,
+      explanation: 'The celebrity confuses speed with velocity. After one full lap she is back at her starting point, so her <strong>displacement = 0</strong>.',
+      correction: 'Average velocity = 0 m/s (displacement is zero). Average speed = 400 \u00f7 60 \u2248 6.7 m/s.'
+    },
+    {
+      topic: 'F = ma \u00b7 Multi-step',
+      q: 'A 600 N unbalanced force acts on a 30 kg object starting from rest. How far does it travel in 3 seconds?',
+      celeb: '"First find acceleration: 600 \u00f7 30 = 20 m/s\u00b2. Then distance: \u00bd times 20 times 9 = 90 meters."',
+      celebCorrect: true,
+      explanation: 'The celebrity chained the equations correctly. a = F/m = 20 m/s\u00b2, then d = \u00bdat\u00b2 = \u00bd(20)(9) = <strong>90 m</strong>. That two-step chain is the core skill for the hardest test questions.'
+    },
+    {
+      topic: "Newton's 2nd & 3rd Laws",
+      q: 'A 60 kg astronaut pushes off a 300 kg space station with 120 N of force. What is the astronaut\'s acceleration?',
+      celeb: '"By Newton\'s Third Law the station pushes back with 120 N, so the astronaut\'s acceleration is 120 \u00f7 60 = 2 m/s\u00b2."',
+      celebCorrect: true,
+      explanation: 'The celebrity is right on both counts. The reaction force on the astronaut is <strong>120 N</strong> (Newton\'s 3rd Law), and a = F/m = 120 \u00f7 60 = <strong>2 m/s\u00b2</strong> (Newton\'s 2nd Law).'
+    },
+    {
+      topic: 'Accel-Time Graphs',
+      q: 'On an acceleration-time graph, what does the area under the curve represent?',
+      celeb: '"The area under an acceleration-time graph gives you the distance traveled."',
+      celebCorrect: false,
+      explanation: 'The celebrity is wrong. The area under an acceleration-time graph = <strong>change in velocity (\u0394v)</strong>. To get distance you need the area under a velocity-time graph.',
+      correction: 'Area under a-t graph = \u0394v. Area under v-t graph = distance.'
+    },
+    {
+      topic: 'Free Fall \u2014 Impact Velocity',
+      q: 'A ball is dropped from rest and falls for 3 seconds. What is its velocity just before hitting the ground?',
+      celeb: '"Using vf = v\u2080 + gt, that\'s 0 plus 9.8 times 3, which equals 29.4 meters per second downward."',
+      celebCorrect: true,
+      explanation: 'The celebrity is correct. vf = 0 + (9.8)(3) = <strong>29.4 m/s downward</strong>. The object started from rest so v\u2080 = 0.'
+    },
+    {
+      topic: 'Inertia & Mass',
+      q: 'Which has more inertia — a 2 kg textbook or a 0.5 kg phone? What does that actually mean?',
+      celeb: '"The textbook has more inertia because it has more mass. It\'s harder to get moving and harder to stop."',
+      celebCorrect: true,
+      explanation: 'The celebrity is correct. Inertia is determined entirely by <strong>mass</strong>. The 2 kg textbook has 4\u00d7 the inertia of the phone — it resists changes in motion more in both directions.'
+    }
+  ]
+};
+
+var WIN_LINES = [
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
+
+// ── STATE ──────────────────────────────────
+var teamNames    = ['Team X', 'Team O'];
+var teamColors   = ['#4db8ff', '#ff6b6b'];
+var teamBgs      = ['#0a2a3d', '#3d0a0a'];
+var currentLevel = 1;
+var board        = [];
+var currentTurn  = 0;
+var selectedSq   = -1;
+var questionAnswered = false;
+var sqQuestions  = [];
+
+// ── BOOT ───────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('lvl1btn').addEventListener('click', function() { setLevel(1); });
+  document.getElementById('lvl2btn').addEventListener('click', function() { setLevel(2); });
+  document.getElementById('btnStart').addEventListener('click', startGame);
+  document.getElementById('btnAgree').addEventListener('click', function() { teamDecision(true); });
+  document.getElementById('btnDisagree').addEventListener('click', function() { teamDecision(false); });
+  document.getElementById('btnNextQ').addEventListener('click', clearQuestion);
+  document.getElementById('btnRestart').addEventListener('click', restartGame);
+});
+
+// ── SETUP ──────────────────────────────────
+function setLevel(n) {
+  currentLevel = n;
+  if (n === 1) {
+    document.getElementById('lvl1btn').classList.add('active');
+    document.getElementById('lvl2btn').classList.remove('active');
+  } else {
+    document.getElementById('lvl2btn').classList.add('active');
+    document.getElementById('lvl1btn').classList.remove('active');
+  }
+}
+
+function startGame() {
+  var xName = document.getElementById('teamXName').value.trim() || 'Team X';
+  var oName = document.getElementById('teamOName').value.trim() || 'Team O';
+  teamNames = [xName, oName];
+
+  document.getElementById('nameX').textContent   = xName;
+  document.getElementById('nameO').textContent   = oName;
+  document.getElementById('scoreX').textContent  = '0 sq';
+  document.getElementById('scoreO').textContent  = '0 sq';
+  document.getElementById('levelBadge').textContent = 'Level ' + currentLevel;
+
+  board        = [null,null,null,null,null,null,null,null,null];
+  currentTurn  = 0;
+  selectedSq   = -1;
+  questionAnswered = false;
+  sqQuestions  = QUESTIONS[currentLevel].slice();
+
+  buildBoard();
+  updateTurnLabel();
+  updatePills();
+  clearQuestion();
+  showScreen('gameScreen');
+}
+
+// ── BOARD ──────────────────────────────────
+function buildBoard() {
+  var el = document.getElementById('board');
+  el.innerHTML = '';
+  for (var i = 0; i < 9; i++) {
+    (function(idx) {
+      var sq = document.createElement('div');
+      sq.className = 'square';
+      sq.id = 'sq-' + idx;
+
+      var inner = document.createElement('div');
+      inner.className = 'square-inner';
+
+      var topicEl = document.createElement('div');
+      topicEl.className   = 'sq-topic';
+      topicEl.textContent = sqQuestions[idx].topic;
+
+      var labelEl = document.createElement('div');
+      labelEl.className   = 'sq-label';
+      labelEl.id          = 'sq-label-' + idx;
+      labelEl.textContent = String(idx + 1);
+
+      inner.appendChild(topicEl);
+      inner.appendChild(labelEl);
+      sq.appendChild(inner);
+      sq.addEventListener('click', function() { selectSquare(idx); });
+      el.appendChild(sq);
+    })(i);
+  }
+}
+
+function selectSquare(idx) {
+  if (board[idx] !== null) return;
+  if (questionAnswered) return;
+  if (selectedSq === idx) return;
+
+  if (selectedSq >= 0) {
+    document.getElementById('sq-' + selectedSq).classList.remove('selected');
+  }
+  selectedSq = idx;
+  document.getElementById('sq-' + idx).classList.add('selected');
+  showQuestion(idx);
+}
+
+// ── QUESTION FLOW ──────────────────────────
+function showQuestion(idx) {
+  var q = sqQuestions[idx];
+  questionAnswered = false;
+
+  document.getElementById('instrCard').style.display = 'none';
+  document.getElementById('qCard').classList.add('show');
+  document.getElementById('qMeta').textContent = 'Square ' + (idx + 1) + ' \u00b7 ' + q.topic;
+  document.getElementById('qText').textContent = q.q;
+
+  document.getElementById('celebBox').classList.remove('show');
+  document.getElementById('agreeRow').classList.remove('show');
+  document.getElementById('revealBox').classList.remove('show');
+  document.getElementById('claimRow').classList.remove('show');
+  document.getElementById('btnNextQ').classList.remove('show');
+
+  setTimeout(function() {
+    document.getElementById('celebAnswer').textContent = q.celeb;
+    document.getElementById('celebBox').classList.add('show');
+    document.getElementById('agreeRow').classList.add('show');
+  }, 500);
+}
+
+function teamDecision(agreed) {
+  if (questionAnswered) return;
+  questionAnswered = true;
+
+  var q       = sqQuestions[selectedSq];
+  var correct = (agreed === q.celebCorrect);
+
+  document.getElementById('agreeRow').classList.remove('show');
+
+  var revealBox   = document.getElementById('revealBox');
+  var revealLabel = document.getElementById('revealLabel');
+  var revealText  = document.getElementById('revealText');
+
+  if (correct) {
+    revealBox.className     = 'reveal-box show';
+    revealLabel.textContent = 'Correct call!';
+    revealText.innerHTML    = q.explanation;
+  } else {
+    revealBox.className     = 'reveal-box wrong-reveal show';
+    revealLabel.textContent = 'Wrong call';
+    var msg = q.explanation;
+    if (!q.celebCorrect && q.correction) {
+      msg += '<br><br><strong>The fix:</strong> ' + q.correction;
+    }
+    revealText.innerHTML = msg;
+  }
+
+  buildClaimRow(correct);
+}
+
+function buildClaimRow(teamGotItRight) {
+  var claimRow = document.getElementById('claimRow');
+  claimRow.innerHTML = '';
+  claimRow.classList.add('show');
+
+  if (teamGotItRight) {
+    var btn = document.createElement('button');
+    btn.className            = 'claim-btn';
+    btn.style.background     = teamBgs[currentTurn];
+    btn.style.borderColor    = teamColors[currentTurn];
+    btn.style.color          = teamColors[currentTurn];
+    btn.textContent          = teamNames[currentTurn] + ' claims this square!';
+    (function(turn) {
+      btn.addEventListener('click', function() { claimSquare(turn); });
+    })(currentTurn);
+    claimRow.appendChild(btn);
+  } else {
+    var other = 1 - currentTurn;
+
+    var label = document.createElement('div');
+    label.style.cssText   = 'font-size:12px;color:#7a9e80;font-family:"IBM Plex Mono",monospace;width:100%;margin-bottom:6px;';
+    label.textContent     = teamNames[other] + ' gets the chance to steal:';
+    claimRow.appendChild(label);
+
+    var btnClaim = document.createElement('button');
+    btnClaim.className         = 'claim-btn';
+    btnClaim.style.background  = teamBgs[other];
+    btnClaim.style.borderColor = teamColors[other];
+    btnClaim.style.color       = teamColors[other];
+    btnClaim.textContent       = 'Claim for ' + teamNames[other];
+    (function(o) {
+      btnClaim.addEventListener('click', function() { claimSquare(o); });
+    })(other);
+    claimRow.appendChild(btnClaim);
+
+    var btnSkip = document.createElement('button');
+    btnSkip.className         = 'claim-btn';
+    btnSkip.style.background  = '#1a2d1f';
+    btnSkip.style.borderColor = '#2a3d2f';
+    btnSkip.style.color       = '#7a9e80';
+    btnSkip.textContent       = 'Skip \u2014 no claim';
+    btnSkip.addEventListener('click', function() { claimSquare(-1); });
+    claimRow.appendChild(btnSkip);
+  }
+}
+
+function claimSquare(teamIdx) {
+  document.getElementById('claimRow').classList.remove('show');
+
+  if (teamIdx >= 0) {
+    var mark = teamIdx === 0 ? 'x' : 'o';
+    board[selectedSq] = mark;
+
+    var sq      = document.getElementById('sq-' + selectedSq);
+    var labelEl = document.getElementById('sq-label-' + selectedSq);
+    sq.classList.remove('selected');
+    sq.classList.add('claimed-' + mark);
+    labelEl.textContent       = mark.toUpperCase();
+    labelEl.style.color       = teamColors[teamIdx];
+    labelEl.style.fontSize    = '36px';
+    labelEl.style.fontFamily  = "'Fraunces',serif";
+    labelEl.style.fontWeight  = '900';
+
+    flashScreen(teamColors[teamIdx]);
+    updateScores();
+
+    var winner = checkWin();
+    if (winner !== null) {
+      setTimeout(function() { showWin(winner); }, 450);
+      return;
+    }
+    if (checkDraw()) {
+      setTimeout(function() { showDraw(); }, 450);
+      return;
+    }
+  } else {
+    var sqEl = document.getElementById('sq-' + selectedSq);
+    if (sqEl) sqEl.classList.remove('selected');
+  }
+
+  currentTurn  = 1 - currentTurn;
+  selectedSq   = -1;
+  questionAnswered = false;
+  updateTurnLabel();
+  updatePills();
+  document.getElementById('btnNextQ').classList.add('show');
+}
+
+function clearQuestion() {
+  document.getElementById('instrCard').style.display = '';
+  document.getElementById('qCard').classList.remove('show');
+  document.getElementById('celebBox').classList.remove('show');
+  document.getElementById('agreeRow').classList.remove('show');
+  document.getElementById('revealBox').classList.remove('show');
+  document.getElementById('claimRow').classList.remove('show');
+  document.getElementById('btnNextQ').classList.remove('show');
+  questionAnswered = false;
+  if (selectedSq >= 0 && board[selectedSq] === null) {
+    var sq = document.getElementById('sq-' + selectedSq);
+    if (sq) sq.classList.remove('selected');
+  }
+  selectedSq = -1;
+}
+
+// ── SCORING & WIN ──────────────────────────
+function updateScores() {
+  var xSq = 0, oSq = 0;
+  for (var i = 0; i < board.length; i++) {
+    if (board[i] === 'x') xSq++;
+    if (board[i] === 'o') oSq++;
+  }
+  document.getElementById('scoreX').textContent = xSq + ' sq';
+  document.getElementById('scoreO').textContent = oSq + ' sq';
+}
+
+function updateTurnLabel() {
+  document.getElementById('turnLabel').textContent = teamNames[currentTurn] + "'s turn to pick";
+}
+
+function updatePills() {
+  var pillX = document.getElementById('pillX');
+  var pillO = document.getElementById('pillO');
+  if (currentTurn === 0) {
+    pillX.classList.add('active-team');
+    pillO.classList.remove('active-team');
+    pillX.style.borderColor = '#4db8ff';
+    pillO.style.borderColor = 'transparent';
+  } else {
+    pillO.classList.add('active-team');
+    pillX.classList.remove('active-team');
+    pillO.style.borderColor = '#ff6b6b';
+    pillX.style.borderColor = 'transparent';
+  }
+}
+
+function checkWin() {
+  for (var i = 0; i < WIN_LINES.length; i++) {
+    var line = WIN_LINES[i];
+    var a = board[line[0]], b = board[line[1]], c = board[line[2]];
+    if (a && a === b && b === c) {
+      for (var j = 0; j < line.length; j++) {
+        var el = document.getElementById('sq-' + line[j]);
+        if (el) el.classList.add('win-sq');
+      }
+      return a === 'x' ? 0 : 1;
+    }
+  }
+  return null;
+}
+
+function checkDraw() {
+  for (var i = 0; i < board.length; i++) {
+    if (board[i] === null) return false;
+  }
+  return true;
+}
+
+function showWin(teamIdx) {
+  document.getElementById('winTitle').textContent = teamNames[teamIdx] + ' wins!';
+  document.getElementById('winTitle').style.color = teamColors[teamIdx];
+  document.getElementById('winSub').textContent   = 'Three in a row \u2014 well played!';
+  buildWinBoard();
+  showScreen('winScreen');
+}
+
+function showDraw() {
+  document.getElementById('winTitle').textContent = "It's a draw!";
+  document.getElementById('winTitle').style.color = '#f5b800';
+  document.getElementById('winSub').textContent   = 'All nine squares claimed with no three in a row.';
+  buildWinBoard();
+  showScreen('winScreen');
+}
+
+function buildWinBoard() {
+  var el = document.getElementById('winBoard');
+  el.innerHTML = '';
+  for (var i = 0; i < board.length; i++) {
+    var c   = board[i];
+    var sq  = document.createElement('div');
+    sq.className = 'win-sq' + (c ? ' ' + c : '');
+
+    var inner = document.createElement('div');
+    inner.className   = 'win-sq-inner';
+    inner.textContent = c ? c.toUpperCase() : '';
+    sq.appendChild(inner);
+    el.appendChild(sq);
+  }
+}
+
+// ── HELPERS ────────────────────────────────
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) {
+    screens[i].classList.remove('active');
+  }
+  document.getElementById(id).classList.add('active');
+}
+
+function flashScreen(color) {
+  var f = document.getElementById('flash');
+  if (!f) return;
+  f.style.background = color;
+  f.classList.add('show');
+  setTimeout(function() { f.classList.remove('show'); }, 350);
+}
+
+function restartGame() {
+  showScreen('setupScreen');
+}
+</script>
+</body>
+</html>
